@@ -415,6 +415,11 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
+        if(strlen($role) == 0)
+        {
+            return json_encode(Array('error' => '操作失败，请选择用户组'), JSON_UNESCAPED_UNICODE);
+        }
+
         if ($role == '000') {
             return json_encode(Array('error' => '操作失败，不可添加超级管理员用户'), JSON_UNESCAPED_UNICODE);
         }

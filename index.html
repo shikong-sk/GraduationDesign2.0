@@ -390,6 +390,100 @@
 						</el-pagination>
 					</div>
 					
+					<div v-else-if="Tab == '添加用户' && rolePermission['addUser'] == '1'">
+					    <!-- <el-form ref="addUserForm" :model="addUser" label-width="80px" label-position="right" :rules="addUserRules" style="max-width: none;"> -->
+					
+						<el-form :model="addUserForm" ref="addUserForm" label-position="right" :rules="addUserRules">
+					        <el-form-item label="用户名" prop="user">
+					            <el-input placeholder="请输入用户名" v-model="addUserForm.user">
+					            </el-input>
+					        </el-form-item>
+						
+							<el-form-item label="密码" prop="password">
+							    <el-input placeholder="请设置密码" v-model="addUserForm.password">
+							    </el-input>
+							</el-form-item>
+						
+							<el-form-item label="联系方式" prop="phone">
+								<el-input v-model="addUserForm.phone" placeholder="请填写联系方式"></el-input>
+							</el-form-item>
+							
+							<el-form-item label="联系地址" prop="address">
+								<el-input v-model="addUserForm.phone" placeholder="请填写联系地址"></el-input>
+							</el-form-item>
+							
+							<el-form-item label="邮箱地址" prop="email">
+								<el-input v-model="addUserForm.email" placeholder="请填写邮箱地址"></el-input>
+							</el-form-item>
+							
+							<el-form-item label="用户组" prop="role" v-if="tmpFilter != ''">
+								<el-select class="w-100" v-model="addUserForm.role" filterable placeholder="请选择用户组" >
+									<el-option
+									  v-for="item in tmpFilter[Tab.slice(2)]['role']"
+									  :key="item.role"
+									  :label="item.name"
+									  :value="item.role">
+									</el-option>
+								</el-select>
+							</el-form-item>
+							
+							<el-form-item label="区域" prop="area">
+								<el-select
+								   v-model="addUserForm.area"
+								   filterable
+								   remote
+								   placeholder="请输入关键词"
+								   :remote-method="getArea"
+								>
+									<el-option
+									  v-for="item in tmpAreaFilter"
+									  :key="item.area"
+									  :loading="tmpAreaLoad"
+									  :label="item.name"
+									  :value="item.area">
+									</el-option>
+								</el-select>
+							</el-form-item>
+								
+							<el-form-item label="场所" prop="place">
+								<el-select
+								   v-model="addUserForm.place"
+								   filterable
+								   remote
+								   placeholder="请输入关键词"
+								   :remote-method="(v)=>{getPlace2(addUserForm.area,v)}"
+								>
+									<el-option
+										v-for="item in tmpPlaceFilter"
+										:key="item.place"
+										loading="tmpPlaceLoad"
+										:label="item.name"
+										:value="item.place">
+									</el-option>
+								</el-select>
+							</el-form-item>
+						
+							<el-form-item label="真实姓名" prop="realName">
+								<el-input v-model="addUserForm.realName" placeholder="请填写真实姓名"></el-input>
+							</el-form-item>
+						
+					        <el-form-item label="身份证" prop="idCard">
+					            <el-input v-model="addUserForm.idCard" placeholder="请填写身份证号"></el-input>
+					        </el-form-item>
+					
+					        <el-form-item label="性别" prop="sex">
+					            <el-select v-model="addUserForm.sex" placeholder="根据身份证号自动选择">
+					                <el-option :label="'男'" :value="'男'"></el-option>
+					                <el-option :label="'女'" :value="'女'"></el-option>
+					            </el-select>
+					        </el-form-item>
+								
+							<div>
+							    <el-button type="primary" class="mx-auto text-center btn-block" @click="addSubmit">添加用户</el-button>
+							</div>
+					
+					    </el-form>
+					</div>
 					
 					<div v-else-if="Tab == '更新用户' && rolePermission['updateUser'] == '1'">
 						<div>
@@ -2384,7 +2478,56 @@
 				},
 				computed: {},
 				data() {
+					var id18 = /^([1-6][1-9]|50)\d{4}(18|19|20)\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
+					var id15 = /^([1-6][1-9]|50)\d{4}\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}$/
+					var validatorIdCard = (rule, value, callback) => {
+					    if (!value) {
+					        return callback(new Error('请输入身份证号'))
+					    } else if (!(id18.test(value) || id15.test(value))) {
+					        return callback(new Error('身份证格式不正确'))
+					    } else {
+							if(management.Tab.slice(2) == '用户')
+							{
+								form = management.addUserForm
+							}
+							else{
+								return
+							}
+							
+					        value = value.toUpperCase()
+					        if (value.length == 18) {
+					
+					            if (form.idCard.substring(16, 17) % 2 == 1) {
+					                form.sex = '男'
+					            } else {
+					                form.sex = '女'
+					            }
+					        } else {
+					
+					            if (form.idCard.substring(14, 15) % 2 == 1) {
+					                form.sex = '男'
+					            } else {
+					                form.sex = '女'
+					            }
+					        }
+					        return callback()
+					    }
+					}
 					return {
+						addUserForm : {
+							address: "",
+							area: "",
+							email: "",
+							idCard: "",
+							password: "",
+							phone: "",
+							place: "",
+							realName: "",
+							role: "",
+							sex: "",
+							user: "",
+						},
+						
 						tmpScope:'',
 						tmpFilter:null,
 						tmpAreaFilter:null,
@@ -2558,9 +2701,71 @@
 						arg:'',
 
 						Edit:-1,
+						
+						addUserRules:{
+							idCard: [{
+							    required: true,
+							    validator: validatorIdCard,
+							    trigger: "blur"
+							}],
+						}
 					}
 				},
 				methods: {
+					addSubmit(){
+						if(management.Tab.slice(2) == '用户')
+						{
+							management.$refs['addUserForm'][0].validate((valid) => {
+							    if (valid) {
+							        axios.post('/System/Core/Management.php', Qs.stringify({
+							            'addUser': '',
+							            'user': management.addUserForm.user,
+							            'password': management.addUserForm.password,
+							            'phone': management.addUserForm.phone,
+							            'address': management.addUserForm.address,
+										'email':management.addUserForm.email,
+										'role':management.addUserForm.role,
+										'area':management.addUserForm.area,
+										'place':management.addUserForm.place,
+										'sex':management.addUserForm.sex,
+										'realName':management.addUserForm.realName,
+										'idCard':management.addUserForm.idCard
+							        }), ).then(function(res) {
+										if('error' in res.data)
+										{
+												management.$message({
+													type: 'error',
+													message: res.data['error']
+												});
+												management.Edit = scope.$index
+												return
+										}
+										if('success' in res.data){
+											management.$message({
+												type: 'success',
+												message: res.data['success']
+											});
+										}
+										if('info' in res.data){
+											management.$message({
+												type: 'info',
+												message: res.data['info']
+											});
+										}
+							        })
+							    } else {
+							        management.$alert('信息填写有误，请检查信息是否填写完整', '错误', {
+							            confirmButtonText: '确定',
+							            type: 'error',
+							            center: true,
+							            callback: action => {
+							
+							            }
+							        })
+							    }
+							})
+						}
+					},
 					Delete(Tab,scope){
 						if(Tab.indexOf('用户') != -1)
 						{
@@ -2885,6 +3090,20 @@
 							'num': 20,
 							'filter':'areaCode',
 							'arg':scope.row.area
+						}), ).then(function(res) {
+							res.data = res.data.slice(1)
+							management.tmpPlaceFilter = res.data
+							management.tmpPlaceLoad = false
+						})
+					},
+					getPlace2(area,v){
+						management.tmpAreaLoad = true
+						axios.post('/System/Core/Management.php', Qs.stringify({
+							"getPlaceList": '',
+							'page': 1,
+							'num': 20,
+							'filter':'areaCode',
+							'arg':area
 						}), ).then(function(res) {
 							res.data = res.data.slice(1)
 							management.tmpPlaceFilter = res.data
@@ -3535,7 +3754,25 @@
 								})
 								break;
 							case "添加用户" : 
-								
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getRoleList": '',
+								}), ).then(function(res) {
+									management.tmpFilter = new Object()
+									management.tmpFilter['用户'] = new Object()
+									management.tmpFilter['用户']['role'] = []
+									management.tmpFilter['用户']['role'] = res.data
+								})
+								management.addUserForm['user'] = ''
+								management.addUserForm['password'] = ''
+								management.addUserForm['phone'] = ''
+								management.addUserForm['address'] = ''
+								management.addUserForm['email'] = ''
+								management.addUserForm['role'] = ''
+								management.addUserForm['area'] = ''
+								management.addUserForm['place'] = ''
+								management.addUserForm['sex'] = ''
+								management.addUserForm['reanName'] = ''
+								management.addUserForm['idCard'] = ''
 								break;
 							case "删除设备" :
 							case "更新设备" :
