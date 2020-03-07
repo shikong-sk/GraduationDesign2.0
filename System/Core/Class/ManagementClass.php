@@ -630,12 +630,12 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，你无法给予比你用户组权限更大的权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        $role = $this->db->database->query("SELECT r.role FROM $this->roleTable r,$this->rolePermissionTable rp WHERE r.name = '$role'")->fetch_assoc()['role'];
+//        $role = $this->db->database->query("SELECT r.role FROM $this->roleTable r,$this->rolePermissionTable rp WHERE r.name = '$role'")->fetch_assoc()['role'];
 
         $query = "UPDATE $this->rolePermissionTable SET `login` = $login, `addUser` = $addUser, `deleteUser` = $deleteUser, `updateUser` = $updateUser, `searchUser` = $searchUser, `addDevice` = $addDevice, `deleteDevice` = $deleteDevice, `updateDevice` = $updateDevice, `searchDevice` = $searchDevice, `addPersonnel` = $addPersonnel, `deletePersonnel` = $deletePersonnel, `updatePersonnel` = $updatePersonnel, `searchPersonnel` = $searchPersonnel, `addAdmin` = $addAdmin, `deleteAdmin` = $deleteAdmin, `editArea` = $editArea, `editPlace` = $editPlace, `editRole` = $editRole, `editRolePermission` = $editRolePermission, `addCar` = $addCar, `deleteCar` = $deleteCar, `updateCar` = $updateCar, `searchCar` = $searchCar WHERE `role` = '$role'";
 
         $res = $this->db->database->query($query);
-
+        
         if ($res && ($this->db->database->affected_rows == 0)) {
             return json_encode(Array('info' => '数据未更改'), JSON_UNESCAPED_UNICODE);
         }
