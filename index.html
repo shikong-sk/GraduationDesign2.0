@@ -1486,6 +1486,41 @@
 						</el-pagination>
 					</div>
 
+					<div v-else-if="Tab == '添加车辆' && rolePermission['addCar'] == '1'">
+						<el-form :model="addCarForm" ref="addCarForm" label-position="right" :rules="addCarRules">
+							<el-form-item label="车牌号码" prop="licensePlate">
+								<el-input placeholder="请输入车牌号码" v-model="addCarForm.licensePlate">
+								</el-input>
+							</el-form-item>
+							
+							<el-form-item label="区域" prop="area">
+								<el-select v-model="addCarForm.area" filterable remote placeholder="请输入关键词" :remote-method="getArea">
+									<el-option v-for="item in tmpAreaFilter" :key="item.area" :loading="tmpAreaLoad" :label="item.name" :value="item.area">
+									</el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="场所" prop="place">
+								<el-select v-model="addCarForm.place" filterable remote placeholder="请输入关键词" :remote-method="(v)=>{getPlace2(addCarForm.area,v)}">
+									<el-option v-for="item in tmpPlaceFilter" :key="item.place" loading="tmpPlaceLoad" :label="item.name" :value="item.place">
+									</el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="出入记录" prop="come">
+								<el-select class="w-100" v-model="addCarForm.come" filterable placeholder="请选择">
+									<el-option label="进" value="0"></el-option>
+									<el-option label="出" value="1"></el-option>
+								</el-select>
+							</el-form-item>
+
+							<div>
+								<el-button type="primary" class="mx-auto text-center btn-block" @click="addSubmit">添加车辆</el-button>
+							</div>
+
+						</el-form>
+					</div>
+
 
 					<div v-else-if="Tab == '查看区域'">
 						<div>
@@ -2666,10 +2701,67 @@
 								trigger: "blur"
 							}],
 						},
+						addCarForm: {
+							licensePlate: "",
+							area: "",
+							place: "",
+							come: "",
+						},
+						addCarRules: {
+							idCard: [{
+								required: true,
+								validator: validatorIdCard,
+								trigger: "blur"
+							}],
+						},
 					}
 				},
 				methods: {
 					addSubmit() {
+						if (management.Tab.slice(2) == '车辆') {
+							management.$refs['addCarForm'][0].validate((valid) => {
+								if (valid) {
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										'addCar': '',
+										'licensePlate': management.addCarForm.licensePlate,
+										'come':management.addCarForm.come,
+										'area': management.addCarForm.area,
+										'place': management.addCarForm.place,
+									}), ).then(function(res) {
+										if ('error' in res.data) {
+											management.$message({
+												type: 'error',
+												message: res.data['error']
+											});
+											management.Edit = scope.$index
+											return
+										}
+										if ('success' in res.data) {
+											management.$message({
+												type: 'success',
+												message: res.data['success']
+											});
+										}
+										if ('info' in res.data) {
+											management.$message({
+												type: 'info',
+												message: res.data['info']
+											});
+										}
+									})
+								} else {
+									management.$alert('信息填写有误，请检查信息是否填写完整', '错误', {
+										confirmButtonText: '确定',
+										type: 'error',
+										center: true,
+										callback: action => {
+						
+										}
+									})
+								}
+							})
+						}
+						
 						if (management.Tab.slice(2) == '人员') {
 							management.$refs['addPersonnelForm'][0].validate((valid) => {
 								if (valid) {
