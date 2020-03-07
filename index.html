@@ -1198,6 +1198,50 @@
 						</el-pagination>
 					</div>
 
+					<div v-else-if="Tab == '添加人员' && rolePermission['addPersonnel'] == '1'">
+						<el-form :model="addPersonnelForm" ref="addPersonnelForm" label-position="right" :rules="addPersonnelRules">
+							<el-form-item label="人员姓名" prop="name">
+								<el-input placeholder="请输入姓名" v-model="addPersonnelForm.name">
+								</el-input>
+							</el-form-item>
+
+							<el-form-item label="身份证号码" prop="idCard">
+								<el-input placeholder="请输入身份证号码" v-model="addPersonnelForm.idCard">
+								</el-input>
+							</el-form-item>
+
+							<el-form-item label="区域" prop="area">
+								<el-select v-model="addPersonnelForm.area" filterable remote placeholder="请输入关键词" :remote-method="getArea">
+									<el-option v-for="item in tmpAreaFilter" :key="item.area" :loading="tmpAreaLoad" :label="item.name" :value="item.area">
+									</el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="场所" prop="place">
+								<el-select v-model="addPersonnelForm.place" filterable remote placeholder="请输入关键词" :remote-method="(v)=>{getPlace2(addPersonnelForm.area,v)}">
+									<el-option v-for="item in tmpPlaceFilter" :key="item.place" loading="tmpPlaceLoad" :label="item.name" :value="item.place">
+									</el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="出入记录" prop="come">
+								<el-select class="w-100" v-model="addPersonnelForm.come" filterable placeholder="请选择">
+									<el-option label="进" value="0"></el-option>
+									<el-option label="出" value="1"></el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="体温" prop="temp">
+								<el-input placeholder="请输入体温数值" v-model="addPersonnelForm.temp">
+								</el-input>
+							</el-form-item>
+
+							<div>
+								<el-button type="primary" class="mx-auto text-center btn-block" @click="addSubmit">添加人员</el-button>
+							</div>
+
+						</el-form>
+					</div>
 
 					<div v-else-if="Tab == '查看车辆' && rolePermission['searchCar'] == '1'">
 						<div>
@@ -2285,7 +2329,7 @@
 							if (management.Tab.slice(2) == '用户') {
 								form = management.addUserForm
 							} else {
-								return
+								return callback()
 							}
 
 							value = value.toUpperCase()
@@ -2304,6 +2348,7 @@
 									form.sex = '女'
 								}
 							}
+							
 							return callback()
 						}
 					}
@@ -2606,10 +2651,71 @@
 							ip: ""
 						},
 						addDeviceRules: {},
+						addPersonnelForm: {
+							name: "",
+							idCard: "",
+							area: "",
+							place: "",
+							come: "",
+							temp:"",
+						},
+						addPersonnelRules: {
+							idCard: [{
+								required: true,
+								validator: validatorIdCard,
+								trigger: "blur"
+							}],
+						},
 					}
 				},
 				methods: {
 					addSubmit() {
+						if (management.Tab.slice(2) == '人员') {
+							management.$refs['addPersonnelForm'][0].validate((valid) => {
+								if (valid) {
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										'addPersonnel': '',
+										'name': management.addPersonnelForm.name,
+										'come':management.addPersonnelForm.come,
+										'area': management.addPersonnelForm.area,
+										'place': management.addPersonnelForm.place,
+										'idCard': management.addPersonnelForm.idCard,
+										'temp':management.addPersonnelForm.temp,
+									}), ).then(function(res) {
+										if ('error' in res.data) {
+											management.$message({
+												type: 'error',
+												message: res.data['error']
+											});
+											management.Edit = scope.$index
+											return
+										}
+										if ('success' in res.data) {
+											management.$message({
+												type: 'success',
+												message: res.data['success']
+											});
+										}
+										if ('info' in res.data) {
+											management.$message({
+												type: 'info',
+												message: res.data['info']
+											});
+										}
+									})
+								} else {
+									management.$alert('信息填写有误，请检查信息是否填写完整', '错误', {
+										confirmButtonText: '确定',
+										type: 'error',
+										center: true,
+										callback: action => {
+						
+										}
+									})
+								}
+							})
+						}
+						
 						if (management.Tab.slice(2) == '设备')
 
 						{
