@@ -1,0 +1,3825 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<script src="Assets/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/popper.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/axios.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/qs.min.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="Assets/css/bootstrap.min.css" />
+
+		<link rel="stylesheet" type="text/css" href="Assets/css/swiper.min.css" />
+
+		<script src="Assets/js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="Assets/js/element-ui.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="Assets/css/element-ui.css" />
+
+		<script src="Assets/js/vuex.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="Assets/js/tinymce/tinymce.min.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="Assets/js/jquery.base64.js" type="text/javascript" charset="utf-8"></script>
+
+
+		<style type="text/css">
+			.text-danger {
+				color:#F56C6C !important;
+			}
+		</style>
+
+		<script type="text/javascript">
+			//公用函数定义
+			function sleep(fun, ms) {
+				setTimeout(fun, ms);
+			}
+
+			function loop(fun, ms) {
+				fun();
+				setInterval(fun, ms);
+			}
+
+			addEventListener(
+				"load",
+				function() {
+					setTimeout(hideURLbar, 0);
+				},
+				false
+			);
+
+			function hideURLbar() {
+				window.scrollTo(0, 1);
+			}
+		</script>
+	</head>
+
+	<body class="body">
+
+		<div id="management">
+			<el-row v-if="managementFlag">
+				<el-col :sm="4" class="text-center">
+					<img style="max-width: 120px;max-height: 50px;text-align: center;" src="Storage/global/Logo.png" alt="logo" class="img-fluid">
+				</el-col>
+				<el-col :sm="18">
+					<el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+						<el-menu-item index="1">面板首页</el-menu-item>
+						<el-submenu index="2" v-if="rolePermission['searchUser'] == '1' || rolePermission['addUser'] == '1' || rolePermission['deleteUser'] == '1' || rolePermission['updateUser'] == '1' ">
+							<template slot="title">用户管理</template>
+							<el-menu-item index="2-1" v-if="rolePermission['searchUser'] == '1' ">查看用户</el-menu-item>
+							<el-menu-item index="2-2" v-if="rolePermission['addUser'] == '1' ">添加用户</el-menu-item>
+							<el-menu-item index="2-3" v-if="rolePermission['deleteUser'] == '1' ">删除用户</el-menu-item>
+							<el-menu-item index="2-4" v-if="rolePermission['updateUser'] == '1' ">更新用户</el-menu-item>
+						</el-submenu>
+						<el-submenu index="3" v-if="rolePermission['searchDevice'] == '1' || rolePermission['addDevice'] == '1' || rolePermission['deleteDevice'] == '1' || rolePermission['updateDevice'] == '1' ">
+							<template slot="title">设备管理</template>
+							<el-menu-item index="3-1">查看设备</el-menu-item>
+							<el-menu-item index="3-2">添加设备</el-menu-item>
+							<el-menu-item index="3-3">删除设备</el-menu-item>
+							<el-menu-item index="3-4">更新设备</el-menu-item>
+						</el-submenu>
+						<el-submenu index="4" v-if="rolePermission['searchPersonnel'] == '1' || rolePermission['addPersonnel'] == '1' || rolePermission['deletePersonnel'] == '1' || rolePermission['updatePersonnel'] == '1' ">
+							<template slot="title">人员管理</template>
+							<el-menu-item index="4-1">查看人员</el-menu-item>
+							<el-menu-item index="4-2">添加人员</el-menu-item>
+							<el-menu-item index="4-3">删除人员</el-menu-item>
+							<el-menu-item index="4-4">更新人员</el-menu-item>
+						</el-submenu>
+						<el-submenu index="5" v-if="rolePermission['searchCar'] == '1' || rolePermission['addCar'] == '1' || rolePermission['deleteCar'] == '1' || rolePermission['updateCar'] == '1' ">
+							<template slot="title">车辆管理</template>
+							<el-menu-item index="5-1">查看车辆</el-menu-item>
+							<el-menu-item index="5-2">添加车辆</el-menu-item>
+							<el-menu-item index="5-3">删除车辆</el-menu-item>
+							<el-menu-item index="5-4">更新车辆</el-menu-item>
+						</el-submenu>
+						<el-submenu index="6" v-if="rolePermission['editArea'] == '1' || rolePermission['editPlace'] == '1'">
+							<template slot="title">行政区划</template>
+							<el-submenu index="6-1" v-if="rolePermission['editArea'] == '1'">
+								<template slot="title">区域管理</template>
+								<el-menu-item index="6-1-1">查看区域</el-menu-item>
+								<el-menu-item index="6-1-2">编辑区域</el-menu-item>
+							</el-submenu>
+							<el-submenu index="6-2" v-if="rolePermission['editPlace'] == '1'">
+								<template slot="title">场所管理</template>
+								<el-menu-item index="6-2-1">查看场所</el-menu-item>
+								<el-menu-item index="6-2-2">编辑场所</el-menu-item>
+							</el-submenu>
+						</el-submenu>
+						<el-submenu index="7" v-if="rolePermission['editRole'] == '1' || rolePermission['editRolePermission'] == '1'">
+							<template slot="title">角色管理</template>
+							<el-submenu index="7-1" v-if="rolePermission['editRole'] == '1'">
+								<template slot="title">角色管理</template>
+								<el-menu-item index="7-1-1">查看角色</el-menu-item>
+								<el-menu-item index="7-1-2">编辑角色</el-menu-item>
+							</el-submenu>
+							<el-submenu index="7-2" v-if="rolePermission['editRolePermission'] == '1'">
+								<template slot="title">角色权限管理</template>
+								<el-menu-item index="7-2-1">查看角色权限</el-menu-item>
+								<el-menu-item index="7-2-2">编辑角色权限</el-menu-item>
+							</el-submenu>
+						</el-submenu>
+						<el-submenu index="8" v-if="rolePermission['addAdmin'] == '1' || rolePermission['deleteAdmin'] == '1'">
+							<template slot="title">管理员管理</template>
+							<el-menu-item index="8-1" v-if="rolePermission['role'] == '000' || rolePermission['role'] == '001' ">查看管理员</el-menu-item>
+							<el-menu-item index="8-2" v-if="rolePermission['addAdmin'] == '1'">添加管理员</el-menu-item>
+							<el-menu-item index="8-3" v-if="rolePermission['deleteAdmin'] == '1'">删除管理员</el-menu-item>
+						</el-submenu>
+					</el-menu>
+				</el-col>
+				<el-col :md="2" :xs="24">
+					<div style="padding-top: 10px; text-align: center;" class="mx-auto">
+						<el-dropdown class="text-center">
+							<span class="el-dropdown-link">
+								{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
+							</span>
+							<el-dropdown-menu slot="dropdown">
+								<el-dropdown-item>个人中心</el-dropdown-item>
+								<el-dropdown-item divided>
+									<div @click="(x)=>{logout()}">退出登录</div>
+								</el-dropdown-item>
+							</el-dropdown-menu>
+						</el-dropdown>
+					</div>
+				</el-col>
+			</el-row>
+
+			<el-tabs :tab-position="tabPosition" style="" v-model="Tab">
+
+				<el-tab-pane v-for="(item,key) in FunctionList" :key="item" :label="item" :name="item">
+					<div v-if="Tab == '控制面板' ">
+						<div v-if="rolePermission['role'] == '000' || rolePermission['role'] == '001' ">
+							<el-row>
+								<el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">
+									<p>3天内进入的车辆</p>
+									<el-progress type="dashboard" :percentage='parseInt(CarData["0"] / CarData["max"] * 100)' :color="colors"></el-progress>
+									<p>{{CarData["0"]}} 辆</p>
+								</el-col>
+								<el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">
+									<p>3天内离开的车辆</p>
+									<el-progress type="dashboard" :percentage='parseInt(CarData["1"] / CarData["max"] * 100)' :color="colors"></el-progress>
+									<p>{{CarData["1"]}} 辆</p>
+								</el-col>
+
+								<el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="PersonnelData">
+									<p>3天内进入的人员</p>
+									<el-progress type="dashboard" :percentage='parseInt(PersonnelData["0"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
+									<p>{{PersonnelData["0"]}} 人</p>
+								</el-col>
+								<el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="PersonnelData">
+									<p>3天内离开的人员</p>
+									<el-progress type="dashboard" :percentage='parseInt(PersonnelData["1"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
+									<p>{{PersonnelData["1"]}} 人</p>
+								</el-col>
+
+							</el-row>
+							
+							<p class="text-center">最近活动过的10台设备</p>
+							<el-table border :data="DeviceData" style="width: 100%" v-if="DeviceData">
+							    <el-table-column prop="deviceId" label="设备ID">
+							    </el-table-column>
+							    <el-table-column prop="name" label="设备名称">
+							    </el-table-column>
+                                <el-table-column label="设备状态">
+                                    <template slot-scope="scope">
+											<span v-if="scope.row.status == 0">离线</span>
+											<span v-if="scope.row.status == 1">在线</span>
+											<span v-if="scope.row.status == 8">异常</span>
+									</template>
+                                </el-table-column>
+								<el-table-column prop="liveTime" label="最后活动时间">
+								</el-table-column>
+							</el-table>
+						</div>
+						<div v-else>
+							<el-row>
+								<div v-if="rolePermission['searchCar'] == '1'" class="text-center">
+									<el-col :md="6" :sm="12" :xs="12" v-if="CarData">
+										<p>3天内进入的车辆</p>
+										<el-progress type="dashboard" :percentage='parseInt(CarData["0"] / CarData["max"] * 100)'
+										 :color="colors"></el-progress>
+										<p>{{CarData["0"]}} 辆</p>
+									</el-col>
+									<el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">
+										<p>3天内离开的车辆</p>
+										<el-progress type="dashboard" v-if="CarData" :percentage='parseInt(CarData["1"] / CarData["max"] * 100)'
+										 :color="colors"></el-progress>
+										<p>{{CarData["1"]}} 辆</p>
+									</el-col>
+								</div>
+								
+								<div v-if="rolePermission['searchPersonnel'] == '1'" class="text-center">
+									<el-col :md="6" :sm="12" :xs="12" v-if="PersonnelData">
+										<p>3天内进入的人员</p>
+										<el-progress type="dashboard" :percentage='parseInt(PersonnelData["0"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
+										<p>{{PersonnelData["0"]}} 人</p>
+									</el-col>
+									<el-col :md="6" :sm="12" :xs="12" v-if="PersonnelData">
+										<p>3天内离开的人员</p>
+										<el-progress type="dashboard" :percentage='parseInt(PersonnelData["1"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
+										<p>{{PersonnelData["1"]}} 人</p>
+									</el-col>
+								</div>
+							</el-row>
+							
+							<div v-if="rolePermission['searchDevice'] == '1'">
+								<p class="text-center">最近活动过的10台设备</p>
+								<el-table border :data="DeviceData" style="width: 100%" v-if="DeviceData">
+								    <el-table-column prop="deviceId" label="设备ID">
+								    </el-table-column>
+								    <el-table-column prop="name" label="设备名称">
+								    </el-table-column>
+								    <el-table-column label="设备状态">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.status == 0">离线</span>
+												<span v-if="scope.row.status == 1">在线</span>
+												<span v-if="scope.row.status == 8">异常</span>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="liveTime" label="最后活动时间">
+									</el-table-column>
+								</el-table>
+							</div>
+						</div>
+						
+						
+						<div>
+							<el-card shadow="never">
+								<div>用户基本信息：</div>
+								<el-row>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>用户名：</span><span v-text="userInfo['userName']"></span>
+									</el-col>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>用户组：</span><span v-text="userInfo['role']"></span>
+									</el-col>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>所属区域：</span><span v-text="userInfo['area']"></span>
+									</el-col>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>所属场所：</span><span v-text="userInfo['place']"></span>
+									</el-col>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>真实姓名：</span><span v-text="userInfo['realName']"></span>
+									</el-col>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>性别：</span><span v-text="userInfo['sex']"></span>
+									</el-col>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>联系方式：</span><span v-text="userInfo['phone']"></span>
+									</el-col>
+									<el-col :xs="24" :sm="12" :md="6">
+										<span>联系邮箱：</span><span v-text="userInfo['email']"></span>
+									</el-col>
+								</el-row>
+							</el-card>
+						</div>
+					</div>
+
+					<div v-else-if="Tab == '查看用户' && rolePermission['searchUser'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+
+								  <el-col :xs="24" :sm="15" :md="12">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+						    <el-table-column prop="id" label="用户ID">
+						    </el-table-column>
+						    <el-table-column prop="userName" label="用户名">
+						    </el-table-column>
+							<el-table-column prop="phone" label="联系方式">
+							</el-table-column>
+							<el-table-column prop="address" label="联系地址">
+							</el-table-column>
+							<el-table-column prop="email" label="邮箱地址">
+							</el-table-column>
+							<el-table-column prop="role" label="用户组">
+							</el-table-column>
+							<el-table-column prop="area" label="所属区域">
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+							</el-table-column>
+							<el-table-column prop="sex" label="性别">
+							</el-table-column>
+							<el-table-column prop="realName" label="真实姓名">
+							</el-table-column>
+							<el-table-column prop="idCard" label="身份证号码">
+							</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+		
+					<div v-else-if="Tab == '删除用户' && rolePermission['deleteUser'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+					
+								  <el-col :xs="24" :sm="15" :md="12">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+						    <el-table-column prop="id" label="用户ID">
+						    </el-table-column>
+						    <el-table-column prop="userName" label="用户名">
+						    </el-table-column>
+							<el-table-column prop="phone" label="联系方式">
+							</el-table-column>
+							<el-table-column prop="address" label="联系地址">
+							</el-table-column>
+							<el-table-column prop="email" label="邮箱地址">
+							</el-table-column>
+							<el-table-column prop="role" label="用户组">
+							</el-table-column>
+							<el-table-column prop="area" label="所属区域">
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+							</el-table-column>
+							<el-table-column prop="sex" label="性别">
+							</el-table-column>
+							<el-table-column prop="realName" label="真实姓名">
+							</el-table-column>
+							<el-table-column prop="idCard" label="身份证号码">
+							</el-table-column>
+							<el-table-column label="操作">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">											删除										</el-button>
+									</div>
+								</template>
+							</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+					
+					
+					<div v-else-if="Tab == '更新用户' && rolePermission['updateUser'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+						    <el-table-column prop="id" label="用户ID">
+						    </el-table-column>
+						    <el-table-column prop="userName" label="用户名">
+						    </el-table-column>
+							<el-table-column label="联系方式">
+									<template slot-scope="scope">
+										<div class="text-center">
+											<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+												{{scope.row.phone}}
+											</span>
+											
+											<input size="mini" type="warning" v-model="scope.row.phone" class="mx-auto w-100" v-else />
+										</div>
+									</template>
+							</el-table-column>
+							<el-table-column label="联系地址">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.address}}
+										</span>
+										
+										<input size="mini" type="warning" v-model="scope.row.address" class="mx-auto w-100" v-else />
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="email" label="邮箱地址">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.email}}
+										</span>
+										
+										<input size="mini" type="warning" v-model="scope.row.email" class="mx-auto w-100" v-else />
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column label="用户组">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.role}}
+										</span>
+										
+										<el-select class="w-100" v-model="scope.row.role" filterable placeholder="请选择搜索条件" v-else-if="tmpFilter != ''">
+											<el-option
+											  v-for="item in tmpFilter[Tab.slice(2)]['role']"
+											  :key="item.role"
+											  :label="item.name"
+											  :value="item.role">
+											</el-option>
+										</el-select>
+
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="area" label="所属区域">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.area}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.area"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="getArea"
+											>
+										    <el-option
+										      v-for="item in tmpAreaFilter"
+										      :key="item.area"
+											  :loading="tmpAreaLoad"
+										      :label="item.name"
+										      :value="item.area">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.place}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.place"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="(v)=>{getPlace(scope,v)}"
+											>
+										    <el-option
+										      v-for="item in tmpPlaceFilter"
+										      :key="item.place"
+											  :loading="tmpPlaceLoad"
+										      :label="item.name"
+										      :value="item.place">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="sex" label="性别">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.sex}}
+										</span>
+										
+									  <el-select class="w-100" v-model="scope.row.sex" filterable placeholder="请选择性别" v-else>
+											<el-option label="男" value="男"></el-option>
+											<el-option label="女" value="女"></el-option>
+									  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="realName" label="真实姓名">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.realName}}
+										</span>
+										
+										<input v-model="scope.row.realName" class="mx-auto w-100" v-else />
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="idCard" label="身份证号码">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.idCard}}
+										</span>
+										
+										<input v-model="scope.row.idCard" class="mx-auto w-100" v-else />
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column label="操作">
+							    <template slot-scope="scope">
+										<div class="text-center">
+											<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+												修改
+											</el-button>
+											
+											<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+												保存
+											</el-button>
+										</div>
+									</template>
+							</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+						
+					</div>
+
+					<div v-else-if="Tab == '查看设备' && rolePermission['searchDevice'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'status'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'status'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="在线" value="1"></el-option>
+											<el-option label="离线" value="0"></el-option>
+											<el-option label="异常" value="8"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="deviceId" label="设备ID">
+								    </el-table-column>
+								    <el-table-column prop="name" label="设备名称">
+								    </el-table-column>
+								    <el-table-column label="设备状态">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.status == 0">离线</span>
+												<span v-if="scope.row.status == 1">在线</span>
+												<span v-if="scope.row.status == 8">异常</span>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="area" label="所属区域">
+									</el-table-column>
+									<el-table-column prop="place" label="所属场所">
+									</el-table-column>
+									<el-table-column prop="liveTime" label="最后活动时间">
+									</el-table-column>
+									<el-table-column prop="ip" label="IP地址">
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+					
+					<div v-else-if="Tab == '更新设备' && rolePermission['updateDevice'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'status'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'status'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="在线" value="1"></el-option>
+											<el-option label="离线" value="0"></el-option>
+											<el-option label="异常" value="8"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="deviceId" label="设备ID">
+								    </el-table-column>
+								    <el-table-column prop="name" label="设备名称">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.name}}
+												</span>
+												
+												<input v-model="scope.row.name" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+								    <el-table-column label="设备状态">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.status == 0 && (Edit != scope.$index)">离线</span>
+												<span v-else-if="scope.row.status == 1 && (Edit != scope.$index)">在线</span>
+												<span v-else-if="scope.row.status == 8 && (Edit != scope.$index)">异常</span>
+												
+												<el-select class="w-100" v-model="scope.row.sex" filterable placeholder="请选择设备状态" v-else>
+														<el-option label="离线" value="0"></el-option>
+														<el-option label="在线" value="1"></el-option>
+														<el-option label="异常" value="8"></el-option>
+												</el-select>
+										</template>
+								    </el-table-column>
+							<el-table-column prop="area" label="所属区域">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.area}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.area"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="getArea"
+											>
+										    <el-option
+										      v-for="item in tmpAreaFilter"
+										      :key="item.area"
+											  :loading="tmpAreaLoad"
+										      :label="item.name"
+										      :value="item.area">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.place}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.place"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="(v)=>{getPlace(scope,v)}"
+											>
+										    <el-option
+										      v-for="item in tmpPlaceFilter"
+										      :key="item.place"
+											  :loading="tmpPlaceLoad"
+										      :label="item.name"
+										      :value="item.place">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+									<el-table-column prop="liveTime" label="最后活动时间">
+									</el-table-column>
+									
+									<el-table-column prop="ip" label="IP地址">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.ip}}
+												</span>
+												
+												<input v-model="scope.row.ip" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+									</el-table-column>
+									
+									<el-table-column label="操作">
+									    <template slot-scope="scope">
+												<div class="text-center">
+													<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+														修改
+													</el-button>
+													
+													<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+														保存
+													</el-button>
+												</div>
+											</template>
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+					<div v-else-if="Tab == '删除设备' && rolePermission['deleteDevice'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'status'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'status'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="在线" value="1"></el-option>
+											<el-option label="离线" value="0"></el-option>
+											<el-option label="异常" value="8"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="deviceId" label="设备ID">
+								    </el-table-column>
+								    <el-table-column prop="name" label="设备名称">
+								    </el-table-column>
+								    <el-table-column label="设备状态">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.status == 0">离线</span>
+												<span v-if="scope.row.status == 1">在线</span>
+												<span v-if="scope.row.status == 8">异常</span>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="area" label="所属区域">
+									</el-table-column>
+									<el-table-column prop="place" label="所属场所">
+									</el-table-column>
+									<el-table-column prop="liveTime" label="最后活动时间">
+									</el-table-column>
+									<el-table-column prop="ip" label="IP地址">
+									</el-table-column>
+									<el-table-column label="操作">								<template slot-scope="scope">									<div class="text-center">										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">											删除										</el-button>									</div>								</template>							</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+	
+					
+					<div v-else-if="Tab == '查看人员' && rolePermission['searchPersonnel'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="进" value="0"></el-option>
+											<el-option label="出" value="1"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="time" label="时间">
+								    </el-table-column>
+								    <el-table-column prop="name" label="姓名">
+								    </el-table-column>
+								    <el-table-column label="出入记录">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.come == 0">进</span>
+												<span v-if="scope.row.come == 1">出</span>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="area" label="所属区域">
+									</el-table-column>
+									<el-table-column prop="place" label="所属场所">
+									</el-table-column>
+									<el-table-column prop="idCard" label="身份证号码">
+									</el-table-column>
+									<el-table-column prop="temp" label="体温">
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+					<div v-else-if="Tab == '更新人员' && rolePermission['updatePersonnel'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="进" value="0"></el-option>
+											<el-option label="出" value="1"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="time" label="时间">
+								    </el-table-column>
+								    <el-table-column prop="name" label="姓名">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.name}}
+												</span>
+												
+												<input v-model="scope.row.name" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+								    <el-table-column label="出入记录">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.come == 0 && (Edit != scope.$index)">进</span>
+												<span v-else-if="scope.row.come == 1 && (Edit != scope.$index)">出</span>
+												
+												<el-select class="w-100" v-model="scope.row.come" filterable placeholder="请选择进出状态" v-else>
+														<el-option label="进" value="0"></el-option>
+														<el-option label="出" value="1"></el-option>
+												</el-select>
+										</template>
+								    </el-table-column>
+							<el-table-column prop="area" label="所属区域">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.area}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.area"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="getArea"
+											>
+										    <el-option
+										      v-for="item in tmpAreaFilter"
+										      :key="item.area"
+											  :loading="tmpAreaLoad"
+										      :label="item.name"
+										      :value="item.area">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.place}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.place"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="(v)=>{getPlace(scope,v)}"
+											>
+										    <el-option
+										      v-for="item in tmpPlaceFilter"
+										      :key="item.place"
+											  :loading="tmpPlaceLoad"
+										      :label="item.name"
+										      :value="item.place">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+									<el-table-column prop="idCard" label="身份证号码">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.idCard}}
+												</span>
+												
+												<input v-model="scope.row.idCard" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+									</el-table-column>
+									<el-table-column prop="temp" label="体温">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.temp}}
+												</span>
+												
+												<input v-model="scope.row.temp" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+									</el-table-column>
+									<el-table-column label="操作">
+									    <template slot-scope="scope">
+												<div class="text-center">
+													<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+														修改
+													</el-button>
+													
+													<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+														保存
+													</el-button>
+												</div>
+											</template>
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+					<div v-else-if="Tab == '删除人员' && rolePermission['deletePersonnel'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="进" value="0"></el-option>
+											<el-option label="出" value="1"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="time" label="时间">
+								    </el-table-column>
+								    <el-table-column prop="name" label="姓名">
+								    </el-table-column>
+								    <el-table-column label="出入记录">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.come == 0">进</span>
+												<span v-if="scope.row.come == 1">出</span>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="area" label="所属区域">
+									</el-table-column>
+									<el-table-column prop="place" label="所属场所">
+									</el-table-column>
+									<el-table-column prop="idCard" label="身份证号码">
+									</el-table-column>
+									<el-table-column prop="temp" label="体温">
+									</el-table-column>
+									<el-table-column label="操作">								<template slot-scope="scope">									<div class="text-center">										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">											删除										</el-button>									</div>								</template>							</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+
+					<div v-else-if="Tab == '查看车辆' && rolePermission['searchCar'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="进" value="0"></el-option>
+											<el-option label="出" value="1"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="time" label="时间">
+								    </el-table-column>
+								    <el-table-column prop="licensePlate" label="车牌号码">
+								    </el-table-column>
+								    <el-table-column label="出入记录">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.come == 0">进</span>
+												<span v-if="scope.row.come == 1">出</span>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="area" label="所属区域">
+									</el-table-column>
+									<el-table-column prop="place" label="所属场所">
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+					<div v-else-if="Tab == '更新车辆' && rolePermission['updateCar'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="进" value="0"></el-option>
+											<el-option label="出" value="1"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="time" label="时间">
+								    </el-table-column>
+								    <el-table-column prop="licensePlate" label="车牌号码">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.licensePlate}}
+												</span>
+												
+												<input v-model="scope.row.licensePlate" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+								    <el-table-column label="出入记录">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.come == 0 && (Edit != scope.$index)">进</span>
+												<span v-else-if="scope.row.come == 1 && (Edit != scope.$index)">出</span>
+												
+												<el-select class="w-100" v-model="scope.row.come" filterable placeholder="请选择进出状态" v-else>
+														<el-option label="进" value="0"></el-option>
+														<el-option label="出" value="1"></el-option>
+												</el-select>
+										</template>
+								    </el-table-column>
+							<el-table-column prop="area" label="所属区域">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.area}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.area"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="getArea"
+											>
+										    <el-option
+										      v-for="item in tmpAreaFilter"
+										      :key="item.area"
+											  :loading="tmpAreaLoad"
+										      :label="item.name"
+										      :value="item.area">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+								<template slot-scope="scope">
+									<div class="text-center">
+										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+											{{scope.row.place}}
+										</span>
+										
+										<el-select
+											v-else
+										    v-model="scope.row.place"
+										    filterable
+										    remote
+										    placeholder="请输入关键词"
+										    :remote-method="(v)=>{getPlace(scope,v)}"
+											>
+										    <el-option
+										      v-for="item in tmpPlaceFilter"
+										      :key="item.place"
+											  :loading="tmpPlaceLoad"
+										      :label="item.name"
+										      :value="item.place">
+										    </el-option>
+										  </el-select>
+								
+									</div>
+								</template>
+							</el-table-column>
+									<el-table-column label="操作">
+									    <template slot-scope="scope">
+												<div class="text-center">
+													<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+														修改
+													</el-button>
+													
+													<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+														保存
+													</el-button>
+												</div>
+											</template>
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+					<div v-else-if="Tab == '删除车辆' && rolePermission['deleteCar'] == '1'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="进" value="0"></el-option>
+											<el-option label="出" value="1"></el-option>
+									  </el-select>
+								  </el-col>
+								  
+								<el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
+									<el-date-picker
+									class="w-100"
+									v-model="tmpArg"
+									type="datetime"
+									placeholder="选择日期时间">
+									</el-date-picker>	
+								</el-col>	
+								
+								<el-col :xs="24" :sm="15" :md="12" v-else>
+									    <el-date-picker
+										class="w-100"
+									      v-model="tmpArg2"
+									      type="datetimerange"
+									      range-separator="至"
+									      start-placeholder="开始日期"
+									      end-placeholder="结束日期">
+									    </el-date-picker>
+								</el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="time" label="时间">
+								    </el-table-column>
+								    <el-table-column prop="licensePlate" label="车牌号码">
+								    </el-table-column>
+								    <el-table-column label="出入记录">
+								        <template slot-scope="scope">
+												<span v-if="scope.row.come == 0">进</span>
+												<span v-if="scope.row.come == 1">出</span>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="area" label="所属区域">
+									</el-table-column>
+									<el-table-column prop="place" label="所属场所">
+									</el-table-column>
+									<el-table-column label="操作">								<template slot-scope="scope">									<div class="text-center">										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">											删除										</el-button>									</div>								</template>							</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+
+					<div v-else-if="Tab == '查看区域'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="tmpFilter != 'level'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'level'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="省" value="1"></el-option>
+											<el-option label="市" value="2"></el-option>
+											<el-option label="区" value="3"></el-option>
+											<el-option label="街道" value="4"></el-option>
+									  </el-select>
+								  </el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="area" label="区域代码">
+								    </el-table-column>
+								    <el-table-column prop="name" label="区域名称">
+								    </el-table-column>
+									<el-table-column prop="level" label="区域级别">
+									</el-table-column>
+									<el-table-column prop="parentCode" label="父级区域代码">
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+					<div v-else-if="Tab == '编辑区域'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12" v-if="tmpFilter != 'level'">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+								  <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'level'">
+									  <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
+											<el-option label="省" value="1"></el-option>
+											<el-option label="市" value="2"></el-option>
+											<el-option label="区" value="3"></el-option>
+											<el-option label="街道" value="4"></el-option>
+									  </el-select>
+								  </el-col>
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="area" label="区域代码">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.area}}
+												</span>
+												
+												<input v-model="scope.row.area" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+								    <el-table-column prop="name" label="区域名称">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.name}}
+												</span>
+												
+												<input v-model="scope.row.name" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="level" label="区域级别">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.level}}
+												</span>
+												<el-select class="w-100" v-model="scope.row.level" filterable placeholder="请选择条件" v-else>
+													<el-option label="省" value="1"></el-option>
+													<el-option label="市" value="2"></el-option>
+													<el-option label="区" value="3"></el-option>
+													<el-option label="街道" value="4"></el-option>
+												</el-select>
+											</div>
+										</template>
+									</el-table-column>
+									<el-table-column prop="parentCode" label="父级区域代码">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.parentCode}}
+												</span>
+												
+												<input v-model="scope.row.parentCode" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+									</el-table-column>
+									
+									<el-table-column label="操作">
+									    <template slot-scope="scope">
+												<div class="text-center">
+													<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+														修改
+													</el-button>
+													
+													<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+														保存
+													</el-button>
+													<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
+														删除
+													</el-button>
+												</div>
+											</template>
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+
+					<div v-else-if="Tab == '查看场所'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="place" label="场所代码">
+								    </el-table-column>
+								    <el-table-column prop="name" label="场所名称">
+								    </el-table-column>
+									<el-table-column prop="area" label="所属区域">
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+
+					<div v-else-if="Tab == '编辑场所'">
+						<div>
+							<el-row>
+								<el-col :xs="24" :sm="9" :md="8">
+									<el-select class="w-100" v-model="tmpFilter" filterable placeholder="请选择搜索条件">
+										<el-option
+										  v-for="item in filterList[Tab.slice(2)]"
+										  :key="item.value"
+										  :label="item.label"
+										  :value="item.value">
+										</el-option>
+									</el-select>
+								</el-col>
+						
+								  <el-col :xs="24" :sm="15" :md="12">
+									  	<el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
+								  </el-col>
+								  
+																  
+								  <el-col  :xs="24" :sm="24" :md="4">
+									  <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								  </el-col>
+								  
+							  </el-row>
+						</div>
+						
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="place" label="场所代码">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.place}}
+												</span>
+												
+												<input v-model="scope.row.place" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+								    <el-table-column prop="name" label="场所名称">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.name}}
+												</span>
+												
+												<input v-model="scope.row.name" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+								<el-table-column prop="area" label="所属区域">
+									<template slot-scope="scope">
+										<div class="text-center">
+											<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
+												{{scope.row.area}}
+											</span>
+											
+											<el-select
+												v-else
+												v-model="scope.row.area"
+												filterable
+												remote
+												placeholder="请输入关键词"
+												:remote-method="getArea"
+												>
+												<el-option
+												  v-for="item in tmpAreaFilter"
+												  :key="item.area"
+												  :loading="tmpAreaLoad"
+												  :label="item.name"
+												  :value="item.area">
+												</el-option>
+											  </el-select>
+									
+										</div>
+									</template>
+							</el-table-column>		
+									</el-table-column>
+									<el-table-column label="操作">
+									    <template slot-scope="scope">
+												<div class="text-center">
+													<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+														修改
+													</el-button>
+													
+													<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+														保存
+													</el-button>
+													
+													<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
+														删除
+													</el-button>
+												</div>
+											</template>
+									</el-table-column>
+						</el-table>
+						<el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+						</el-pagination>
+					</div>
+					
+					<div v-else-if="Tab == '编辑角色' && rolePermission['editRole'] == '1'">
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="role" label="角色代码">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.role}}
+												</span>
+												
+												<input v-model="scope.row.role" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+								    </el-table-column>
+									<el-table-column prop="name" label="角色名称">
+										<template slot-scope="scope">
+											<div class="text-center">
+												<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
+													{{scope.row.name}}
+												</span>
+												
+												<input v-model="scope.row.name" class="mx-auto w-100" v-else />
+											</div>
+										</template>
+									</el-table-column>
+									<el-table-column label="操作">
+									    <template slot-scope="scope">
+												<div class="text-center">
+													<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+														修改
+													</el-button>
+													
+													<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+														保存
+													</el-button>
+													<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
+														删除
+													</el-button>
+												</div>
+											</template>
+									</el-table-column>
+						</el-table>
+					</div>
+					
+					<div v-else-if="Tab == '查看角色' && rolePermission['editRole'] == '1'">
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+								    <el-table-column prop="role" label="角色代码">
+								    </el-table-column>
+									<el-table-column prop="name" label="角色名称">
+									</el-table-column>
+						</el-table>
+					</div>
+					
+					
+					<div v-else-if="Tab == '查看角色权限' && rolePermission['editRolePermission'] == '1'">
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+									<el-table-column prop="name" label="角色名称">
+									</el-table-column>
+									<el-table-column label="登录">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.login == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.login == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加用户">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.addUser == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.addUser == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除用户">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.deleteUser =='0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.deleteUser == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新用户信息">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.updateUser == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.updateUser == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索用户">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.searchUser == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.searchUser == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加设备">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.addDevice == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.addDevice == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除设备">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.deleteDevice == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.deleteDevice == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新设备信息">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.updateDevice == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.updateDevice == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索设备">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.searchDevice == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.searchDevice == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加人员">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.addPersonnel == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.addPersonnel == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除人员">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.deletePersonnel == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.deletePersonnel == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新人员信息">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.updatePersonnel == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.updatePersonnel == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索人员">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.searchPersonnel == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.searchPersonnel == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加车辆">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.addCar == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.addCar == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除车辆">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.deleteCar == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.deleteCar == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新车辆信息">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.updateCar == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.updateCar == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索车辆">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.searchCar == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.searchCar == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑区域">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.editArea == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.editArea == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑场所">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.editPlace == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.editPlace == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑角色">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.editRole == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.editRole == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑角色权限">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.editRolePermission == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.editRolePermission == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加管理员">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.addAdmin == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.addAdmin == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除管理员">
+									    <template slot-scope="scope">
+												<span v-if="scope.row.deleteAdmin == '0'" class="text-danger" ><b>×</b></span>
+												<span v-if="scope.row.deleteAdmin == '1'" class="text-success"><b>√</b></span>
+										</template>
+									</el-table-column>
+						</el-table>
+					</div>
+
+					<div v-else-if="Tab == '编辑角色权限' && rolePermission['editRolePermission'] == '1'">
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+									<el-table-column prop="name" label="角色名称">
+									</el-table-column>
+									<el-table-column label="操作">
+									    <template slot-scope="scope">
+												<div class="text-center">
+													<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
+														修改
+													</el-button>
+													
+													<el-button size="mini" type="warning" class="mx-auto text-center" @click="save(Tab,scope)" v-else>
+														保存
+													</el-button>
+												</div>
+											</template>
+									</el-table-column>
+									<el-table-column label="登录">
+										<template slot-scope="scope">
+												<span v-if="scope.row.login == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.login == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.login" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加用户">
+										<template slot-scope="scope">
+												<span v-if="scope.row.addUser == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.addUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.addUser" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除用户">
+										<template slot-scope="scope">
+												<span v-if="scope.row.deleteUser == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.deleteUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.deleteUser" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新用户信息">
+										<template slot-scope="scope">
+												<span v-if="scope.row.updateUser == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.updateUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.updateUser" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索用户">
+										<template slot-scope="scope">
+												<span v-if="scope.row.searchUser == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.searchUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.searchUser" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加设备">
+										<template slot-scope="scope">
+												<span v-if="scope.row.addDevice == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.addDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.addDevice" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除设备">
+										<template slot-scope="scope">
+												<span v-if="scope.row.deleteDevice == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.deleteDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.deleteDevice" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新设备信息">
+										<template slot-scope="scope">
+												<span v-if="scope.row.updateDevice == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.updateDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.updateDevice" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索设备">
+										<template slot-scope="scope">
+												<span v-if="scope.row.searchDevice == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.searchDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.searchDevice" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加人员">
+										<template slot-scope="scope">
+												<span v-if="scope.row.addPersonnel == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.addPersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.addPersonnel" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除人员">
+										<template slot-scope="scope">
+												<span v-if="scope.row.deletePersonnel == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.deletePersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.deletePersonnel" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新人员信息">
+										<template slot-scope="scope">
+												<span v-if="scope.row.updatePersonnel == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.updatePersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.updatePersonnel" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索人员">
+										<template slot-scope="scope">
+												<span v-if="scope.row.searchPersonnel == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.searchPersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.searchPersonnel" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加车辆">
+										<template slot-scope="scope">
+												<span v-if="scope.row.addCar == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.addCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.addCar" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除车辆">
+										<template slot-scope="scope">
+												<span v-if="scope.row.deleteCar == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.deleteCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.deleteCar" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="更新车辆信息">
+										<template slot-scope="scope">
+												<span v-if="scope.row.updateCar == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.updateCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.updateCar" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="查询/搜索车辆">
+										<template slot-scope="scope">
+												<span v-if="scope.row.searchCar == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.searchCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.searchCar" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑区域">
+										<template slot-scope="scope">
+												<span v-if="scope.row.editArea == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.editArea == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.editArea" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑场所">
+										<template slot-scope="scope">
+												<span v-if="scope.row.editPlace == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.editPlace == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.editPlace" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑角色">
+										<template slot-scope="scope">
+												<span v-if="scope.row.editRole == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.editRole == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.editRole" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="编辑角色权限">
+										<template slot-scope="scope">
+												<span v-if="scope.row.editRolePermission == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.editRolePermission == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.editRolePermission" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="添加管理员">
+										<template slot-scope="scope">
+												<span v-if="scope.row.addAdmin == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.addAdmin == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.addAdmin" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+									<el-table-column label="删除管理员">
+										<template slot-scope="scope">
+												<span v-if="scope.row.deleteAdmin == '0' && (Edit != scope.$index)" class="text-danger" ><b>×</b></span>
+												<span v-else-if="scope.row.deleteAdmin == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
+												
+												<el-select class="w-100" v-model="scope.row.deleteAdmin" filterable placeholder="请选择权限" v-else>
+														<el-option label="×" value="0"></el-option>
+														<el-option label="√" value="1"></el-option>
+												</el-select>
+										</template>
+									</el-table-column>
+						</el-table>
+					</div>
+
+					
+					<div v-else-if="Tab == '查看管理员' && (rolePermission['role'] == '001' || rolePermission['role'] == '000')">
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+						    <el-table-column prop="id" label="用户ID">
+						    </el-table-column>
+						    <el-table-column prop="userName" label="用户名">
+						    </el-table-column>
+							<el-table-column prop="phone" label="联系方式">
+							</el-table-column>
+							<el-table-column prop="address" label="联系地址">
+							</el-table-column>
+							<el-table-column prop="email" label="邮箱地址">
+							</el-table-column>
+							<el-table-column prop="role" label="用户组">
+							</el-table-column>
+							<el-table-column prop="area" label="所属区域">
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+							</el-table-column>
+							<el-table-column prop="sex" label="性别">
+							</el-table-column>
+							<el-table-column prop="realName" label="真实姓名">
+							</el-table-column>
+							<el-table-column prop="idCard" label="身份证号码">
+							</el-table-column>
+						</el-table>
+					</div>
+
+					<div v-else-if="Tab == '删除管理员' && rolePermission['role'] == '000'">
+						<el-table border :data="data" style="width: 100%" v-loading="load">
+						    <el-table-column prop="id" label="用户ID">
+						    </el-table-column>
+						    <el-table-column prop="userName" label="用户名">
+						    </el-table-column>
+							<el-table-column prop="phone" label="联系方式">
+							</el-table-column>
+							<el-table-column prop="address" label="联系地址">
+							</el-table-column>
+							<el-table-column prop="email" label="邮箱地址">
+							</el-table-column>
+							<el-table-column prop="role" label="用户组">
+							</el-table-column>
+							<el-table-column prop="area" label="所属区域">
+							</el-table-column>
+							<el-table-column prop="place" label="所属场所">
+							</el-table-column>
+							<el-table-column prop="sex" label="性别">
+							</el-table-column>
+							<el-table-column prop="realName" label="真实姓名">
+							</el-table-column>
+							<el-table-column prop="idCard" label="身份证号码">
+							</el-table-column>
+							<el-table-column label="操作">
+									<template slot-scope="scope">
+										<div class="text-center">
+											<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
+												删除
+											</el-button>
+										</div>
+									</template>
+								</el-table-column>
+						</el-table>
+					</div>
+					
+				</el-tab-pane>
+			</el-tabs>
+
+
+			<el-backtop :bottom="100" :right="20">
+				<div style="{
+							        background-color: #f2f5f6;
+							        box-shadow: 0 0 6px rgba(0,0,0, .12);
+							        text-align: center;
+							        color: #1989fa;
+									width: 100%;
+									height: 100%;
+									border-radius: 50%;
+									line-height: 180%;
+							      }">
+					▲
+				</div>
+			</el-backtop>
+		</div>
+		<script>
+			var management = new Vue({
+				el: '#management',
+				watch: {
+					Tab(n,o)
+					{
+						management.tabChange(n,o)
+					}
+				},
+				computed: {},
+				data() {
+					return {
+						tmpScope:'',
+						tmpFilter:null,
+						tmpAreaFilter:null,
+						tmpAreaLoad:false,
+						tmpPlaceFilter:null,
+						tmpPlaceLoad:false,
+						
+						filterList:{
+							'用户':[
+								{label:'用户名',value:'userName'},
+								{label:'邮箱',value:'email'},
+								{label:'身份证号码',value:'idCard'},
+								{label:'联系地址',value:'address'},
+								{label:'用户组',value:'role'},
+								{label:'联系方式',value:'phone'},
+								{label:'性别',value:'sex'},
+								{label:'区域/场所',value:'area'},
+							],
+							'设备':[
+								{label:'设备名称',value:'name'},
+								{label:'在此时间之前',value:'beforeTime'},
+								{label:'在此时间之后',value:'afterTime'},
+								{label:'在此时间段内',value:'betweenTime'},
+								{label:'设备状态',value:'status'},
+								{label:'ip地址',value:'ip'},
+								{label:'区域/场所',value:'area'},
+							],
+							'人员':[
+								{label:'姓名',value:'name'},
+								{label:'在此时间之前',value:'beforeTime'},
+								{label:'在此时间之后',value:'afterTime'},
+								{label:'在此时间段内',value:'betweenTime'},
+								{label:'出入记录',value:'come'},
+								{label:'体温低于',value:'lowerTemp'},
+								{label:'体温高于',value:'higherTemp'},
+								{label:'身份证号码',value:'idCard'},
+								{label:'区域/场所',value:'area'},
+							],
+							'车辆':[
+								{label:'车牌号码',value:'licensePlate'},
+								{label:'在此时间之前',value:'beforeTime'},
+								{label:'在此时间之后',value:'afterTime'},
+								{label:'在此时间段内',value:'betweenTime'},
+								{label:'出入记录',value:'come'},
+								{label:'区域/场所',value:'area'},
+							],
+							'区域':[
+								{label:'区域名称',value:'name'},
+								{label:'级别',value:'level'},
+							],
+							'场所':[
+								{label:'场所名称',value:'name'},
+								{label:'区域名称',value:'area'},
+							]
+						},
+						colors: [{
+								color: '#f56c6c',
+								percentage: 20
+							},
+							{
+								color: '#e6a23c',
+								percentage: 40
+							},
+							{
+								color: '#5cb87a',
+								percentage: 60
+							},
+							{
+								color: '#1989fa',
+								percentage: 80
+							},
+							{
+								color: '#6f7ad3',
+								percentage: 100
+							}
+						],
+						managementFlag: false,
+						activeIndex: '1',
+						userName: '',
+						role: "",
+						rolePermission: "",
+
+						Tab: "控制面板",
+
+						rolePermissionList: {
+							"1": "login",
+							"2-1": "searchUser",
+							"2-2": "addUser",
+							"2-3": "deleteUser",
+							"2-4": "updateUser",
+							"3-1": "searchDevice",
+							"3-2": "addDevice",
+							"3-3": "deleteDevice",
+							"3-4": "updateDevice",
+							"4-1": "searchPersonnel",
+							"4-2": "addPersonnel",
+							"4-3": "deletePersonnel",
+							"4-4": "updatePersonnel",
+							"5-1": "searchCar",
+							"5-2": "addCar",
+							"5-3": "deleteCar",
+							"5-4": "updateCar",
+							"6-1-1": "login",
+							"6-1-2": "editArea",
+							"6-2-1": "login",
+							"6-2-2": "editPlace",
+							"7-1-1": "editRole",
+							"7-1-2": "editRole",
+							"7-2-1": "editRolePermission",
+							"7-2-2": "editRolePermission",
+							"8-1": "login",
+							"8-2": "addAdmin",
+							"8-3": "deleteAdmin"
+						},
+
+						allFunctionList: {
+							"1": "控制面板",
+							"2-1": "查看用户",
+							"2-2": "添加用户",
+							"2-3": "删除用户",
+							"2-4": "更新用户",
+							"3-1": "查看设备",
+							"3-2": "添加设备",
+							"3-3": "删除设备",
+							"3-4": "更新设备",
+							"4-1": "查看人员",
+							"4-2": "添加人员",
+							"4-3": "删除人员",
+							"4-4": "更新人员",
+							"5-1": "查看车辆",
+							"5-2": "添加车辆",
+							"5-3": "删除车辆",
+							"5-4": "更新车辆",
+							"6-1-1": "查看区域",
+							"6-1-2": "编辑区域",
+							"6-2-1": "查看场所",
+							"6-2-2": "编辑场所",
+							"7-1-1": "查看角色",
+							"7-1-2": "编辑角色",
+							"7-2-1": "查看角色权限",
+							"7-2-2": "编辑角色权限",
+							"8-1": "查看管理员",
+							"8-2": "添加管理员",
+							"8-3": "删除管理员"
+						},
+
+						FunctionList: ['控制面板'],
+
+						tabIndex: '班级概览',
+						tabs: [],
+						tabPosition: 'left',
+
+						data: [],
+						PersonnelData: "",
+						CarData: "",
+						DeviceData: "",
+						
+						userInfo:"",
+						
+						page:1,
+						num:10,
+						maxNum:0,
+						
+						load:false,
+						
+						tmpFilter:'',
+						tmpArg:'',
+						tmpArg2:'',
+						
+						filter:'',
+						arg:'',
+
+						Edit:-1,
+					}
+				},
+				methods: {
+					Delete(Tab,scope){
+						if(Tab.indexOf('用户') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deleteUser": '',
+								'id': scope.row.id,
+								'user':scope.row.userName,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+									management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('设备') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deleteDevice": '',
+								'name':scope.row.name,
+								"id": scope.row.deviceId,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('人员') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deletePersonnel": '',
+								'time':$.base64.encode(scope.row.time),
+								'name':scope.row.name,
+								'idCard':scope.row.idCard,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('车辆') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deleteCar": '',
+								'time':$.base64.encode(scope.row.time),
+								'licensePlate':scope.row.licensePlate,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('区域') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deleteArea": '',
+								'code':scope.row.area,
+								'name':scope.row.name,
+								'level':scope.row.level,
+								'parentCode':scope.row.parentCode
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('场所') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deletePlace": '',
+								'id':scope.row.place,
+								'area':scope.row.area,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+									management.$message({
+										type: 'error',
+										message: res.data['error']
+									});
+									return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('角色') != -1 && Tab.indexOf('权限') == -1 )
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deleteRole": '',
+								'id':scope.row.role,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('角色') != -1 && Tab.indexOf('权限') != -1 )
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updateRolePermission": '',
+								'role':scope.row.role,
+								'login':scope.row.login,
+								'addUser':scope.row.addUser,
+								'deleteUser':scope.row.deleteUser,
+								'updateUser':scope.row.updateUser,
+								'searchUser':scope.row.searchUser,
+								'addDevice':scope.row.addDevice,
+								'deleteDevice':scope.row.deleteDevice,
+								'updateDevice':scope.row.updateDevice,
+								'searchDevice':scope.row.searchDevice,
+								'addPersonnel':scope.row.addPersonnel,
+								'deletePersonnel':scope.row.deletePersonnel,
+								'updatePersonnel':scope.row.updatePersonnel,
+								'searchPersonnel':scope.row.searchPersonnel,
+								'addAdmin':scope.row.addAdmin,
+								'deleteAdmin':scope.row.deleteAdmin,
+								'editArea':scope.row.editArea,
+								'editPlace':scope.row.editPlace,
+								'editRolePermission':scope.row.editRolePermission,
+								'editRole':scope.row.editRole,
+								'addCar':scope.row.addCar,
+								'deleteCar':scope.row.deleteCar,
+								'updateCar':scope.row.updateCar,
+								'searchCar':scope.row.searchCar,
+								
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						
+						if(Tab.indexOf('管理员') != -1 && management.rolePermission['role'] == '000' )
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"deleteAdmin": '',
+								'id':scope.row.id,
+								'name':scope.row.userName,
+								
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+					},
+					getPlace(scope,v){
+						management.tmpAreaLoad = true
+						axios.post('/System/Core/Management.php', Qs.stringify({
+							"getPlaceList": '',
+							'page': 1,
+							'num': 20,
+							'filter':'areaCode',
+							'arg':scope.row.area
+						}), ).then(function(res) {
+							res.data = res.data.slice(1)
+							management.tmpPlaceFilter = res.data
+							management.tmpPlaceLoad = false
+						})
+					},
+					getArea(arg){
+						management.tmpAreaLoad = true
+						axios.post('/System/Core/Management.php', Qs.stringify({
+							"getAreaList": '',
+							'page': 1,
+							'num': 20,
+							'filter':'name',
+							'arg':arg
+						}), ).then(function(res) {
+							res.data = res.data.slice(1)
+							management.tmpAreaFilter = res.data
+							management.tmpPlaceFilter = []
+							management.tmpAreaLoad = false
+							// management.getPlace(scope,res.data[0].area)
+						})
+					},
+					edit(Tab,scope){
+						management.tmpScope = scope
+						management.Edit = scope.$index
+						if(scope.row.area != null || scope.row.area != "")
+						{
+							this.getArea(scope.row.area)
+							fun = new Promise(function(){
+								management.getArea(scope.row.area)
+							})
+							
+							fun.then(
+								function(){
+									console.log(management.tmpAreaFilter[0])
+									scope.row.area = management.tmpAreaFilter[0].area
+									// for(x in management.tmpAreaFilter)
+									// {
+										
+									// 	if(management.tmpAreaFilter[x].name == scope.row.area)
+									// 	{
+									// 		scope.row.area = management.tmpAreaFilter[x].area
+									// 		console.log(scope.row.area)
+									// 		return
+									// 	}
+									// }
+								}
+							)
+							
+						}
+					},
+					save(Tab,scope){
+						management.Edit = -1
+						management.tmpAreaFilter = []
+						console.log(management.tmpScope)
+						console.log(scope)
+						if(Tab.indexOf('用户') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updateUser": '',
+								'id': scope.row.id,
+								'phone':scope.row.phone,
+								'address':scope.row.address,
+								'email':scope.row.email,
+								'role':scope.row.role,
+								'area':scope.row.area,
+								'place':scope.row.place,
+								'sex':scope.row.sex,
+								'realName':scope.row.realName,
+								'idCard':scope.row.idCard
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+									management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('设备') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updateDevice": '',
+								'name':scope.row.name,
+								'area':scope.row.area,
+								'place':scope.row.place,
+								'ip':scope.row.ip,
+								"id": scope.row.deviceId,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+									management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('人员') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updatePersonnel": '',
+								'time':$.base64.encode(scope.row.time),
+								'name':scope.row.name,
+								'idCard':scope.row.idCard,
+								'area':scope.row.area,
+								'place':scope.row.place,
+								'come':scope.row.come,
+								'temp':scope.row.temp
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+									management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('车辆') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updateCar": '',
+								'time':$.base64.encode(scope.row.time),
+								'licensePlate':scope.row.licensePlate,
+								'area':scope.row.area,
+								'place':scope.row.place,
+								'come':scope.row.come,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('区域') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updateArea": '',
+								'code':scope.row.area,
+								'name':scope.row.name,
+								'level':scope.row.level,
+								'parentCode':scope.row.parentCode
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('场所') != -1)
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updatePlace": '',
+								'id':scope.row.place,
+								'area':scope.row.area,
+								'name':scope.row.name,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('角色') != -1 && Tab.indexOf('权限') == -1 )
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updateRole": '',
+								'id':scope.row.role,
+								'name':scope.row.name,
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+						
+						if(Tab.indexOf('角色') != -1 && Tab.indexOf('权限') != -1 )
+						{
+							axios.post('/System/Core/Management.php', Qs.stringify({
+								"updateRolePermission": '',
+								'role':scope.row.role,
+								'login':scope.row.login,
+								'addUser':scope.row.addUser,
+								'deleteUser':scope.row.deleteUser,
+								'updateUser':scope.row.updateUser,
+								'searchUser':scope.row.searchUser,
+								'addDevice':scope.row.addDevice,
+								'deleteDevice':scope.row.deleteDevice,
+								'updateDevice':scope.row.updateDevice,
+								'searchDevice':scope.row.searchDevice,
+								'addPersonnel':scope.row.addPersonnel,
+								'deletePersonnel':scope.row.deletePersonnel,
+								'updatePersonnel':scope.row.updatePersonnel,
+								'searchPersonnel':scope.row.searchPersonnel,
+								'addAdmin':scope.row.addAdmin,
+								'deleteAdmin':scope.row.deleteAdmin,
+								'editArea':scope.row.editArea,
+								'editPlace':scope.row.editPlace,
+								'editRolePermission':scope.row.editRolePermission,
+								'editRole':scope.row.editRole,
+								'addCar':scope.row.addCar,
+								'deleteCar':scope.row.deleteCar,
+								'updateCar':scope.row.updateCar,
+								'searchCar':scope.row.searchCar,
+								
+							}), ).then(function(res) {
+								if('error' in res.data)
+								{
+										management.$message({
+										    type: 'error',
+										    message: res.data['error']
+										});
+										management.Edit = scope.$index
+										return
+								}
+								if('success' in res.data){
+									management.$message({
+									    type: 'success',
+									    message: res.data['success']
+									});
+								}
+								if('info' in res.data){
+									management.$message({
+									    type: 'info',
+									    message: res.data['info']
+									});
+								}
+								management.CurrentChange(management.page,Tab)
+								console.log(res.data)
+							})
+						}
+					},
+					search(Tab){
+						console.log(Tab)
+						management.filter = management.tmpFilter
+						if(management.filter.indexOf('Time') == -1)
+						{
+							management.arg = management.tmpArg
+						}
+						else{
+							if(management.tmpArg2 == '')
+							{
+								management.arg = $.base64.encode(this.getTime(management.tmpArg.getTime()))
+							}
+							else{
+								management.arg = $.base64.encode(JSON.stringify({
+											'startTime': management.getTime(management.tmpArg2[0].getTime()),
+											"endTime": management.getTime(management.tmpArg2[1].getTime())
+									})
+								)
+							}
+						}
+						management.page = 1
+						this.CurrentChange(management.page,Tab)
+					},
+					CurrentChange(page,Tab)
+					{
+						management.Edit = -1
+						management.load = true
+						management.page = page
+						management.data = []
+						switch(Tab){
+							case "删除用户" :
+							case "更新用户" :
+							case "查看用户" : 
+								if(management.filter == '' && management.arg == '')
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getUserList": '',
+										'page': management.page,
+										'num': management.num,
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								else
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getUserList": '',
+										'page': management.page,
+										'num': management.num,
+										'filter':management.filter,
+										'arg':management.arg
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								break;
+							case "添加用户" : 
+								
+								break;
+							case "删除设备" :
+							case "更新设备" :
+							case "查看设备" : 
+								if(management.filter == '' && management.arg == '')
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getDeviceList": '',
+										'page': management.page,
+										'num': management.num,
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								else
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getDeviceList": '',
+										'page': management.page,
+										'num': management.num,
+										'filter':management.filter,
+										'arg':management.arg
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								break;
+							case "添加设备" : 
+								
+								break;
+							case "删除人员" :
+							case "更新人员" :
+							case "查看人员" : 
+								if(management.filter == '' && management.arg == '')
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getPersonnelList": '',
+										'page': management.page,
+										'num': management.num,
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								else
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getPersonnelList": '',
+										'page': management.page,
+										'num': management.num,
+										'filter':management.filter,
+										'arg':management.arg
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								break;
+							case "添加人员" : 
+								
+								break;
+							case "删除车辆" :
+							case "更新车辆" :
+							case "查看车辆" : 
+								if(management.filter == '' && management.arg == '')
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getCarList": '',
+										'page': management.page,
+										'num': management.num,
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								else
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getCarList": '',
+										'page': management.page,
+										'num': management.num,
+										'filter':management.filter,
+										'arg':management.arg
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								break;
+							case "添加车辆" : 
+								
+								break;
+							case "编辑区域" :
+							case "查看区域" : 
+								if(management.filter == '' && management.arg == '')
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getAreaList": '',
+										'page': management.page,
+										'num': management.num,
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								else
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getAreaList": '',
+										'page': management.page,
+										'num': management.num,
+										'filter':management.filter,
+										'arg':management.arg
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								break;
+							case "编辑场所" :
+							case "查看场所" : 
+								if(management.filter == '' && management.arg == '')
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getPlaceList": '',
+										'page': management.page,
+										'num': management.num,
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								else
+								{
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getPlaceList": '',
+										'page': management.page,
+										'num': management.num,
+										'filter':management.filter,
+										'arg':management.arg
+									}), ).then(function(res) {
+										management.maxNum = res.data[0]
+										management.data = res.data.slice(1)
+										management.load = false
+									})
+								}
+								break;
+							case "编辑角色" :
+							case "查看角色" : 	
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getRoleList": '',
+								}), ).then(function(res) {
+									management.data = res.data
+									management.load = false
+								})
+								break;
+							case "查看角色权限" : 
+							case "编辑角色权限" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getRolePermissionList": '',
+								}), ).then(function(res) {
+									management.data = res.data
+									management.load = false
+								})
+								break;
+							case "查看管理员" : 
+								
+								break;
+							case "添加管理员" : 
+								
+								break;
+							case "删除管理员" : 
+								
+								break;
+						}
+					},
+					tabChange(tab,oTab){
+						management.Edit = -1
+						management.tmpFilter = null
+						management.page = 1
+						management.num = 10
+						management.data = []
+						management.filter = ''
+						management.arg = ""
+						management.load = true
+						management.tmpFilter = ""
+						management.tmpArg = ""
+						management.tmpArg2 = ""
+						switch(tab){
+							case "添加管理员" : 
+							case "更新用户" :
+							case "查看用户" :
+							case "删除用户" :
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getUserList": '',
+									'page': management.page,
+									'num': management.num,
+								}), ).then(function(res) {
+									management.maxNum = res.data[0]
+									management.data = res.data.slice(1)
+									management.load = false
+								})
+								management.tmpFilter = new Object()
+								management.tmpFilter['用户'] = new Object()
+								management.tmpFilter['用户']['role'] = []
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getRoleList": '',
+								}), ).then(function(res) {
+									management.tmpFilter['用户']['role'] = res.data
+								})
+								break;
+							case "添加用户" : 
+								
+								break;
+							case "删除设备" :
+							case "更新设备" :
+							case "查看设备" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getDeviceList": '',
+									'page': management.page,
+									'num': management.num,
+								}), ).then(function(res) {
+									management.maxNum = res.data[0]
+									management.data = res.data.slice(1)
+									management.load = false
+								})
+								break;
+							case "添加设备" : 
+								
+								break;
+							case "删除人员" :
+							case "更新人员" :
+							case "查看人员" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getPersonnelList": '',
+									'page': management.page,
+									'num': management.num,
+								}), ).then(function(res) {
+									management.maxNum = res.data[0]
+									management.data = res.data.slice(1)
+									management.load = false
+								})
+								break;
+							case "添加人员" : 
+								
+								break;
+							case "删除车辆" :
+							case "更新车辆" :
+							case "查看车辆" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getCarList": '',
+									'page': management.page,
+									'num': management.num,
+								}), ).then(function(res) {
+									management.maxNum = res.data[0]
+									management.data = res.data.slice(1)
+									management.load = false
+								})
+								break;
+							case "添加车辆" : 
+								
+								break;
+							case "编辑区域" : 
+							case "查看区域" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getAreaList": '',
+									'page': management.page,
+									'num': management.num,
+								}), ).then(function(res) {
+									management.maxNum = res.data[0]
+									management.data = res.data.slice(1)
+									management.load = false
+								})
+								break;
+							case "编辑场所" :
+							case "查看场所" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getPlaceList": '',
+									'page': management.page,
+									'num': management.num,
+								}), ).then(function(res) {
+									management.maxNum = res.data[0]
+									management.data = res.data.slice(1)
+									management.load = false
+								})
+								break;
+							case "编辑角色" : 
+							case "查看角色" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getRoleList": '',
+								}), ).then(function(res) {
+									management.data = res.data
+									management.load = false
+								})
+								break;
+							case "编辑角色权限" :
+							case "查看角色权限" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getRolePermissionList": '',
+								}), ).then(function(res) {
+									management.data = res.data
+									management.load = false
+								})
+								break;
+							case "删除管理员" :
+							case "查看管理员" : 
+								axios.post('/System/Core/Management.php', Qs.stringify({
+									"getAdminList": '',
+								}), ).then(function(res) {
+									management.data = res.data
+									management.load = false
+								})
+								break;
+						}
+						console.log(tab)
+					},
+					getTime(unixTime) {
+						unixTime = new Date(unixTime)
+						Y = unixTime.getFullYear()
+						M = (unixTime.getMonth() + 1) < 10 ? '0' + (unixTime.getMonth() + 1) : (unixTime.getMonth() + 1)
+						D = unixTime.getDate() < 10 ? '0' + unixTime.getDate() : unixTime.getDate()
+						H = unixTime.getHours() < 10 ? '0' + unixTime.getHours() : unixTime.getHours()
+						i = unixTime.getMinutes() < 10 ? '0' + unixTime.getMinutes() : unixTime.getMinutes()
+						S = unixTime.getSeconds() < 10 ? '0' + unixTime.getSeconds() : unixTime.getSeconds()
+						return Y + '-' + M + '-' + D + ' ' + H + ':' + i + ':' + S
+					},
+					handleSelect(key, keyPath) {
+						management.FunctionList = []
+						// if(management.allFunctionList[key].length != 0)
+						if (key in management.allFunctionList) {
+							reg = RegExp("^" + keyPath[0], "")
+							flag = 0
+							for (x in management.allFunctionList) {
+								if (reg.test(x)) {
+
+									console.log(x, reg.test(x))
+									if (management.rolePermission[management.rolePermissionList[x]] == '1') {
+										management.FunctionList.push(management.allFunctionList[x])
+										if (flag == 0) {
+											management.Tab = management.allFunctionList[key]
+										}
+										flag++
+									}
+
+								}
+							}
+						}
+						console.log(key, keyPath);
+					},
+					logout() {
+						axios.post('/System/Core/User.php', Qs.stringify({
+							"logout": '',
+						}), ).then(function(res) {
+							for (x in res.data) {
+								if ('success' === x) {
+									console.log(res.data['success'])
+									management.$alert(res.data['success'], '操作成功', {
+										confirmButtonText: '确定',
+										type: 'success',
+										center: true,
+										callback: action => {
+											window.location = 'login.html'
+										}
+									})
+								}
+							}
+						})
+					},
+				},
+				mounted() {
+					axios.post('/System/Core/User.php', Qs.stringify({
+						"getRolePermission": '',
+					}), ).then(function(res) {
+						for (x in res.data) {
+							if ('error' === x) {
+								management.$alert(res.data[x], '错误', {
+									confirmButtonText: '确定',
+									type: 'error',
+									center: true,
+									callback: action => {
+										window.location = 'login.html'
+									}
+								})
+							} else {
+								management.managementFlag = true
+								management.rolePermission = res.data[x]
+
+								if (management.rolePermission['searchCar'] == '1') {
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getCarList": '',
+										'page': 1,
+										'num': 9999999999999,
+										'filter': 'betweenTime',
+										'arg': $.base64.encode(JSON.stringify({
+											'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
+											"endTime": management.getTime(new Date().getTime())
+										})),
+									}), ).then(function(res) {
+										come = 0
+										res.data = res.data.slice(1)
+										for (x in res.data) {
+											if (res.data[x]['come'] == '0') {
+												come++
+											}
+										}
+										management.CarData = {
+											'0': come,
+											"1": res.data.length - come,
+											"max": res.data.length
+										}
+									})
+								}
+
+								if (management.rolePermission['searchPersonnel'] == '1') {
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getPersonnelList": '',
+										'page': 1,
+										'num': 9999999999999,
+										'filter': 'betweenTime',
+										'arg': $.base64.encode(JSON.stringify({
+											'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
+											"endTime": management.getTime(new Date().getTime())
+										})),
+									}), ).then(function(res) {
+										res.data = res.data.slice(1)
+										come = 0
+										for (x in res.data) {
+											if (res.data[x]['come'] == '0') {
+												come++
+											}
+										}
+										management.PersonnelData = {
+											'0': come,
+											"1": res.data.length - come,
+											"max": res.data.length
+										}
+									})
+								}
+
+								if (management.rolePermission['searchDevice'] == '1') {
+									axios.post('/System/Core/Management.php', Qs.stringify({
+										"getDeviceList": '',
+										'page': 1,
+										'num': 10,
+										'filter':'beforeTime',
+										'arg':$.base64.encode(management.getTime(new Date().getTime()),
+										)
+									}), ).then(function(res) {
+										res.data = res.data.slice(1)
+										management.DeviceData = res.data
+									})
+								}
+
+							}
+							console.log(x)
+							console.log(res.data[x])
+						}
+					})
+
+					axios.post('/System/Core/User.php', Qs.stringify({
+						"getUserInfo": '',
+					}), ).then(function(res) {
+						for (x in res.data) {
+							management.userName = res.data[x]['userName']
+							management.role = res.data[x]['role']
+							management.userInfo = res.data[x]
+							console.log(res.data[x])
+						}
+					})
+
+				}
+			})
+		</script>
+
+		</div>
+
+		<script type="text/javascript">
+			var resetWindow = function() {
+				$('#management').css({
+					'min-height': $(window).height() - $('#head').height() - $('#foot').height()
+				})
+
+				if ($(window).width() <= 995) {
+					management.tabPosition = 'top'
+					$('#management').css({
+						'margin': '0 10px',
+						'margin-top': '5px'
+					})
+				} else {
+					management.tabPosition = 'left'
+					$('#management').css({
+						'margin': '0 5px',
+						'margin-top': '5px'
+					})
+				}
+			}
+
+		</script>
+
+</html>
