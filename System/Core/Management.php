@@ -54,7 +54,7 @@ if(isset($_POST['getCarList']) && isset($_POST['page']) && isset($_POST['num']))
 
 if(isset($_POST['getUserList']) && isset($_POST['page']) && isset($_POST['num']))
 {
-    die($Management->getUserList($_POST['page'],$_POST['num'],$_POST['filter'],$_POST['arg']));
+    die($Management->getUserList($_POST['page'],$_POST['num'],$_POST['filter'],$_POST['arg'],$_POST['extend']));
 }
 
 if(isset($_POST['getDeviceList']) && isset($_POST['page']) && isset($_POST['num']))

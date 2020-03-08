@@ -123,7 +123,7 @@ class  ManagementClass
         return $json;
     }
 
-    public function getUserList($page, $num, $filter, $arg)
+    public function getUserList($page, $num, $filter, $arg,$extend = '')
     {
         if (!$this->rolePermission->checkSearchUser()) {
             return json_encode(Array('error' => '查询失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
@@ -149,10 +149,21 @@ class  ManagementClass
             }
         }
 
+        if(strlen($extend) != 0)
+        {
+            switch ($extend)
+            {
+                case 'notAdmin': $query .= " AND (u.role != '001' AND u.role != '000')"; break;
+                default:
+                    return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+            }
+        }
+
         $count = $this->db->database->query($query)->num_rows;
         $json = Array('0'=>$count);
 
         $query .= " LIMIT $page,$num";
+
         $res = $this->db->database->query($query);
         $resNum = 0;
 
@@ -635,7 +646,7 @@ class  ManagementClass
         $query = "UPDATE $this->rolePermissionTable SET `login` = $login, `addUser` = $addUser, `deleteUser` = $deleteUser, `updateUser` = $updateUser, `searchUser` = $searchUser, `addDevice` = $addDevice, `deleteDevice` = $deleteDevice, `updateDevice` = $updateDevice, `searchDevice` = $searchDevice, `addPersonnel` = $addPersonnel, `deletePersonnel` = $deletePersonnel, `updatePersonnel` = $updatePersonnel, `searchPersonnel` = $searchPersonnel, `addAdmin` = $addAdmin, `deleteAdmin` = $deleteAdmin, `editArea` = $editArea, `editPlace` = $editPlace, `editRole` = $editRole, `editRolePermission` = $editRolePermission, `addCar` = $addCar, `deleteCar` = $deleteCar, `updateCar` = $updateCar, `searchCar` = $searchCar WHERE `role` = '$role'";
 
         $res = $this->db->database->query($query);
-        
+
         if ($res && ($this->db->database->affected_rows == 0)) {
             return json_encode(Array('info' => '数据未更改'), JSON_UNESCAPED_UNICODE);
         }
@@ -1054,6 +1065,8 @@ class  ManagementClass
         if ($id == '00000') {
             return json_encode(Array('error' => '操作失败，该场所为系统自动生成，不可修改'), JSON_UNESCAPED_UNICODE);
         }
+
+        $area = $this->db->database->query("SELECT p.area FROM $this->areaTable a,$this->placeTable p WHERE p.area = a.code AND a.name = '$area' AND p.id = '$id'")->fetch_assoc()['area'];
 
         $query = "DELETE FROM $this->placeTable WHERE id = '$id' AND area = '$area'";
 
