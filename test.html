@@ -158,7 +158,7 @@
                         <el-row>
                             <el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">
                                 <p>3天内进入的车辆</p>
-                                <el-progress type="dashboard" :percentage='parseInt(CarData["0"] / CarData["max"] * 100)' :color="colors"></el-progress>
+                                <el-progress type="dashboard" :percentage='parseInt(isNaN(CarData["0"] / CarData["max"] * 100)?0:CarData["0"] / CarData["max"] * 100)' :color="colors"></el-progress>
                                 <p>{{CarData["0"]}} 辆</p>
                             </el-col>
                             <el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">

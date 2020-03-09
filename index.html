@@ -2782,6 +2782,59 @@
                             validator: validatorIdCard,
                             trigger: "blur"
                         }],
+						user: [{
+							message:"请输入用户名",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:2,
+							max:10,
+							trigger: ['blur','change'],
+							message:"用户名长度为2~10个字符"
+						}],
+						password: [{
+							message:"请设置密码",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:6,
+							trigger: ['blur','change'],
+							message:"密码长度不小于6个字符"
+						}],
+						sex:[
+							{
+							    required: true,
+							    message:"请选择性别",
+							    trigger: "blur"
+							}
+						],
+						role:[
+							{
+							    required: true,
+							    message:"请选择用户组",
+							    trigger: "blur"
+							}
+						],
+						area: [{
+							message:"请输入关键字搜索并选择区域",
+						    required: true,
+						    trigger: "blur"
+						}],
+						place: [{
+							message:"请输入关键字搜索并选择场所",
+						    required: true,
+						    trigger: "blur"
+						}],
+						realName: [{
+							message:"请输入真实姓名",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:2,
+							max:5,
+							trigger: ['blur','change'],
+							message:"姓名长度为2~5个字符"
+						}],
                     },
                     addDeviceForm: {
                         id: "",
@@ -2790,7 +2843,36 @@
                         place: "",
                         ip: ""
                     },
-                    addDeviceRules: {},
+                    addDeviceRules: {
+						id: [{
+							message:"请输入设备id",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:5,
+							trigger: ['blur','change'],
+							message:"设备id不小于5个字符"
+						}],
+						name: [{
+							message:"请输入设备名称",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:2,
+							trigger: ['blur','change'],
+							message:"名称长度不小于2个字符"
+						}],
+						area: [{
+							message:"请输入关键字搜索并选择区域",
+						    required: true,
+						    trigger: "blur"
+						}],
+						place: [{
+							message:"请输入关键字搜索并选择场所",
+						    required: true,
+						    trigger: "blur"
+						}],
+					},
                     addPersonnelForm: {
                         name: "",
                         idCard: "",
@@ -2803,8 +2885,33 @@
                         idCard: [{
                             required: true,
                             validator: validatorIdCard,
-                            trigger: "blur"
+                            trigger: ['blur','change'],
                         }],
+						name: [{
+							message:"请输入姓名",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:2,
+							max:5,
+							trigger: ['blur','change'],
+							message:"姓名长度为2~5个字符"
+						}],
+						area: [{
+							message:"请输入关键字搜索并选择区域",
+						    required: true,
+						    trigger: "blur"
+						}],
+						place: [{
+							message:"请输入关键字搜索并选择场所",
+						    required: true,
+						    trigger: "blur"
+						}],
+						come: [{
+							message:"请选择出入记录",
+						    required: true,
+						    trigger: "blur"
+						}],
                     },
                     addCarForm: {
                         licensePlate: "",
@@ -2813,11 +2920,31 @@
                         come: "",
                     },
                     addCarRules: {
-                        idCard: [{
-                            required: true,
-                            validator: validatorIdCard,
-                            trigger: "blur"
-                        }],
+						licensePlate: [{
+							message:"请输入车牌号码",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:7,
+							max:7,
+							trigger:"blur",
+							message:"请输入正确的车牌号码 例：京A12345"
+						}],
+						area: [{
+							message:"请输入关键字搜索并选择区域",
+						    required: true,
+						    trigger: "blur"
+						}],
+						place: [{
+							message:"请输入关键字搜索并选择场所",
+						    required: true,
+						    trigger: "blur"
+						}],
+						come: [{
+							message:"请选择出入记录",
+						    required: true,
+						    trigger: "blur"
+						}],
                     },
                     addAreaForm: {
                         code: "",
@@ -2825,18 +2952,93 @@
                         level: "",
                         parentCode: ""
                     },
-                    addAreaRules: {},
+                    addAreaRules: {
+						code: [{
+							message:"请输入区域代码",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:12,
+							max:12,
+							trigger: ['blur','change'],
+							message:"区域代码为12个字符 例:110000000000"
+						}],
+						level: [{
+							message:"请选择区域级别",
+						    required: true,
+						    trigger: ['blur','change'],
+						}],
+						parentCode: [{
+							message:"请输入父级区域代码，若添加省级区域则填写 0",
+						    required: true,
+						    trigger: "blur"
+						}],
+						name: [{
+							message:"请输入区域名称",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:2,
+							trigger: ['blur','change'],
+							message:"区域名称长度不小于2个字符"
+						}],
+					},
                     addPlaceForm: {
                         id: "",
                         name: "",
                         area: "",
                     },
-                    addPlaceRules: {},
+                    addPlaceRules: {
+						id: [{
+							message:"请输入场所编号",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:5,
+							max:5,
+							trigger: ['blur','change'],
+							message:"场所编号为5个字符 例:00001"
+						}],
+						area: [{
+							message:"请输入关键字搜索并选择区域",
+						    required: true,
+						    trigger: ['blur','change'],
+						}],
+						name: [{
+							message:"请输入场所名称",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:2,
+							trigger: ['blur','change'],
+							message:"场所名称长度不小于2个字符"
+						}],
+					},
                     addRoleForm: {
                         id: "",
                         name: "",
                     },
-                    addRoleRules: {},
+                    addRoleRules: {
+						id:[{
+							message:"请输入角色id",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:3,
+							max:3,
+							trigger: ['blur','change'],
+							message:"角色id为3个字符 例:008"
+						}],
+						name: [{
+							message:"请输入角色名称",
+						    required: true,
+						    trigger: "blur"
+						},{
+							min:2,
+							trigger: ['blur','change'],
+							message:"角色名称长度不小于2个字符"
+						}],
+					},
                 }
             },
             methods: {

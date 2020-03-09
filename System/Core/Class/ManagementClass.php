@@ -400,8 +400,19 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        if (strlen($name) == 0 || floatval($temp) <= 0 || floatval($temp) >= 100 || strlen($idCard) == 0 || strlen($area) == 0 || strlen($place) == 0 || strlen($come) == 0 || intval($come) < 0 || intval($come) > 1) {
-            return json_encode(Array('success' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
+
+        if(strlen($temp) != 0)
+        {
+            if(floatval($temp) <= 0 || floatval($temp) >= 100)
+            {
+                return json_encode(Array('error' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
+            }
+        }
+        else{
+            $temp = 0;
+        }
+        if (strlen($name) == 0 || strlen($idCard) == 0 || strlen($area) == 0 || strlen($place) == 0 || strlen($come) == 0 || intval($come) < 0 || intval($come) > 1) {
+            return json_encode(Array('error' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
         }
 
         $query = "INSERT INTO $this->personnelTable(`time`, `name`, `idCard`, `area`, `place`, `come`, `temp`) VALUES (from_unixtime(" . time() . "), '$name', '$idCard', '$area', '$place', $come, $temp)";
