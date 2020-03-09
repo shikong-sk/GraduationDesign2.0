@@ -4,11 +4,11 @@
  * 用户抽象类
  */
 
-require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Class/Interface/SqlMethod.php');
+require_once(dirname(__FILE__) .'/../Interface/SqlMethod.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Class/SqlHelper.php');
+require_once(dirname(__FILE__) .'/../SqlHelper.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Class/RolePermissionClass.php');
+require_once(dirname(__FILE__) .'/../RolePermissionClass.php');
 
 abstract class UserClass implements SqlMethod,UserMethod {
 

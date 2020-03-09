@@ -1,7 +1,7 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Class/Interface/SqlMethod.php');
-require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Class/SqlHelper.php');
+require_once(dirname(__FILE__) .'/../Interface/SqlMethod.php');
+require_once(dirname(__FILE__) .'/../SqlHelper.php');
 
 abstract class KeepAliveClass implements KeepAliveMethod,SqlMethod
 {

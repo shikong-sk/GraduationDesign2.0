@@ -158,23 +158,23 @@
                         <el-row>
                             <el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">
                                 <p>3天内进入的车辆</p>
-                                <el-progress type="dashboard" :percentage='parseInt(CarData["0"] / CarData["max"] * 100)' :color="colors"></el-progress>
+                                <el-progress type="dashboard" :percentage='parseInt(isNaN(CarData["0"] / CarData["max"] * 100)?0:CarData["0"] / CarData["max"] * 100)' :color="colors"></el-progress>
                                 <p>{{CarData["0"]}} 辆</p>
                             </el-col>
                             <el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">
                                 <p>3天内离开的车辆</p>
-                                <el-progress type="dashboard" :percentage='parseInt(CarData["1"] / CarData["max"] * 100)' :color="colors"></el-progress>
+                                <el-progress type="dashboard" :percentage='parseInt(isNaN(CarData["1"] / CarData["max"] * 100)?0:CarData["1"] / CarData["max"] * 100)' :color="colors"></el-progress>
                                 <p>{{CarData["1"]}} 辆</p>
                             </el-col>
 
                             <el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="PersonnelData">
                                 <p>3天内进入的人员</p>
-                                <el-progress type="dashboard" :percentage='parseInt(PersonnelData["0"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
+                                <el-progress type="dashboard" :percentage='parseInt(isNaN(PersonnelData["0"] / PersonnelData["max"] * 100)?0:PersonnelData["0"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
                                 <p>{{PersonnelData["0"]}} 人</p>
                             </el-col>
                             <el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="PersonnelData">
                                 <p>3天内离开的人员</p>
-                                <el-progress type="dashboard" :percentage='parseInt(PersonnelData["1"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
+                                <el-progress type="dashboard" :percentage='parseInt(isNaN(PersonnelData["1"] / PersonnelData["max"] * 100)?0:PersonnelData["1"] / PersonnelData["max"] * 100)' :color="colors"></el-progress>
                                 <p>{{PersonnelData["1"]}} 人</p>
                             </el-col>
 
@@ -202,12 +202,12 @@
                             <div v-if="rolePermission['searchCar'] == '1'" class="text-center">
                                 <el-col :md="6" :sm="12" :xs="12" v-if="CarData">
                                     <p>3天内进入的车辆</p>
-                                    <el-progress type="dashboard" :percentage='parseInt(CarData["0"] / CarData["max"] * 100)' :color="colors"></el-progress>
+                                    <el-progress type="dashboard" :percentage='parseInt(isNaN(CarData["0"] / CarData["max"] * 100)?0:CarData["0"] / CarData["max"] * 100)' :color="colors"></el-progress>
                                     <p>{{CarData["0"]}} 辆</p>
                                 </el-col>
                                 <el-col :md="6" :sm="12" :xs="12" class="text-center" v-if="CarData">
                                     <p>3天内离开的车辆</p>
-                                    <el-progress type="dashboard" v-if="CarData" :percentage='parseInt(CarData["1"] / CarData["max"] * 100)' :color="colors"></el-progress>
+                                    <el-progress type="dashboard" v-if="CarData" :percentage='parseInt(isNaN(CarData["1"] / CarData["max"] * 100)?0:CarData["1"] / CarData["max"] * 100)' :color="colors"></el-progress>
                                     <p>{{CarData["1"]}} 辆</p>
                                 </el-col>
                             </div>

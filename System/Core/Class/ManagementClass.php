@@ -4,13 +4,13 @@
  * 管理类
  */
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/Interface/SqlMethod.php');
+require_once(dirname(__FILE__) . '/Interface/SqlMethod.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/SqlHelper.php');
+require_once(dirname(__FILE__) . '/SqlHelper.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/RolePermissionClass.php');
+require_once(dirname(__FILE__) . '/RolePermissionClass.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/Abstract/UserClass.php');
+require_once(dirname(__FILE__) . '/Abstract/UserClass.php');
 
 
 class  ManagementClass
@@ -349,7 +349,7 @@ class  ManagementClass
         }
 
         if (strlen($licensePlate) < 7 || strlen($area) == 0 || strlen($place) == 0 || strlen($come) == 0 ) {
-            return json_encode(Array('success' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
+            return json_encode(Array('error' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
         }
 
         $query = "INSERT INTO $this->carTable(`time`, `licensePlate`, `area`, `place`, `come`) VALUES (from_unixtime(" . time() . "), '$licensePlate', '$area', '$place', $come)";

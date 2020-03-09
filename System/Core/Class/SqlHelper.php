@@ -4,8 +4,11 @@
  * 数据库操作类
  */
 
-require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Core.php');
-require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Config/db.config.php');
+//require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Core.php');
+//require_once(realpath('./'). '/../../Core.php');
+require_once(dirname(__FILE__).'../../Core.php');
+
+require_once(dirname(__FILE__) .'../../../Config/db.config.php');
 
 class SqlHelper
 {
@@ -54,7 +57,8 @@ class SqlHelper
         $this->database = new mysqli();
         $this->database->connect($this->db_ip . ':' . $this->db_port, $this->db_user, $this->db_password);
         if ($this->database->connect_error) {
-            die('数据库连接失败,请检查数据库配置文件 ./Core/System/Config/db.config.php 配置是否有误');
+
+            die(json_encode(Array('error' => '数据库连接失败,请检查数据库配置文件 ./Core/System/Config/db.config.php 配置是否有误'), JSON_UNESCAPED_UNICODE));
         }
 
         $this->database->query('set names utf8');

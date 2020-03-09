@@ -6,11 +6,14 @@
  * Time: 12:07
  */
 //phpinfo();
-require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/RolePermissionClass.php');
+//require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/RolePermissionClass.php');
+require_once(dirname(__FILE__). '/Class/RolePermissionClass.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/Abstract/UserClass.php');
+//require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/Abstract/UserClass.php');
+require_once(dirname(__FILE__). '/Class/Abstract/UserClass.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/ManagementClass.php');
+//require_once($_SERVER['DOCUMENT_ROOT'] . '/System/Core/Class/ManagementClass.php');
+require_once(dirname(__FILE__). '/Class/ManagementClass.php');
 
 session_start();
 
