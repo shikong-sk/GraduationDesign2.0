@@ -4162,6 +4162,72 @@
                     management.tmpArg = ""
                     management.tmpArg2 = ""
                     switch (tab) {
+						case "控制面板":
+							if (management.rolePermission['searchCar'] == '1') {
+							    axios.post('/System/Core/Management.php', Qs.stringify({
+							        "getCarList": '',
+							        'page': 1,
+							        'num': 9999999999999,
+							        'filter': 'betweenTime',
+							        'arg': $.base64.encode(JSON.stringify({
+							            'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
+							            "endTime": management.getTime(new Date().getTime())
+							        })),
+							    }), ).then(function(res) {
+							        come = 0
+							        res.data = res.data.slice(1)
+							        for (x in res.data) {
+							            if (res.data[x]['come'] == '0') {
+							                come++
+							            }
+							        }
+							        management.CarData = {
+							            '0': come,
+							            "1": res.data.length - come,
+							            "max": res.data.length
+							        }
+							    })
+							}
+							
+							if (management.rolePermission['searchPersonnel'] == '1') {
+							    axios.post('/System/Core/Management.php', Qs.stringify({
+							        "getPersonnelList": '',
+							        'page': 1,
+							        'num': 9999999999999,
+							        'filter': 'betweenTime',
+							        'arg': $.base64.encode(JSON.stringify({
+							            'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
+							            "endTime": management.getTime(new Date().getTime())
+							        })),
+							    }), ).then(function(res) {
+							        res.data = res.data.slice(1)
+							        come = 0
+							        for (x in res.data) {
+							            if (res.data[x]['come'] == '0') {
+							                come++
+							            }
+							        }
+							        management.PersonnelData = {
+							            '0': come,
+							            "1": res.data.length - come,
+							            "max": res.data.length
+							        }
+							    })
+							}
+							
+							if (management.rolePermission['searchDevice'] == '1') {
+							    axios.post('/System/Core/Management.php', Qs.stringify({
+							        "getDeviceList": '',
+							        'page': 1,
+							        'num': 10,
+							        'filter': 'beforeTime',
+							        'arg': $.base64.encode(management.getTime(new Date().getTime()), )
+							    }), ).then(function(res) {
+							        res.data = res.data.slice(1)
+							        management.DeviceData = res.data
+							    })
+							}
+							break;
                         case "添加管理员":
                             axios.post('/System/Core/Management.php', Qs.stringify({
                                 "getUserList": '',
