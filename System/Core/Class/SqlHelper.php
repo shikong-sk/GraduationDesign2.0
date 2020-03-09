@@ -6,9 +6,9 @@
 
 //require_once($_SERVER['DOCUMENT_ROOT'] .'/System/Core/Core.php');
 //require_once(realpath('./'). '/../../Core.php');
-require_once(dirname(__FILE__).'../../Core.php');
+require_once(dirname(__FILE__).'/../Core.php');
 
-require_once(dirname(__FILE__) .'../../../Config/db.config.php');
+require_once(dirname(__FILE__) .'/../../Config/db.config.php');
 
 class SqlHelper
 {
