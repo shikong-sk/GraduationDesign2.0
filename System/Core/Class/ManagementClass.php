@@ -308,7 +308,7 @@ class  ManagementClass
 //            return json_encode(Array('error'=>'查询失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
 //        }
         $page = ($page - 1) * $num;
-        $query = "SELECT p.id place,a.name area,p.name FROM $this->placeTable p,$this->areaTable a WHERE p.area = a.code ";
+        $query = "SELECT p.id place,a.name area,a.code areaCode,p.name FROM $this->placeTable p,$this->areaTable a WHERE p.area = a.code ";
 
         $count = "SELECT count(*) as num FROM $this->placeTable p,$this->areaTable a WHERE p.area = a.code ";
 

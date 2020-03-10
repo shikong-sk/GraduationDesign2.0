@@ -3984,7 +3984,7 @@
                         axios.post('/System/Core/Management.php', Qs.stringify({
                             "updatePlace": '',
                             'id': scope.row.place,
-                            'area': scope.row.area,
+                            'area': scope.row.areaCode,
                             'name': scope.row.name,
                         }), ).then(function(res) {
                             if ('error' in res.data) {
