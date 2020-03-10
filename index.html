@@ -337,7 +337,7 @@
                         <el-table-column prop="idCard" label="身份证号码">
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{CurrentChange(page,Tab)}" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -941,9 +941,45 @@
                                 </el-select>
                             </el-col>
 
-                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come' && tmpFilter!='area'">
                                 <el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
                             </el-col>
+
+							<div v-else-if="tmpFilter == 'area'">
+								<el-col :xs="24" :sm="24" :md="24" >
+								</el-col>
+								<el-col :xs="24" :sm="12" :md="6" >
+								    <el-select class="w-100" v-model="tmpProvince" filterable placeholder="请选择省份">
+								        <el-option label="进" value="0"></el-option>
+								        <el-option label="出" value="1"></el-option>
+								    </el-select>
+								</el-col>
+								<el-col :xs="24" :sm="12" :md="6" >
+								    <el-select class="w-100" v-model="tmpCity" filterable placeholder="请选择城市">
+								        <el-option label="进" value="0"></el-option>
+								        <el-option label="出" value="1"></el-option>
+								    </el-select>
+								</el-col>
+								<el-col :xs="24" :sm="12" :md="6" >
+								    <el-select class="w-100" v-model="tmpArea" filterable placeholder="请选择区">
+								        <el-option label="进" value="0"></el-option>
+								        <el-option label="出" value="1"></el-option>
+								    </el-select>
+								</el-col>
+								<el-col :xs="24" :sm="12" :md="6" >
+								    <el-select class="w-100" v-model="tmpRow" filterable placeholder="请选择街道">
+								        <el-option label="进" value="0"></el-option>
+								        <el-option label="出" value="1"></el-option>
+								    </el-select>
+								</el-col>
+								<el-col :xs="24" :sm="24" :md="20">
+									<el-select class="w-100" v-model="tmpDevice" filterable placeholder="请选择设备">
+									    <el-option label="进" value="0"></el-option>
+									    <el-option label="出" value="1"></el-option>
+									</el-select>
+								</el-col>
+							</div>
+
 
                             <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
                                 <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
@@ -1089,6 +1125,7 @@
 									</div>
 								</template>
                         </el-table-column>
+						
                         <el-table-column prop="idCard" label="身份证号码">
                             <template slot-scope="scope">
 									<div class="text-center">
@@ -1182,6 +1219,8 @@
                         </el-table-column>
                         <el-table-column prop="place" label="所属场所">
                         </el-table-column>
+						<el-table-column prop="device" label="登记设备">
+						</el-table-column>
                         <el-table-column prop="idCard" label="身份证号码">
                         </el-table-column>
                         <el-table-column prop="temp" label="体温">
@@ -3060,11 +3099,22 @@
                             message: "角色名称长度不小于2个字符"
                         }],
                     },
+					
+					tmpProvinceList:[],
+					tmpProvince:"",
+					tmpCityList:[],
+					tmpCity:'',
+					tmpAreaList:[],
+					tmpArea:'',
+					tmpRowList:[],
+					tmpRow:"",
+					tmpDeviceList:[],
+					tmpDevice:''
                 }
             },
             methods: {
                 setAdmin(Tab, scope) {
-                    axios.post('/System/Core/Management.php', Qs.stringify({
+                    axios.post('./System/Core/Management.php', Qs.stringify({
                         'addAdmin': '',
                         'id': scope.row.id,
                         'name': scope.row.userName,
@@ -3095,7 +3145,7 @@
                     if (management.Tab.slice(2) == '角色') {
                         management.$refs['addRoleForm'][0].validate((valid) => {
                             if (valid) {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     'addRole': '',
                                     'id': management.addRoleForm.id,
                                     'name': management.addRoleForm.name,
@@ -3137,7 +3187,7 @@
                     if (management.Tab.slice(2) == '场所') {
                         management.$refs['addPlaceForm'][0].validate((valid) => {
                             if (valid) {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     'addPlace': '',
                                     'id': management.addPlaceForm.id,
                                     'name': management.addPlaceForm.name,
@@ -3180,7 +3230,7 @@
                     if (management.Tab.slice(2) == '区域') {
                         management.$refs['addAreaForm'][0].validate((valid) => {
                             if (valid) {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     'addArea': '',
                                     'code': management.addAreaForm.code,
                                     'name': management.addAreaForm.name,
@@ -3224,7 +3274,7 @@
                     if (management.Tab.slice(2) == '车辆') {
                         management.$refs['addCarForm'][0].validate((valid) => {
                             if (valid) {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     'addCar': '',
                                     'licensePlate': management.addCarForm.licensePlate,
                                     'come': management.addCarForm.come,
@@ -3268,7 +3318,7 @@
                     if (management.Tab.slice(2) == '人员') {
                         management.$refs['addPersonnelForm'][0].validate((valid) => {
                             if (valid) {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     'addPersonnel': '',
                                     'name': management.addPersonnelForm.name,
                                     'come': management.addPersonnelForm.come,
@@ -3319,7 +3369,7 @@
 
                             if (valid) {
 
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
 
                                     'addDevice': '',
                                     'id': management.addDeviceForm.id,
@@ -3402,7 +3452,7 @@
                     if (management.Tab.slice(2) == '用户') {
                         management.$refs['addUserForm'][0].validate((valid) => {
                             if (valid) {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     'addUser': '',
                                     'user': management.addUserForm.user,
                                     'password': management.addUserForm.password,
@@ -3452,7 +3502,7 @@
                 },
                 Delete(Tab, scope) {
                     if (Tab.indexOf('用户') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deleteUser": '',
                             'id': scope.row.id,
                             'user': scope.row.userName,
@@ -3482,7 +3532,7 @@
                     }
 
                     if (Tab.indexOf('设备') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deleteDevice": '',
                             'name': scope.row.name,
                             "id": scope.row.deviceId,
@@ -3512,7 +3562,7 @@
                     }
 
                     if (Tab.indexOf('人员') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deletePersonnel": '',
                             'time': $.base64.encode(scope.row.time),
                             'name': scope.row.name,
@@ -3543,7 +3593,7 @@
                     }
 
                     if (Tab.indexOf('车辆') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deleteCar": '',
                             'time': $.base64.encode(scope.row.time),
                             'licensePlate': scope.row.licensePlate,
@@ -3573,7 +3623,7 @@
                     }
 
                     if (Tab.indexOf('区域') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deleteArea": '',
                             'code': scope.row.area,
                             'name': scope.row.name,
@@ -3605,7 +3655,7 @@
                     }
 
                     if (Tab.indexOf('场所') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deletePlace": '',
                             'id': scope.row.place,
                             'area': scope.row.area,
@@ -3635,7 +3685,7 @@
                     }
 
                     if (Tab.indexOf('角色') != -1 && Tab.indexOf('权限') == -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deleteRole": '',
                             'id': scope.row.role,
                         }), ).then(function(res) {
@@ -3664,7 +3714,7 @@
                     }
 
                     if (Tab.indexOf('角色') != -1 && Tab.indexOf('权限') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updateRolePermission": '',
                             'role': scope.row.role,
                             'login': scope.row.login,
@@ -3718,7 +3768,7 @@
 
 
                     if (Tab.indexOf('管理员') != -1 && management.rolePermission['role'] == '000') {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "deleteAdmin": '',
                             'id': scope.row.id,
                             'name': scope.row.userName,
@@ -3750,7 +3800,7 @@
                 },
                 getPlace(scope, v) {
                     management.tmpAreaLoad = true
-                    axios.post('/System/Core/Management.php', Qs.stringify({
+                    axios.post('./System/Core/Management.php', Qs.stringify({
                         "getPlaceList": '',
                         'page': 1,
                         'num': 20,
@@ -3764,7 +3814,7 @@
                 },
                 getPlace2(area, v) {
                     management.tmpAreaLoad = true
-                    axios.post('/System/Core/Management.php', Qs.stringify({
+                    axios.post('./System/Core/Management.php', Qs.stringify({
                         "getPlaceList": '',
                         'page': 1,
                         'num': 20,
@@ -3776,9 +3826,35 @@
                         management.tmpPlaceLoad = false
                     })
                 },
+				getArea2() {
+					tmpProvinceList=[]
+					tmpProvince=""
+					tmpCityList=[]
+					tmpCity=''
+					tmpAreaList=[]
+					tmpArea=''
+					tmpRowList=[]
+					tmpRow=""
+					tmpDeviceList=[]
+					tmpDevice=''
+				    // management.tmpAreaLoad = true
+				    // axios.post('./System/Core/Management.php', Qs.stringify({
+				    //     "getAreaList": '',
+				    //     'page': 1,
+				    //     'num': 20,
+				    //     'filter': 'level',
+				    //     'arg': arg
+				    // }), ).then(function(res) {
+				    //     res.data = res.data.slice(1)
+				    //     management.tmpAreaFilter = res.data
+				    //     management.tmpPlaceFilter = []
+				    //     management.tmpAreaLoad = false
+				    //         // management.getPlace(scope,res.data[0].area)
+				    // })
+				},
                 getArea(arg) {
                     management.tmpAreaLoad = true
-                    axios.post('/System/Core/Management.php', Qs.stringify({
+                    axios.post('./System/Core/Management.php', Qs.stringify({
                         "getAreaList": '',
                         'page': 1,
                         'num': 20,
@@ -3826,7 +3902,7 @@
                     console.log(management.tmpScope)
                     console.log(scope)
                     if (Tab.indexOf('用户') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updateUser": '',
                             'id': scope.row.id,
                             'phone': scope.row.phone,
@@ -3865,7 +3941,7 @@
                     }
 
                     if (Tab.indexOf('设备') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updateDevice": '',
                             'name': scope.row.name,
                             'area': scope.row.area,
@@ -3899,7 +3975,7 @@
                     }
 
                     if (Tab.indexOf('人员') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updatePersonnel": '',
                             'time': $.base64.encode(scope.row.time),
                             'name': scope.row.name,
@@ -3935,7 +4011,7 @@
                     }
 
                     if (Tab.indexOf('车辆') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updateCar": '',
                             'time': $.base64.encode(scope.row.time),
                             'licensePlate': scope.row.licensePlate,
@@ -3969,7 +4045,7 @@
                     }
 
                     if (Tab.indexOf('区域') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updateArea": '',
                             'code': scope.row.area,
                             'name': scope.row.name,
@@ -4002,7 +4078,7 @@
                     }
 
                     if (Tab.indexOf('场所') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updatePlace": '',
                             'id': scope.row.place,
                             'area': scope.row.areaCode,
@@ -4034,7 +4110,7 @@
                     }
 
                     if (Tab.indexOf('角色') != -1 && Tab.indexOf('权限') == -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updateRole": '',
                             'id': scope.row.role,
                             'name': scope.row.name,
@@ -4065,7 +4141,7 @@
                     }
 
                     if (Tab.indexOf('角色') != -1 && Tab.indexOf('权限') != -1) {
-                        axios.post('/System/Core/Management.php', Qs.stringify({
+                        axios.post('./System/Core/Management.php', Qs.stringify({
                             "updateRolePermission": '',
                             'role': scope.row.role,
                             'login': scope.row.login,
@@ -4146,7 +4222,7 @@
                         case "更新用户":
                         case "查看用户":
                             if (management.filter == '' && management.arg == '') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getUserList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4156,7 +4232,7 @@
                                     management.load = false
                                 })
                             } else {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getUserList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4176,7 +4252,7 @@
                         case "更新设备":
                         case "查看设备":
                             if (management.filter == '' && management.arg == '') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getDeviceList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4186,7 +4262,7 @@
                                     management.load = false
                                 })
                             } else {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getDeviceList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4206,7 +4282,7 @@
                         case "更新人员":
                         case "查看人员":
                             if (management.filter == '' && management.arg == '') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getPersonnelList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4216,7 +4292,7 @@
                                     management.load = false
                                 })
                             } else {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getPersonnelList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4236,7 +4312,7 @@
                         case "更新车辆":
                         case "查看车辆":
                             if (management.filter == '' && management.arg == '') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getCarList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4246,7 +4322,7 @@
                                     management.load = false
                                 })
                             } else {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getCarList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4265,7 +4341,7 @@
                         case "编辑区域":
                         case "查看区域":
                             if (management.filter == '' && management.arg == '') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getAreaList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4275,7 +4351,7 @@
                                     management.load = false
                                 })
                             } else {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getAreaList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4291,7 +4367,7 @@
                         case "编辑场所":
                         case "查看场所":
                             if (management.filter == '' && management.arg == '') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getPlaceList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4301,7 +4377,7 @@
                                     management.load = false
                                 })
                             } else {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getPlaceList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4316,7 +4392,7 @@
                             break;
                         case "编辑角色":
                         case "查看角色":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getRoleList": '',
                             }), ).then(function(res) {
                                 management.data = res.data
@@ -4325,7 +4401,7 @@
                             break;
                         case "查看角色权限":
                         case "编辑角色权限":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getRolePermissionList": '',
                             }), ).then(function(res) {
                                 management.data = res.data
@@ -4337,7 +4413,7 @@
                             break;
                         case "添加管理员":
                             if (management.filter == '' && management.arg == '') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getUserList": '',
                                     "extend": "notAdmin",
                                     'page': management.page,
@@ -4348,7 +4424,7 @@
                                     management.load = false
                                 })
                             } else {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getUserList": '',
                                     'page': management.page,
                                     'num': management.num,
@@ -4363,7 +4439,7 @@
                             }
                             break;
                         case "删除管理员":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getAdminList": '',
                             }), ).then(function(res) {
                                 management.data = res.data
@@ -4387,7 +4463,7 @@
                     switch (tab) {
                         case "控制面板":
                             if (management.rolePermission['searchCar'] == '1') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getCarList": '',
                                     'page': 1,
                                     'num': 9999999999999,
@@ -4413,7 +4489,7 @@
                             }
 
                             if (management.rolePermission['searchPersonnel'] == '1') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getPersonnelList": '',
                                     'page': 1,
                                     'num': 9999999999999,
@@ -4439,7 +4515,7 @@
                             }
 
                             if (management.rolePermission['searchDevice'] == '1') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getDeviceList": '',
                                     'page': 1,
                                     'num': 10,
@@ -4452,7 +4528,7 @@
                             }
                             break;
                         case "添加管理员":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getUserList": '',
                                 "extend": "notAdmin",
                                 'page': management.page,
@@ -4465,7 +4541,7 @@
                             management.tmpFilter = new Object()
                             management.tmpFilter['用户'] = new Object()
                             management.tmpFilter['用户']['role'] = []
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getRoleList": '',
                             }), ).then(function(res) {
                                 management.tmpFilter['用户']['role'] = res.data
@@ -4474,7 +4550,7 @@
                         case "更新用户":
                         case "查看用户":
                         case "删除用户":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getUserList": '',
                                 'page': management.page,
                                 'num': management.num,
@@ -4486,14 +4562,14 @@
                             management.tmpFilter = new Object()
                             management.tmpFilter['用户'] = new Object()
                             management.tmpFilter['用户']['role'] = []
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getRoleList": '',
                             }), ).then(function(res) {
                                 management.tmpFilter['用户']['role'] = res.data
                             })
                             break;
                         case "添加用户":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getRoleList": '',
                             }), ).then(function(res) {
                                 management.tmpFilter = new Object()
@@ -4516,7 +4592,7 @@
                         case "删除设备":
                         case "更新设备":
                         case "查看设备":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getDeviceList": '',
                                 'page': management.page,
                                 'num': management.num,
@@ -4532,7 +4608,7 @@
                         case "删除人员":
                         case "更新人员":
                         case "查看人员":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getPersonnelList": '',
                                 'page': management.page,
                                 'num': management.num,
@@ -4548,7 +4624,7 @@
                         case "删除车辆":
                         case "更新车辆":
                         case "查看车辆":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getCarList": '',
                                 'page': management.page,
                                 'num': management.num,
@@ -4563,7 +4639,7 @@
                             break;
                         case "编辑区域":
                         case "查看区域":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getAreaList": '',
                                 'page': management.page,
                                 'num': management.num,
@@ -4575,7 +4651,7 @@
                             break;
                         case "编辑场所":
                         case "查看场所":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getPlaceList": '',
                                 'page': management.page,
                                 'num': management.num,
@@ -4587,7 +4663,7 @@
                             break;
                         case "编辑角色":
                         case "查看角色":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getRoleList": '',
                             }), ).then(function(res) {
                                 management.data = res.data
@@ -4596,7 +4672,7 @@
                             break;
                         case "编辑角色权限":
                         case "查看角色权限":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getRolePermissionList": '',
                             }), ).then(function(res) {
                                 management.data = res.data
@@ -4605,7 +4681,7 @@
                             break;
                         case "删除管理员":
                         case "查看管理员":
-                            axios.post('/System/Core/Management.php', Qs.stringify({
+                            axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getAdminList": '',
                             }), ).then(function(res) {
                                 management.data = res.data
@@ -4649,7 +4725,7 @@
                     console.log(key, keyPath);
                 },
                 logout() {
-                    axios.post('/System/Core/User.php', Qs.stringify({
+                    axios.post('./System/Core/User.php', Qs.stringify({
                         "logout": '',
                     }), ).then(function(res) {
                         for (x in res.data) {
@@ -4669,7 +4745,7 @@
                 },
             },
             mounted() {
-                axios.post('/System/Core/User.php', Qs.stringify({
+                axios.post('./System/Core/User.php', Qs.stringify({
                     "getRolePermission": '',
                 }), ).then(function(res) {
                     for (x in res.data) {
@@ -4687,7 +4763,7 @@
                             management.rolePermission = res.data[x]
 
                             if (management.rolePermission['searchCar'] == '1') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getCarList": '',
                                     'page': 1,
                                     'num': 9999999999999,
@@ -4713,7 +4789,7 @@
                             }
 
                             if (management.rolePermission['searchPersonnel'] == '1') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getPersonnelList": '',
                                     'page': 1,
                                     'num': 9999999999999,
@@ -4739,7 +4815,7 @@
                             }
 
                             if (management.rolePermission['searchDevice'] == '1') {
-                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                axios.post('./System/Core/Management.php', Qs.stringify({
                                     "getDeviceList": '',
                                     'page': 1,
                                     'num': 10,
@@ -4757,7 +4833,7 @@
                     }
                 })
 
-                axios.post('/System/Core/User.php', Qs.stringify({
+                axios.post('./System/Core/User.php', Qs.stringify({
                     "getUserInfo": '',
                 }), ).then(function(res) {
                     for (x in res.data) {
