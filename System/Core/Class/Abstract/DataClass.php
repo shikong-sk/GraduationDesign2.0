@@ -38,8 +38,8 @@ class DataClass{
         if($temp == null){
             $temp = 0;
         }
-        // time 为 unix时间戳 例：1583814308 精确到秒数
-        $query = "INSERT INTO $this->personnelTable(`time`, `name`, `idCard`, `area`, `place`, `come`, `temp`,`device`) VALUES (from_unixtime($time), '$name', '$idCard', '$this->area', '$this->place', $come, $temp,'$this->device')";
+        // time 为 标准24小时制时间 例：2020-03-10 17:15:00
+        $query = "INSERT INTO $this->personnelTable(`time`, `name`, `idCard`, `area`, `place`, `come`, `temp`,`device`) VALUES ('$time', '$name', '$idCard', '$this->area', '$this->place', $come, $temp,'$this->device')";
 
         $res = $this->db->database->query($query);
 

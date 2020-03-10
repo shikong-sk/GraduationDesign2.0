@@ -672,7 +672,7 @@
                         </el-table-column>
                         <el-table-column label="设备状态">
                             <template slot-scope="scope">
-									<span v-if="scope.row.status == 0" class="text-success">离线</span>
+									<span v-if="scope.row.status == 0" class="text-danger">离线</span>
 									<span v-if="scope.row.status == 1" class="text-success">在线</span>
 									<span v-if="scope.row.status == 8">异常</span>
 								</template>
