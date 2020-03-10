@@ -226,7 +226,9 @@ class  ManagementClass
             return json_encode(Array('error' => '查询失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
         $page = ($page - 1) * $num;
-        $query = "SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp FROM $this->personnelTable pe,$this->areaTable a,$this->placeTable p WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code ";
+//        $query = "SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,d.name device FROM $this->personnelTable pe,$this->areaTable a,$this->placeTable p,$this->deviceTable d WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code AND d.area = pe.area AND d.place = pe.place AND pe.device = d.deviceID";
+
+        $query = "SELECT pe.*,d.name device FROM (SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,pe.device deviceID FROM $this->areaTable a,$this->placeTable p,$this->personnelTable pe WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code) pe LEFT JOIN $this->deviceTable d ON pe.deviceID = d.deviceID";
 
         if(strlen($filter) != 0)
         {

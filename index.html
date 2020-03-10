@@ -74,6 +74,19 @@
                         <el-menu-item index="2-2" v-if="rolePermission['addUser'] == '1' ">添加用户</el-menu-item>
                         <el-menu-item index="2-3" v-if="rolePermission['deleteUser'] == '1' ">删除用户</el-menu-item>
                         <el-menu-item index="2-4" v-if="rolePermission['updateUser'] == '1' ">更新用户</el-menu-item>
+
+                        <el-submenu index="2-5" v-if="rolePermission['editRole'] == '1'">
+                            <template slot="title">角色管理</template>
+                            <el-menu-item index="2-5-1">查看角色</el-menu-item>
+                            <el-menu-item index="2-5-2">编辑角色</el-menu-item>
+                            <el-menu-item index="2-5-3">添加角色</el-menu-item>
+                        </el-submenu>
+                        <el-submenu index="2-6" v-if="rolePermission['editRolePermission'] == '1'">
+                            <template slot="title">角色权限管理</template>
+                            <el-menu-item index="2-6-1">查看角色权限</el-menu-item>
+                            <el-menu-item index="2-6-2">编辑角色权限</el-menu-item>
+                        </el-submenu>
+
                     </el-submenu>
                     <el-submenu index="3" v-if="rolePermission['searchDevice'] == '1' || rolePermission['addDevice'] == '1' || rolePermission['deleteDevice'] == '1' || rolePermission['updateDevice'] == '1' ">
                         <template slot="title">设备管理</template>
@@ -83,14 +96,14 @@
                         <el-menu-item index="3-4">更新设备</el-menu-item>
                     </el-submenu>
                     <el-submenu index="4" v-if="rolePermission['searchPersonnel'] == '1' || rolePermission['addPersonnel'] == '1' || rolePermission['deletePersonnel'] == '1' || rolePermission['updatePersonnel'] == '1' ">
-                        <template slot="title">人员管理</template>
+                        <template slot="title">人员查询</template>
                         <el-menu-item index="4-1">查看人员</el-menu-item>
                         <el-menu-item index="4-2">添加人员</el-menu-item>
                         <el-menu-item index="4-3">删除人员</el-menu-item>
                         <el-menu-item index="4-4">更新人员</el-menu-item>
                     </el-submenu>
                     <el-submenu index="5" v-if="rolePermission['searchCar'] == '1' || rolePermission['addCar'] == '1' || rolePermission['deleteCar'] == '1' || rolePermission['updateCar'] == '1' ">
-                        <template slot="title">车辆管理</template>
+                        <template slot="title">车辆查询</template>
                         <el-menu-item index="5-1">查看车辆</el-menu-item>
                         <el-menu-item index="5-2">添加车辆</el-menu-item>
                         <el-menu-item index="5-3">删除车辆</el-menu-item>
@@ -111,7 +124,7 @@
                             <el-menu-item index="6-2-3">添加场所</el-menu-item>
                         </el-submenu>
                     </el-submenu>
-                    <el-submenu index="7" v-if="rolePermission['editRole'] == '1' || rolePermission['editRolePermission'] == '1'">
+<!--                    <el-submenu index="7" v-if="rolePermission['editRole'] == '1' || rolePermission['editRolePermission'] == '1'">
                         <template slot="title">角色管理</template>
                         <el-submenu index="7-1" v-if="rolePermission['editRole'] == '1'">
                             <template slot="title">角色管理</template>
@@ -124,7 +137,7 @@
                             <el-menu-item index="7-2-1">查看角色权限</el-menu-item>
                             <el-menu-item index="7-2-2">编辑角色权限</el-menu-item>
                         </el-submenu>
-                    </el-submenu>
+                    </el-submenu> -->
                     <el-submenu index="8" v-if="rolePermission['addAdmin'] == '1' || rolePermission['deleteAdmin'] == '1'">
                         <template slot="title">管理员管理</template>
                         <el-menu-item index="8-1" v-if="rolePermission['role'] == '000' || rolePermission['role'] == '001' ">查看管理员</el-menu-item>
@@ -140,7 +153,7 @@
 								{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>个人中心</el-dropdown-item>
+                            <el-dropdown-item><a href="index.html">个人中心</a></el-dropdown-item>
                             <el-dropdown-item divided>
                                 <div @click="(x)=>{logout()}">退出登录</div>
                             </el-dropdown-item>
@@ -659,8 +672,8 @@
                         </el-table-column>
                         <el-table-column label="设备状态">
                             <template slot-scope="scope">
-									<span v-if="scope.row.status == 0">离线</span>
-									<span v-if="scope.row.status == 1">在线</span>
+									<span v-if="scope.row.status == 0" class="text-success">离线</span>
+									<span v-if="scope.row.status == 1" class="text-success">在线</span>
 									<span v-if="scope.row.status == 8">异常</span>
 								</template>
                         </el-table-column>
@@ -957,7 +970,7 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="时间">
+                        <el-table-column prop="time" label="出入时间">
                         </el-table-column>
                         <el-table-column prop="name" label="姓名">
                         </el-table-column>
@@ -970,6 +983,8 @@
                         <el-table-column prop="area" label="所属区域">
                         </el-table-column>
                         <el-table-column prop="place" label="所属场所">
+                        </el-table-column>
+                        <el-table-column prop="device" label="登记设备">
                         </el-table-column>
                         <el-table-column prop="idCard" label="身份证号码">
                         </el-table-column>
@@ -2673,6 +2688,11 @@
                         "2-2": "addUser",
                         "2-3": "deleteUser",
                         "2-4": "updateUser",
+						"2-5-1": "editRole",
+						"2-5-2": "editRole",
+						"2-5-3": "editRole",
+						"2-6-1": "editRolePermission",
+						"2-6-2": "editRolePermission",
                         "3-1": "searchDevice",
                         "3-2": "addDevice",
                         "3-3": "deleteDevice",
@@ -2691,11 +2711,11 @@
                         "6-2-1": "login",
                         "6-2-2": "editPlace",
                         "6-2-3": "editPlace",
-                        "7-1-1": "editRole",
-                        "7-1-2": "editRole",
-                        "7-1-3": "editRole",
-                        "7-2-1": "editRolePermission",
-                        "7-2-2": "editRolePermission",
+                        // "7-1-1": "editRole",
+                        // "7-1-2": "editRole",
+                        // "7-1-3": "editRole",
+                        // "7-2-1": "editRolePermission",
+                        // "7-2-2": "editRolePermission",
                         "8-1": "login",
                         "8-2": "addAdmin",
                         "8-3": "deleteAdmin"
@@ -2707,6 +2727,11 @@
                         "2-2": "添加用户",
                         "2-3": "删除用户",
                         "2-4": "更新用户",
+						"2-5-1": "查看角色",
+						"2-5-2": "编辑角色",
+						"2-5-3": "添加角色",
+						"2-6-1": "查看角色权限",
+						"2-6-2": "编辑角色权限",
                         "3-1": "查看设备",
                         "3-2": "添加设备",
                         "3-3": "删除设备",
@@ -2725,11 +2750,11 @@
                         "6-2-1": "查看场所",
                         "6-2-2": "编辑场所",
                         "6-2-3": "添加场所",
-                        "7-1-1": "查看角色",
-                        "7-1-2": "编辑角色",
-                        "7-1-3": "添加角色",
-                        "7-2-1": "查看角色权限",
-                        "7-2-2": "编辑角色权限",
+                        // "7-1-1": "查看角色",
+                        // "7-1-2": "编辑角色",
+                        // "7-1-3": "添加角色",
+                        // "7-2-1": "查看角色权限",
+                        // "7-2-2": "编辑角色权限",
                         "8-1": "查看管理员",
                         "8-2": "添加管理员",
                         "8-3": "删除管理员"
@@ -2782,59 +2807,55 @@
                             validator: validatorIdCard,
                             trigger: "blur"
                         }],
-						user: [{
-							message:"请输入用户名",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:2,
-							max:10,
-							trigger: ['blur','change'],
-							message:"用户名长度为2~10个字符"
-						}],
-						password: [{
-							message:"请设置密码",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:6,
-							trigger: ['blur','change'],
-							message:"密码长度不小于6个字符"
-						}],
-						sex:[
-							{
-							    required: true,
-							    message:"请选择性别",
-							    trigger: "blur"
-							}
-						],
-						role:[
-							{
-							    required: true,
-							    message:"请选择用户组",
-							    trigger: "blur"
-							}
-						],
-						area: [{
-							message:"请输入关键字搜索并选择区域",
-						    required: true,
-						    trigger: "blur"
-						}],
-						place: [{
-							message:"请输入关键字搜索并选择场所",
-						    required: true,
-						    trigger: "blur"
-						}],
-						realName: [{
-							message:"请输入真实姓名",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:2,
-							max:5,
-							trigger: ['blur','change'],
-							message:"姓名长度为2~5个字符"
-						}],
+                        user: [{
+                            message: "请输入用户名",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 2,
+                            max: 10,
+                            trigger: ['blur', 'change'],
+                            message: "用户名长度为2~10个字符"
+                        }],
+                        password: [{
+                            message: "请设置密码",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 6,
+                            trigger: ['blur', 'change'],
+                            message: "密码长度不小于6个字符"
+                        }],
+                        sex: [{
+                            required: true,
+                            message: "请选择性别",
+                            trigger: "blur"
+                        }],
+                        role: [{
+                            required: true,
+                            message: "请选择用户组",
+                            trigger: "blur"
+                        }],
+                        area: [{
+                            message: "请输入关键字搜索并选择区域",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        place: [{
+                            message: "请输入关键字搜索并选择场所",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        realName: [{
+                            message: "请输入真实姓名",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 2,
+                            max: 5,
+                            trigger: ['blur', 'change'],
+                            message: "姓名长度为2~5个字符"
+                        }],
                     },
                     addDeviceForm: {
                         id: "",
@@ -2844,35 +2865,35 @@
                         ip: ""
                     },
                     addDeviceRules: {
-						id: [{
-							message:"请输入设备id",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:5,
-							trigger: ['blur','change'],
-							message:"设备id不小于5个字符"
-						}],
-						name: [{
-							message:"请输入设备名称",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:2,
-							trigger: ['blur','change'],
-							message:"名称长度不小于2个字符"
-						}],
-						area: [{
-							message:"请输入关键字搜索并选择区域",
-						    required: true,
-						    trigger: "blur"
-						}],
-						place: [{
-							message:"请输入关键字搜索并选择场所",
-						    required: true,
-						    trigger: "blur"
-						}],
-					},
+                        id: [{
+                            message: "请输入设备id",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 5,
+                            trigger: ['blur', 'change'],
+                            message: "设备id不小于5个字符"
+                        }],
+                        name: [{
+                            message: "请输入设备名称",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 2,
+                            trigger: ['blur', 'change'],
+                            message: "名称长度不小于2个字符"
+                        }],
+                        area: [{
+                            message: "请输入关键字搜索并选择区域",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        place: [{
+                            message: "请输入关键字搜索并选择场所",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                    },
                     addPersonnelForm: {
                         name: "",
                         idCard: "",
@@ -2885,33 +2906,33 @@
                         idCard: [{
                             required: true,
                             validator: validatorIdCard,
-                            trigger: ['blur','change'],
+                            trigger: ['blur', 'change'],
                         }],
-						name: [{
-							message:"请输入姓名",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:2,
-							max:5,
-							trigger: ['blur','change'],
-							message:"姓名长度为2~5个字符"
-						}],
-						area: [{
-							message:"请输入关键字搜索并选择区域",
-						    required: true,
-						    trigger: "blur"
-						}],
-						place: [{
-							message:"请输入关键字搜索并选择场所",
-						    required: true,
-						    trigger: "blur"
-						}],
-						come: [{
-							message:"请选择出入记录",
-						    required: true,
-						    trigger: "blur"
-						}],
+                        name: [{
+                            message: "请输入姓名",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 2,
+                            max: 5,
+                            trigger: ['blur', 'change'],
+                            message: "姓名长度为2~5个字符"
+                        }],
+                        area: [{
+                            message: "请输入关键字搜索并选择区域",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        place: [{
+                            message: "请输入关键字搜索并选择场所",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        come: [{
+                            message: "请选择出入记录",
+                            required: true,
+                            trigger: "blur"
+                        }],
                     },
                     addCarForm: {
                         licensePlate: "",
@@ -2920,31 +2941,31 @@
                         come: "",
                     },
                     addCarRules: {
-						licensePlate: [{
-							message:"请输入车牌号码",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:7,
-							max:7,
-							trigger:"blur",
-							message:"请输入正确的车牌号码 例：京A12345"
-						}],
-						area: [{
-							message:"请输入关键字搜索并选择区域",
-						    required: true,
-						    trigger: "blur"
-						}],
-						place: [{
-							message:"请输入关键字搜索并选择场所",
-						    required: true,
-						    trigger: "blur"
-						}],
-						come: [{
-							message:"请选择出入记录",
-						    required: true,
-						    trigger: "blur"
-						}],
+                        licensePlate: [{
+                            message: "请输入车牌号码",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 7,
+                            max: 7,
+                            trigger: "blur",
+                            message: "请输入正确的车牌号码 例：京A12345"
+                        }],
+                        area: [{
+                            message: "请输入关键字搜索并选择区域",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        place: [{
+                            message: "请输入关键字搜索并选择场所",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        come: [{
+                            message: "请选择出入记录",
+                            required: true,
+                            trigger: "blur"
+                        }],
                     },
                     addAreaForm: {
                         code: "",
@@ -2953,92 +2974,92 @@
                         parentCode: ""
                     },
                     addAreaRules: {
-						code: [{
-							message:"请输入区域代码",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:12,
-							max:12,
-							trigger: ['blur','change'],
-							message:"区域代码为12个字符 例:110000000000"
-						}],
-						level: [{
-							message:"请选择区域级别",
-						    required: true,
-						    trigger: ['blur','change'],
-						}],
-						parentCode: [{
-							message:"请输入父级区域代码，若添加省级区域则填写 0",
-						    required: true,
-						    trigger: "blur"
-						}],
-						name: [{
-							message:"请输入区域名称",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:2,
-							trigger: ['blur','change'],
-							message:"区域名称长度不小于2个字符"
-						}],
-					},
+                        code: [{
+                            message: "请输入区域代码",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 12,
+                            max: 12,
+                            trigger: ['blur', 'change'],
+                            message: "区域代码为12个字符 例:110000000000"
+                        }],
+                        level: [{
+                            message: "请选择区域级别",
+                            required: true,
+                            trigger: ['blur', 'change'],
+                        }],
+                        parentCode: [{
+                            message: "请输入父级区域代码，若添加省级区域则填写 0",
+                            required: true,
+                            trigger: "blur"
+                        }],
+                        name: [{
+                            message: "请输入区域名称",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 2,
+                            trigger: ['blur', 'change'],
+                            message: "区域名称长度不小于2个字符"
+                        }],
+                    },
                     addPlaceForm: {
                         id: "",
                         name: "",
                         area: "",
                     },
                     addPlaceRules: {
-						id: [{
-							message:"请输入场所编号",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:5,
-							max:5,
-							trigger: ['blur','change'],
-							message:"场所编号为5个字符 例:00001"
-						}],
-						area: [{
-							message:"请输入关键字搜索并选择区域",
-						    required: true,
-						    trigger: ['blur','change'],
-						}],
-						name: [{
-							message:"请输入场所名称",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:2,
-							trigger: ['blur','change'],
-							message:"场所名称长度不小于2个字符"
-						}],
-					},
+                        id: [{
+                            message: "请输入场所编号",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 5,
+                            max: 5,
+                            trigger: ['blur', 'change'],
+                            message: "场所编号为5个字符 例:00001"
+                        }],
+                        area: [{
+                            message: "请输入关键字搜索并选择区域",
+                            required: true,
+                            trigger: ['blur', 'change'],
+                        }],
+                        name: [{
+                            message: "请输入场所名称",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 2,
+                            trigger: ['blur', 'change'],
+                            message: "场所名称长度不小于2个字符"
+                        }],
+                    },
                     addRoleForm: {
                         id: "",
                         name: "",
                     },
                     addRoleRules: {
-						id:[{
-							message:"请输入角色id",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:3,
-							max:3,
-							trigger: ['blur','change'],
-							message:"角色id为3个字符 例:008"
-						}],
-						name: [{
-							message:"请输入角色名称",
-						    required: true,
-						    trigger: "blur"
-						},{
-							min:2,
-							trigger: ['blur','change'],
-							message:"角色名称长度不小于2个字符"
-						}],
-					},
+                        id: [{
+                            message: "请输入角色id",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 3,
+                            max: 3,
+                            trigger: ['blur', 'change'],
+                            message: "角色id为3个字符 例:008"
+                        }],
+                        name: [{
+                            message: "请输入角色名称",
+                            required: true,
+                            trigger: "blur"
+                        }, {
+                            min: 2,
+                            trigger: ['blur', 'change'],
+                            message: "角色名称长度不小于2个字符"
+                        }],
+                    },
                 }
             },
             methods: {
@@ -4364,72 +4385,72 @@
                     management.tmpArg = ""
                     management.tmpArg2 = ""
                     switch (tab) {
-						case "控制面板":
-							if (management.rolePermission['searchCar'] == '1') {
-							    axios.post('/System/Core/Management.php', Qs.stringify({
-							        "getCarList": '',
-							        'page': 1,
-							        'num': 9999999999999,
-							        'filter': 'betweenTime',
-							        'arg': $.base64.encode(JSON.stringify({
-							            'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
-							            "endTime": management.getTime(new Date().getTime())
-							        })),
-							    }), ).then(function(res) {
-							        come = 0
-							        res.data = res.data.slice(1)
-							        for (x in res.data) {
-							            if (res.data[x]['come'] == '0') {
-							                come++
-							            }
-							        }
-							        management.CarData = {
-							            '0': come,
-							            "1": res.data.length - come,
-							            "max": res.data.length
-							        }
-							    })
-							}
-							
-							if (management.rolePermission['searchPersonnel'] == '1') {
-							    axios.post('/System/Core/Management.php', Qs.stringify({
-							        "getPersonnelList": '',
-							        'page': 1,
-							        'num': 9999999999999,
-							        'filter': 'betweenTime',
-							        'arg': $.base64.encode(JSON.stringify({
-							            'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
-							            "endTime": management.getTime(new Date().getTime())
-							        })),
-							    }), ).then(function(res) {
-							        res.data = res.data.slice(1)
-							        come = 0
-							        for (x in res.data) {
-							            if (res.data[x]['come'] == '0') {
-							                come++
-							            }
-							        }
-							        management.PersonnelData = {
-							            '0': come,
-							            "1": res.data.length - come,
-							            "max": res.data.length
-							        }
-							    })
-							}
-							
-							if (management.rolePermission['searchDevice'] == '1') {
-							    axios.post('/System/Core/Management.php', Qs.stringify({
-							        "getDeviceList": '',
-							        'page': 1,
-							        'num': 10,
-							        'filter': 'beforeTime',
-							        'arg': $.base64.encode(management.getTime(new Date().getTime()), )
-							    }), ).then(function(res) {
-							        res.data = res.data.slice(1)
-							        management.DeviceData = res.data
-							    })
-							}
-							break;
+                        case "控制面板":
+                            if (management.rolePermission['searchCar'] == '1') {
+                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                    "getCarList": '',
+                                    'page': 1,
+                                    'num': 9999999999999,
+                                    'filter': 'betweenTime',
+                                    'arg': $.base64.encode(JSON.stringify({
+                                        'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
+                                        "endTime": management.getTime(new Date().getTime())
+                                    })),
+                                }), ).then(function(res) {
+                                    come = 0
+                                    res.data = res.data.slice(1)
+                                    for (x in res.data) {
+                                        if (res.data[x]['come'] == '0') {
+                                            come++
+                                        }
+                                    }
+                                    management.CarData = {
+                                        '0': come,
+                                        "1": res.data.length - come,
+                                        "max": res.data.length
+                                    }
+                                })
+                            }
+
+                            if (management.rolePermission['searchPersonnel'] == '1') {
+                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                    "getPersonnelList": '',
+                                    'page': 1,
+                                    'num': 9999999999999,
+                                    'filter': 'betweenTime',
+                                    'arg': $.base64.encode(JSON.stringify({
+                                        'startTime': management.getTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 3),
+                                        "endTime": management.getTime(new Date().getTime())
+                                    })),
+                                }), ).then(function(res) {
+                                    res.data = res.data.slice(1)
+                                    come = 0
+                                    for (x in res.data) {
+                                        if (res.data[x]['come'] == '0') {
+                                            come++
+                                        }
+                                    }
+                                    management.PersonnelData = {
+                                        '0': come,
+                                        "1": res.data.length - come,
+                                        "max": res.data.length
+                                    }
+                                })
+                            }
+
+                            if (management.rolePermission['searchDevice'] == '1') {
+                                axios.post('/System/Core/Management.php', Qs.stringify({
+                                    "getDeviceList": '',
+                                    'page': 1,
+                                    'num': 10,
+                                    'filter': 'beforeTime',
+                                    'arg': $.base64.encode(management.getTime(new Date().getTime()), )
+                                }), ).then(function(res) {
+                                    res.data = res.data.slice(1)
+                                    management.DeviceData = res.data
+                                })
+                            }
+                            break;
                         case "添加管理员":
                             axios.post('/System/Core/Management.php', Qs.stringify({
                                 "getUserList": '',
@@ -4771,8 +4792,14 @@
                     'margin': '0 5px',
                     'margin-top': '5px'
                 })
-            }
+            }	
         }
+		$(document).ready(function(){
+			resetWindow()
+			$(window).resize(function(){
+				resetWindow()
+			})
+		})
     </script>
 
 </html>
