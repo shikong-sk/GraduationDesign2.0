@@ -32,15 +32,23 @@ $img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAABWEAYAAAA/OsCCAAAACX
 //
 //}
 
-include_once './Class/Abstract/FileClass.php';
+//include_once './Class/Abstract/FileClass.php';
+//
+//class FileManager extends FileClass{
+//
+//}
+//$f = new FileManager();
+//echo $f->_root_ . $f->allowDirs[0];
+//
+//echo $f->uploadImage($img,'car');
 
-class FileManager extends FileClass{
+include_once './Class/Abstract/DataClass.php';
 
-}
-$f = new FileManager();
-echo $f->_root_ . $f->allowDirs[0];
+//header('Content-Type:application/json; charset=utf-8');
 
-echo $f->uploadImage($img,'car');
+$d = new DataClass('1','测试1','0','00000');
+
+die($d->pushPersonnel('1583814308','测试','440500199010011111','0','37.0'));
 
 //ignore_user_abort(true);//关闭浏览器后，继续执行php代码
 //set_time_limit(600);//程序执行时间无限制
