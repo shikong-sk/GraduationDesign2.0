@@ -337,7 +337,7 @@
                         <el-table-column prop="idCard" label="身份证号码">
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="(v)=>{CurrentChange(page,Tab)}" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -394,7 +394,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -621,7 +621,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
 
                 </div>
@@ -686,7 +686,7 @@
                         <el-table-column prop="ip" label="IP地址">
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -816,7 +816,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -889,7 +889,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1027,8 +1027,7 @@
                         <el-table-column prop="temp" label="体温">
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
-                    </el-pagination>
+					<el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum"></el-pagination>
                 </div>
 
                 <div v-else-if="Tab == '更新人员' && rolePermission['updatePersonnel'] == '1'">
@@ -1162,7 +1161,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1235,7 +1234,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1338,7 +1337,7 @@
                         <el-table-column prop="place" label="所属场所">
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1450,7 +1449,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1517,7 +1516,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1597,7 +1596,7 @@
                         <el-table-column prop="parentCode" label="父级区域代码">
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1698,7 +1697,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1766,7 +1765,7 @@
                         <el-table-column prop="area" label="所属区域">
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -1849,7 +1848,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
@@ -2487,7 +2486,7 @@
 								</template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination @size-change="" @current-change="(v)=>{CurrentChange(v,Tab)}" :current-page.sync="page" :page-size="num" layout="prev, pager, next, jumper" :total="maxNum">
+                    <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
                     </el-pagination>
                 </div>
 
