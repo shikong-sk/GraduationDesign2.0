@@ -65,6 +65,10 @@ foreach ($_POST as $key => $value)
 {
     foreach ($blacklist as $blackItem){
         if (preg_match('/\b' . $blackItem . '\b/im', $value)) {
+            if($key = 'time' && $blackItem = ' ')
+            {
+                continue;
+            }
             die('非法参数'.$value);
         }
     }

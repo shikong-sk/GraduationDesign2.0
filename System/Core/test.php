@@ -42,16 +42,31 @@ $img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAABWEAYAAAA/OsCCAAAACX
 //
 //echo $f->uploadImage($img,'car');
 
-include_once './Class/Abstract/DataClass.php';
-
-//header('Content-Type:application/json; charset=utf-8');
-
-$d = new DataClass('1','测试1','0','00000');
-
-die($d->pushPersonnel('1583814308','测试','440500199010011111','0','37.0'));
+//include_once './Class/Abstract/DataClass.php';
+//
+////header('Content-Type:application/json; charset=utf-8');
+//
+//$d = new DataClass('1','测试1','0','00000');
+//
+//die($d->pushPersonnel('1583814308','测试','440500199010011111','0','37.0'));
 
 //ignore_user_abort(true);//关闭浏览器后，继续执行php代码
 //set_time_limit(600);//程序执行时间无限制
 
 //$_POST['id'];
 //$device = $this->db->database->query("SELECT deviceID FROM $this->deviceTable WHERE deviceID = '$this->device'")->fetch_assoc()['deviceID'];
+
+$_POST['time'] = '2020-01-01 00:00:00';
+$blacklist = Array("order by",'or','and','rpad','concat',' ','union','%a0',',','if','xor','join','rand','floor','outfile','mid','#','\|\|','--+','0[xX][0-9a-fA-F]+');
+foreach ($_POST as $key => $value)
+{
+    foreach ($blacklist as $blackItem){
+        if (preg_match('/\b' . $blackItem . '\b/im', $value)) {
+            if($key = 'time' && $blackItem = ' ')
+            {
+                continue;
+            }
+            die('非法参数'.$value);
+        }
+    }
+}
