@@ -68,26 +68,24 @@
             <el-col :sm="18">
                 <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="1">面板首页</el-menu-item>
-                    <el-submenu index="2" v-if="rolePermission['searchUser'] == '1' || rolePermission['addUser'] == '1' || rolePermission['deleteUser'] == '1' || rolePermission['updateUser'] == '1' ">
-                        <template slot="title">用户管理</template>
-                        <el-menu-item index="2-1" v-if="rolePermission['searchUser'] == '1' ">查看用户</el-menu-item>
-                        <el-menu-item index="2-2" v-if="rolePermission['addUser'] == '1' ">添加用户</el-menu-item>
-                        <el-menu-item index="2-3" v-if="rolePermission['deleteUser'] == '1' ">删除用户</el-menu-item>
-                        <el-menu-item index="2-4" v-if="rolePermission['updateUser'] == '1' ">更新用户</el-menu-item>
-
-                        <el-submenu index="2-5" v-if="rolePermission['editRole'] == '1'">
-                            <template slot="title">角色管理</template>
-                            <el-menu-item index="2-5-1">查看角色</el-menu-item>
-                            <el-menu-item index="2-5-2">编辑角色</el-menu-item>
-                            <el-menu-item index="2-5-3">添加角色</el-menu-item>
-                        </el-submenu>
-                        <el-submenu index="2-6" v-if="rolePermission['editRolePermission'] == '1'">
-                            <template slot="title">角色权限管理</template>
-                            <el-menu-item index="2-6-1">查看角色权限</el-menu-item>
-                            <el-menu-item index="2-6-2">编辑角色权限</el-menu-item>
-                        </el-submenu>
-
-                    </el-submenu>
+					<el-submenu index="6" v-if="rolePermission['editArea'] == '1' || rolePermission['editPlace'] == '1'">
+					    <template slot="title">行政区划</template>
+					    <el-submenu index="6-1" v-if="rolePermission['editArea'] == '1'">
+					        <template slot="title">区域管理</template>
+					        <el-menu-item index="6-1-1">查看区域</el-menu-item>
+					        <el-menu-item index="6-1-2">编辑区域</el-menu-item>
+					        <el-menu-item index="6-1-3">添加区域</el-menu-item>
+					    </el-submenu>
+					    <el-submenu index="6-2" v-if="rolePermission['editPlace'] == '1'">
+					        <template slot="title">场所管理</template>
+					        <el-menu-item index="6-2-1">查看场所</el-menu-item>
+					        <el-menu-item index="6-2-2">编辑场所</el-menu-item>
+					        <el-menu-item index="6-2-3">添加场所</el-menu-item>
+					    </el-submenu>
+					</el-submenu>
+					
+					
+					
                     <el-submenu index="3" v-if="rolePermission['searchDevice'] == '1' || rolePermission['addDevice'] == '1' || rolePermission['deleteDevice'] == '1' || rolePermission['updateDevice'] == '1' ">
                         <template slot="title">设备管理</template>
                         <el-menu-item index="3-1">查看设备</el-menu-item>
@@ -109,21 +107,6 @@
                         <el-menu-item index="5-3">删除车辆</el-menu-item>
                         <el-menu-item index="5-4">更新车辆</el-menu-item>
                     </el-submenu>
-                    <el-submenu index="6" v-if="rolePermission['editArea'] == '1' || rolePermission['editPlace'] == '1'">
-                        <template slot="title">行政区划</template>
-                        <el-submenu index="6-1" v-if="rolePermission['editArea'] == '1'">
-                            <template slot="title">区域管理</template>
-                            <el-menu-item index="6-1-1">查看区域</el-menu-item>
-                            <el-menu-item index="6-1-2">编辑区域</el-menu-item>
-                            <el-menu-item index="6-1-3">添加区域</el-menu-item>
-                        </el-submenu>
-                        <el-submenu index="6-2" v-if="rolePermission['editPlace'] == '1'">
-                            <template slot="title">场所管理</template>
-                            <el-menu-item index="6-2-1">查看场所</el-menu-item>
-                            <el-menu-item index="6-2-2">编辑场所</el-menu-item>
-                            <el-menu-item index="6-2-3">添加场所</el-menu-item>
-                        </el-submenu>
-                    </el-submenu>
 <!--                    <el-submenu index="7" v-if="rolePermission['editRole'] == '1' || rolePermission['editRolePermission'] == '1'">
                         <template slot="title">角色管理</template>
                         <el-submenu index="7-1" v-if="rolePermission['editRole'] == '1'">
@@ -138,6 +121,27 @@
                             <el-menu-item index="7-2-2">编辑角色权限</el-menu-item>
                         </el-submenu>
                     </el-submenu> -->
+					<el-submenu index="2" v-if="rolePermission['searchUser'] == '1' || rolePermission['addUser'] == '1' || rolePermission['deleteUser'] == '1' || rolePermission['updateUser'] == '1' ">
+					    <template slot="title">用户管理</template>
+					    <el-menu-item index="2-1" v-if="rolePermission['searchUser'] == '1' ">查看用户</el-menu-item>
+					    <el-menu-item index="2-2" v-if="rolePermission['addUser'] == '1' ">添加用户</el-menu-item>
+					    <el-menu-item index="2-3" v-if="rolePermission['deleteUser'] == '1' ">删除用户</el-menu-item>
+					    <el-menu-item index="2-4" v-if="rolePermission['updateUser'] == '1' ">更新用户</el-menu-item>
+					
+					    <el-submenu index="2-5" v-if="rolePermission['editRole'] == '1'">
+					        <template slot="title">角色管理</template>
+					        <el-menu-item index="2-5-1">查看角色</el-menu-item>
+					        <el-menu-item index="2-5-2">编辑角色</el-menu-item>
+					        <el-menu-item index="2-5-3">添加角色</el-menu-item>
+					    </el-submenu>
+					    <el-submenu index="2-6" v-if="rolePermission['editRolePermission'] == '1'">
+					        <template slot="title">角色权限管理</template>
+					        <el-menu-item index="2-6-1">查看角色权限</el-menu-item>
+					        <el-menu-item index="2-6-2">编辑角色权限</el-menu-item>
+					    </el-submenu>
+					
+					</el-submenu>
+					
                     <el-submenu index="8" v-if="rolePermission['addAdmin'] == '1' || rolePermission['deleteAdmin'] == '1'">
                         <template slot="title">管理员管理</template>
                         <el-menu-item index="8-1" v-if="rolePermission['role'] == '000' || rolePermission['role'] == '001' ">查看管理员</el-menu-item>
@@ -941,43 +945,54 @@
                                 </el-select>
                             </el-col>
 
-                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come' && tmpFilter!='area'">
+                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come' && tmpFilter!='areaLevel'">
                                 <el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
                             </el-col>
 
-							<div v-else-if="tmpFilter == 'area'">
-								<el-col :xs="24" :sm="24" :md="24" >
+							<div v-else-if="tmpFilter == 'areaLevel'">
+								<el-col :xs="24" :sm="24" :md="24">
 								</el-col>
-								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpProvince" filterable placeholder="请选择省份" @change="(v)=>{tmpCity = '';tmpCityList = [];tmpArea = '';tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+								
+								<el-col :xs="24" :sm="12" :md="6">
+								    <el-input v-model="tmpName" placeholder="请输入姓名搜索"></el-input>
+								</el-col>
+								<el-col :xs="24" :sm="12" :md="6">
+								    <el-input v-model="tmpIdCard" placeholder="请输入身份证号码搜索"></el-input>
+								</el-col>
+								
+								<el-col :xs="24" :sm="12" :md="12">
+								    <el-date-picker class="w-100" v-model="tmpArg2" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+								    </el-date-picker>
+								</el-col>
+								
+								<el-col :xs="24" :sm="12" :md="4" >
+								    <el-select class="w-100" v-model="tmpProvince" filterable placeholder="请选择省份" @change="(v)=>{tmpCity = '';tmpCityList = [];tmpArea = '';tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
 								        <el-option :label="t.label" :value="t.value" v-for="t in tmpProvinceList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
-								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpCity" filterable placeholder="请选择城市" @change="(v)=>{tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+								<el-col :xs="24" :sm="12" :md="4" >
+								    <el-select class="w-100" v-model="tmpCity" filterable placeholder="请选择城市" @change="(v)=>{tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
 								        <el-option :label="t.label" :value="t.value" v-for="t in tmpCityList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
-								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpArea" filterable placeholder="请选择区" @change="(v)=>{tmpRowList = [];tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+								<el-col :xs="24" :sm="12" :md="4" >
+								    <el-select class="w-100" v-model="tmpArea" filterable placeholder="请选择区" @change="(v)=>{tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
 								        <el-option :label="t.label" :value="t.value" v-for="t in tmpAreaList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
-								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpRow" filterable placeholder="请选择街道" @change="(v)=>{tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+								<el-col :xs="24" :sm="12" :md="4" >
+								    <el-select class="w-100" v-model="tmpRow" filterable placeholder="请选择街道" @change="(v)=>{tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
 										<el-option :label="t.label" :value="t.value" v-for="t in tmpRowList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
-								<el-col :xs="24" :sm="12" :md="10">
-									<el-select class="w-100" v-model="tmpDevice" filterable placeholder="请选择场所">
-									    <el-option label="进" value="0"></el-option>
-									    <el-option label="出" value="1"></el-option>
+								<el-col :xs="24" :sm="12" :md="4">
+									<el-select class="w-100" v-model="tmpPlace" filterable placeholder="请选择场所" @change="(v)=>{tmpDevice = '';tmpDeviceList = [];getDevice(v)}">
+									    <el-option :label="t.label" :value="t.value" v-for="t in tmpPlaceList" :key="t.label"></el-option>
 									</el-select>
 								</el-col>
-								<el-col :xs="24" :sm="12" :md="10">
+								<el-col :xs="24" :sm="12" :md="4">
 									<el-select class="w-100" v-model="tmpDevice" filterable placeholder="请选择设备">
-									    <el-option label="进" value="0"></el-option>
-									    <el-option label="出" value="1"></el-option>
+									    <el-option :label="t.label" :value="t.value" v-for="t in tmpDeviceList" :key="t.label"></el-option>
 									</el-select>
 								</el-col>
 							</div>
@@ -1000,19 +1015,28 @@
                                 </el-date-picker>
                             </el-col>
 
-                            <el-col :xs="24" :sm="24" :md="4">
+                            <el-col :xs="24" :sm="24" :md="4" v-if="tmpFilter!='areaLevel'">
                                 <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
                             </el-col>
+							
+							<div v-else>
+								<el-col :xs="24" :sm="24" :md="20">
+									&nbsp;
+								</el-col>
+								<el-col :xs="24" :sm="24" :md="4">
+								    <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+								</el-col>
+							</div>
 
                         </el-row>
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="出入时间">
+                        <el-table-column prop="time" label="出入时间" width="160">
                         </el-table-column>
                         <el-table-column prop="name" label="姓名">
                         </el-table-column>
-                        <el-table-column label="出入记录">
+                        <el-table-column label="出入记录" width="80">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0">进</span>
 									<span v-if="scope.row.come == 1">出</span>
@@ -1024,9 +1048,9 @@
                         </el-table-column>
                         <el-table-column prop="device" label="登记设备">
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column prop="idCard" label="身份证号码" width="180">
                         </el-table-column>
-                        <el-table-column prop="temp" label="体温">
+                        <el-table-column prop="temp" label="体温" width="60">
                         </el-table-column>
                     </el-table>
 					<el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum"></el-pagination>
@@ -1041,37 +1065,83 @@
                                     </el-option>
                                 </el-select>
                             </el-col>
-
-                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+                    
+                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come' && tmpFilter!='areaLevel'">
                                 <el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
                             </el-col>
-
+                    
+                    		<div v-else-if="tmpFilter == 'areaLevel'">
+                    			<el-col :xs="24" :sm="24" :md="24">
+                    			</el-col>
+                    			
+                    			<el-col :xs="24" :sm="12" :md="12">
+                    			    <el-input v-model="tmpArg" placeholder="请输入姓名或身份证号码搜索"></el-input>
+                    			</el-col>
+                    			
+                    			<el-col :xs="24" :sm="12" :md="12">
+                    			    <el-date-picker class="w-100" v-model="tmpArg2" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                    			    </el-date-picker>
+                    			</el-col>
+                    			
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpProvince" filterable placeholder="请选择省份" @change="(v)=>{tmpCity = '';tmpCityList = [];tmpArea = '';tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    			        <el-option :label="t.label" :value="t.value" v-for="t in tmpProvinceList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpCity" filterable placeholder="请选择城市" @change="(v)=>{tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    			        <el-option :label="t.label" :value="t.value" v-for="t in tmpCityList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpArea" filterable placeholder="请选择区" @change="(v)=>{tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    			        <el-option :label="t.label" :value="t.value" v-for="t in tmpAreaList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpRow" filterable placeholder="请选择街道" @change="(v)=>{tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    					<el-option :label="t.label" :value="t.value" v-for="t in tmpRowList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="10">
+                    				<el-select class="w-100" v-model="tmpPlace" filterable placeholder="请选择场所" @change="(v)=>{tmpDevice = '';tmpDeviceList = [];getDevice(v)}">
+                    				    <el-option :label="t.label" :value="t.value" v-for="t in tmpPlaceList" :key="t.label"></el-option>
+                    				</el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="10">
+                    				<el-select class="w-100" v-model="tmpDevice" filterable placeholder="请选择设备">
+                    				    <el-option :label="t.label" :value="t.value" v-for="t in tmpDeviceList" :key="t.label"></el-option>
+                    				</el-select>
+                    			</el-col>
+                    		</div>
+                    
+                    
                             <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
                                 <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
                                     <el-option label="进" value="0"></el-option>
                                     <el-option label="出" value="1"></el-option>
                                 </el-select>
                             </el-col>
-
+                    
                             <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
                                 <el-date-picker class="w-100" v-model="tmpArg" type="datetime" placeholder="选择日期时间">
                                 </el-date-picker>
                             </el-col>
-
+                    
                             <el-col :xs="24" :sm="15" :md="12" v-else>
                                 <el-date-picker class="w-100" v-model="tmpArg2" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                                 </el-date-picker>
                             </el-col>
-
+                    
                             <el-col :xs="24" :sm="24" :md="4">
                                 <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
                             </el-col>
-
+                    
                         </el-row>
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="时间">
+                        <el-table-column prop="time" label="出入时间" width="160">
                         </el-table-column>
                         <el-table-column prop="name" label="姓名">
                             <template slot-scope="scope">
@@ -1084,7 +1154,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="出入记录">
+                        <el-table-column label="出入记录" width="80">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0 && (Edit != scope.$index)">进</span>
 									<span v-else-if="scope.row.come == 1 && (Edit != scope.$index)">出</span>
@@ -1127,7 +1197,7 @@
 								</template>
                         </el-table-column>
 						
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column prop="idCard" label="身份证号码" width="180">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1138,7 +1208,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="temp" label="体温">
+                        <el-table-column prop="temp" label="体温" width="60">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1176,41 +1246,87 @@
                                     </el-option>
                                 </el-select>
                             </el-col>
-
-                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come'">
+                    
+                            <el-col :xs="24" :sm="15" :md="12" v-if="!(tmpFilter.indexOf('Time') != -1) && tmpFilter != 'come' && tmpFilter!='areaLevel'">
                                 <el-input v-model="tmpArg" placeholder="请输入搜索内容"></el-input>
                             </el-col>
-
+                    
+                    		<div v-else-if="tmpFilter == 'areaLevel'">
+                    			<el-col :xs="24" :sm="24" :md="24">
+                    			</el-col>
+                    			
+                    			<el-col :xs="24" :sm="12" :md="12">
+                    			    <el-input v-model="tmpArg" placeholder="请输入姓名或身份证号码搜索"></el-input>
+                    			</el-col>
+                    			
+                    			<el-col :xs="24" :sm="12" :md="12">
+                    			    <el-date-picker class="w-100" v-model="tmpArg2" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                    			    </el-date-picker>
+                    			</el-col>
+                    			
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpProvince" filterable placeholder="请选择省份" @change="(v)=>{tmpCity = '';tmpCityList = [];tmpArea = '';tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    			        <el-option :label="t.label" :value="t.value" v-for="t in tmpProvinceList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpCity" filterable placeholder="请选择城市" @change="(v)=>{tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    			        <el-option :label="t.label" :value="t.value" v-for="t in tmpCityList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpArea" filterable placeholder="请选择区" @change="(v)=>{tmpRowList = [];tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    			        <el-option :label="t.label" :value="t.value" v-for="t in tmpAreaList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="6" >
+                    			    <el-select class="w-100" v-model="tmpRow" filterable placeholder="请选择街道" @change="(v)=>{tmpPlace = '';tmpPlaceList = [];tmpDevice = '';tmpDeviceList = [];getArea2(v);getPlace3(v)}">
+                    					<el-option :label="t.label" :value="t.value" v-for="t in tmpRowList" :key="t.label"></el-option>
+                    			    </el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="10">
+                    				<el-select class="w-100" v-model="tmpPlace" filterable placeholder="请选择场所" @change="(v)=>{tmpDevice = '';tmpDeviceList = [];getDevice(v)}">
+                    				    <el-option :label="t.label" :value="t.value" v-for="t in tmpPlaceList" :key="t.label"></el-option>
+                    				</el-select>
+                    			</el-col>
+                    			<el-col :xs="24" :sm="12" :md="10">
+                    				<el-select class="w-100" v-model="tmpDevice" filterable placeholder="请选择设备">
+                    				    <el-option :label="t.label" :value="t.value" v-for="t in tmpDeviceList" :key="t.label"></el-option>
+                    				</el-select>
+                    			</el-col>
+                    		</div>
+                    
+                    
                             <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter == 'come'">
                                 <el-select class="w-100" v-model="tmpArg" filterable placeholder="请选择条件">
                                     <el-option label="进" value="0"></el-option>
                                     <el-option label="出" value="1"></el-option>
                                 </el-select>
                             </el-col>
-
+                    
                             <el-col :xs="24" :sm="15" :md="12" v-else-if="tmpFilter != 'betweenTime'">
                                 <el-date-picker class="w-100" v-model="tmpArg" type="datetime" placeholder="选择日期时间">
                                 </el-date-picker>
                             </el-col>
-
+                    
                             <el-col :xs="24" :sm="15" :md="12" v-else>
                                 <el-date-picker class="w-100" v-model="tmpArg2" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
                                 </el-date-picker>
                             </el-col>
-
+                    
                             <el-col :xs="24" :sm="24" :md="4">
                                 <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
                             </el-col>
-
+                    
                         </el-row>
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="时间">
+                        <el-table-column prop="time" label="出入时间" width="160">
                         </el-table-column>
                         <el-table-column prop="name" label="姓名">
                         </el-table-column>
-                        <el-table-column label="出入记录">
+                        <el-table-column label="出入记录" width="80">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0">进</span>
 									<span v-if="scope.row.come == 1">出</span>
@@ -1222,9 +1338,9 @@
                         </el-table-column>
 						<el-table-column prop="device" label="登记设备">
 						</el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column prop="idCard" label="身份证号码" width="180">
                         </el-table-column>
-                        <el-table-column prop="temp" label="体温">
+                        <el-table-column prop="temp" label="体温" width="60">
                         </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
@@ -2660,9 +2776,15 @@
                         }, {
                             label: '身份证号码',
                             value: 'idCard'
-                        }, {
-                            label: '区域/场所',
+                        },{
+                            label: '区域/场所名称',
                             value: 'area'
+                        },  {
+                            label: '设备名称',
+                            value: 'deviceName'
+                        }, {
+                            label: '区域/场所/设备',
+                            value: 'areaLevel'
                         }, ],
                         '车辆': [{
                             label: '车牌号码',
@@ -3113,7 +3235,10 @@
 					tmpRowList:[],
 					tmpRow:"",
 					tmpDeviceList:[],
-					tmpDevice:''
+					tmpDevice:'',
+					
+					tmpIdCard:"",
+					tmpName:"",
                 }
             },
             methods: {
@@ -3830,6 +3955,80 @@
                         management.tmpPlaceLoad = false
                     })
                 },
+				getPlace3(v) {
+					if(v != '0')
+					{
+						for(;v.length<12;)
+						{
+							v+='0'
+						}
+					}
+
+				    axios.post('./System/Core/Management.php', Qs.stringify({
+				        "getPlaceList": '',
+				        'page': 1,
+				        'num': '9999999999999',
+				        'filter': 'areaCode',
+				        'arg': v
+				    }), ).then(function(res) {
+				        res.data = res.data.slice(1)
+				        for( x in res.data)
+				        {
+				        	management.tmpPlaceList.push({'label':res.data[x].name,"value":res.data[x].place})
+				        }
+						tmpDeviceList=[]
+						tmpDevice=''
+				    })
+				},
+				getDevice(p)
+				{
+					if(management.tmpProvince == '0')
+					{
+						a = '0'
+					}
+					else
+					{
+						if(management.tmpRow.length != 0)
+						{
+							a = management.tmpRow
+						}
+						else{
+							if(management.tmpArea.length != 0)
+							{
+								a = management.tmpArea
+							}
+							else{
+								if(management.tmpCity.length != 0)
+								{
+									a = management.tmpCity
+								}
+								else{
+									a = management.tmpProvince
+								}
+							}
+						}
+						for(;a.length<12;)
+						{
+							a+='0'
+						}
+					}
+					axios.post('./System/Core/Management.php', Qs.stringify({
+					    "getDeviceList": '',
+					    'page': 1,
+					    'num': '9999999999999',
+					    'filter': 'areaLevel',
+					    'arg': JSON.stringify({
+					            'area': a,
+					            "place": p
+					        })
+					}), ).then(function(res) {
+					    res.data = res.data.slice(1)
+					    for( x in res.data)
+					    {
+					    	management.tmpDeviceList.push({'label':res.data[x].name,"value":res.data[x].deviceId})
+					    }
+					})
+				},
 				getArea2(v='') {
 					// tmpProvinceList=[]
 					// tmpProvince=""
@@ -3852,6 +4051,7 @@
 						    'arg': '1'
 						}), ).then(function(res) {
 						    res.data = res.data.slice(1)
+							management.tmpProvinceList.push({'label':'全国',"value":'0'})
 							for(x in res.data)
 							{
 								management.tmpProvinceList.push({'label':res.data[x].name,"value":res.data[x].area.substr(0,2)})
@@ -4284,7 +4484,82 @@
                 search(Tab) {
                     console.log(Tab)
                     management.filter = management.tmpFilter
-                    if (management.filter.indexOf('Time') == -1) {
+					if(management.tmpFilter == 'areaLevel')
+					{
+						if(management.tmpProvince == '0')
+						{
+							a = '0'
+						}
+						else
+						{
+							if(management.tmpRow.length != 0)
+							{
+								a = management.tmpRow
+							}
+							else{
+								if(management.tmpArea.length != 0)
+								{
+									a = management.tmpArea
+								}
+								else{
+									if(management.tmpCity.length != 0)
+									{
+										a = management.tmpCity
+									}
+									else{
+										a = management.tmpProvince
+									}
+								}
+							}
+						}
+						
+						if(management.tmpArg2.length != 0)
+						{
+							if(management.tmpDevice.length != 0)
+							{
+								management.arg = JSON.stringify({
+								    'area': a,
+								    "place": management.tmpPlace,
+									"device":management.tmpDevice,
+									"idCard":management.tmpIdCard,
+												"name":management.tmpName,
+									'startTime': management.getTime(management.tmpArg2[0].getTime()),
+									"endTime": management.getTime(management.tmpArg2[1].getTime())
+								})
+							}else{
+								management.arg = JSON.stringify({
+								    'area': a,
+								    "place": management.tmpPlace,
+									"idCard":management.tmpIdCard,
+												"name":management.tmpName,
+									'startTime': management.getTime(management.tmpArg2[0].getTime()),
+									"endTime": management.getTime(management.tmpArg2[1].getTime())
+								})
+							}
+						}
+						else{
+							if(management.tmpDevice.length != 0)
+							{
+								management.arg = JSON.stringify({
+								    'area': a,
+								    "place": management.tmpPlace,
+									"device":management.tmpDevice,
+									"idCard":management.tmpIdCard,
+												"name":management.tmpName,
+								})
+							}else{
+								management.arg = JSON.stringify({
+								    'area': a,
+								    "place": management.tmpPlace,
+									"idCard":management.tmpIdCard,
+												"name":management.tmpName,
+								})
+							}
+						}
+						
+						
+					}
+                    else if (management.filter.indexOf('Time') == -1) {
                         management.arg = management.tmpArg
                     } else {
                         if (management.tmpArg2 == '') {
@@ -4559,6 +4834,8 @@
 					management.Place=''
 					management.tmpDeviceList=[]
 					management.tmpDevice=''
+					management.tmpIdCard = ""
+					management.tmpName = ""
                     switch (tab) {
                         case "控制面板":
                             if (management.rolePermission['searchCar'] == '1') {

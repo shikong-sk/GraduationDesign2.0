@@ -199,6 +199,12 @@ class  ManagementClass
                 case 'status': $query .= "AND d.status LIKE '%$arg%'";break;
                 case 'name': $query .= "AND d.name LIKE '%$arg%'";break;
                 case 'area': $query .= "AND (a.name LIKE '%$arg%' OR p.name LIKE '%$arg%')";break;
+                case 'areaLevel' :
+                    //  JSON格式{"area":"4405","place":"00000"}
+                    $json = json_decode($arg,true);
+                    if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+                    $query .= "AND d.area = '".$json['area']."' AND d.place = '".$json['place']."'";
+                    break;
                 default:
                     return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
             }
@@ -229,7 +235,7 @@ class  ManagementClass
         $page = ($page - 1) * $num;
 //        $query = "SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,d.name device FROM $this->personnelTable pe,$this->areaTable a,$this->placeTable p,$this->deviceTable d WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code AND d.area = pe.area AND d.place = pe.place AND pe.device = d.deviceID";
 
-        $query = "SELECT pe.*,d.name device FROM (SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,pe.device deviceID FROM $this->areaTable a,$this->placeTable p,$this->personnelTable pe WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code ";
+        $query = "SELECT * FROM (SELECT pe.*,d.name device FROM (SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,pe.device deviceID FROM $this->areaTable a,$this->placeTable p,$this->personnelTable pe WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code ";
 
         if(strlen($filter) != 0)
         {
@@ -248,14 +254,29 @@ class  ManagementClass
                 case 'come': $query .= "AND pe.come LIKE '%$arg%'";break;
                 case 'name': $query .= "AND pe.name LIKE '%$arg%'";break;
                 case 'area': $query .= "AND (a.name LIKE '%$arg%' OR p.name LIKE '%$arg%')";break;
+                case 'deviceName':
+                    $query .= "AND LENGTH(TRIM(pe.device)) != 0 AND pe.device is not null";
+                    $last_query = "WHERE pe.device LIKE '%$arg%'";
+                    break;
                 case 'areaLevel' :
-                    //  JSON格式{"area":"4405","place":"00000","device":""}
+                    //  JSON格式{"area":"4405","place":"00000","device":"","startTime":"2020-03-02 00:00:00","endTime":"2020-03-03 23:59:59"}
                     $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
-                    $query .= "WHERE d.deviceID IN (SELECT deviceID FROM $this->deviceTable WHERE area LIKE '".$json['area']."%' AND place LIKE '".$json['place']."%')";
+                    $tmp_query = "WHERE d.deviceID IN (SELECT deviceID FROM $this->deviceTable WHERE area LIKE '".$json['area']."%' AND place LIKE '".$json['place']."%')";
                     if(isset($json['device']) && strlen($json['device'])!=0 )
                     {
-                        $query .= "AND d.device = '".$json['device']."'";
+                        $tmp_query .= " AND d.deviceId = '".$json['device']."'";
+                    }
+                    if(isset($json['name']) && strlen($json['name']) != 0)
+                    {
+                        $query .= " AND pe.name LIKE '%".$json['name']."%'";
+                    }
+                    if(isset($json['idCard']) && strlen($json['idCard']) != 0){
+                        $query .= " AND pe.idCard LIKE '%".$json['idCard']."%'";
+                    }
+                    if(isset($json['startTime']) && strlen($json['startTime']) != 0 && isset($json['endTime']) && strlen($json['endTime']) != 0)
+                    {
+                        $query .= " AND pe.time > '".$json["startTime"]."' AND pe.time < '".$json["endTime"]."'";
                     }
                     break;
                 default:
@@ -264,11 +285,24 @@ class  ManagementClass
         }
 
         $query.=" ) pe LEFT JOIN $this->deviceTable d ON pe.deviceID = d.deviceID";
+
+        if(isset($tmp_query))
+        {
+            $query .= ' ' . $tmp_query;
+        }
+
+        $query .= ") pe";
+        if(isset($last_query))
+        {
+            $query .= ' ' . $last_query;
+        }
+
         $count = $this->db->database->query($query)->num_rows;
         $json = Array('0'=>$count);
 
-        $query .= " order by pe.time DESC LIMIT $page,$num";
+        $query .=" order by pe.time DESC LIMIT $page,$num";
 
+//        echo $query;
         $res = $this->db->database->query($query);
         $resNum = 0;
 
