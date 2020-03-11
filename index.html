@@ -949,30 +949,32 @@
 								<el-col :xs="24" :sm="24" :md="24" >
 								</el-col>
 								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpProvince" filterable placeholder="请选择省份">
-								        <el-option label="进" value="0"></el-option>
-								        <el-option label="出" value="1"></el-option>
+								    <el-select class="w-100" v-model="tmpProvince" filterable placeholder="请选择省份" @change="(v)=>{tmpCity = '';tmpCityList = [];tmpArea = '';tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+								        <el-option :label="t.label" :value="t.value" v-for="t in tmpProvinceList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
 								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpCity" filterable placeholder="请选择城市">
-								        <el-option label="进" value="0"></el-option>
-								        <el-option label="出" value="1"></el-option>
+								    <el-select class="w-100" v-model="tmpCity" filterable placeholder="请选择城市" @change="(v)=>{tmpAreaList = [];tmpRow = '';tmpRowList = [];tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+								        <el-option :label="t.label" :value="t.value" v-for="t in tmpCityList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
 								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpArea" filterable placeholder="请选择区">
-								        <el-option label="进" value="0"></el-option>
-								        <el-option label="出" value="1"></el-option>
+								    <el-select class="w-100" v-model="tmpArea" filterable placeholder="请选择区" @change="(v)=>{tmpRowList = [];tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+								        <el-option :label="t.label" :value="t.value" v-for="t in tmpAreaList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
 								<el-col :xs="24" :sm="12" :md="6" >
-								    <el-select class="w-100" v-model="tmpRow" filterable placeholder="请选择街道">
-								        <el-option label="进" value="0"></el-option>
-								        <el-option label="出" value="1"></el-option>
+								    <el-select class="w-100" v-model="tmpRow" filterable placeholder="请选择街道" @change="(v)=>{tmpPlace = '';tmpPlaceList = [];getArea2(v);}">
+										<el-option :label="t.label" :value="t.value" v-for="t in tmpRowList" :key="t.label"></el-option>
 								    </el-select>
 								</el-col>
-								<el-col :xs="24" :sm="24" :md="20">
+								<el-col :xs="24" :sm="12" :md="10">
+									<el-select class="w-100" v-model="tmpDevice" filterable placeholder="请选择场所">
+									    <el-option label="进" value="0"></el-option>
+									    <el-option label="出" value="1"></el-option>
+									</el-select>
+								</el-col>
+								<el-col :xs="24" :sm="12" :md="10">
 									<el-select class="w-100" v-model="tmpDevice" filterable placeholder="请选择设备">
 									    <el-option label="进" value="0"></el-option>
 									    <el-option label="出" value="1"></el-option>
@@ -3099,6 +3101,9 @@
                         }],
                     },
 					
+					tmpPlaceList:[],
+					tmpPlace:"",
+					
 					tmpProvinceList:[],
 					tmpProvince:"",
 					tmpCityList:[],
@@ -3825,31 +3830,114 @@
                         management.tmpPlaceLoad = false
                     })
                 },
-				getArea2() {
-					tmpProvinceList=[]
-					tmpProvince=""
-					tmpCityList=[]
-					tmpCity=''
-					tmpAreaList=[]
-					tmpArea=''
-					tmpRowList=[]
-					tmpRow=""
-					tmpDeviceList=[]
-					tmpDevice=''
-				    // management.tmpAreaLoad = true
-				    // axios.post('./System/Core/Management.php', Qs.stringify({
-				    //     "getAreaList": '',
-				    //     'page': 1,
-				    //     'num': 20,
-				    //     'filter': 'level',
-				    //     'arg': arg
-				    // }), ).then(function(res) {
-				    //     res.data = res.data.slice(1)
-				    //     management.tmpAreaFilter = res.data
-				    //     management.tmpPlaceFilter = []
-				    //     management.tmpAreaLoad = false
-				    //         // management.getPlace(scope,res.data[0].area)
-				    // })
+				getArea2(v='') {
+					// tmpProvinceList=[]
+					// tmpProvince=""
+					// tmpCityList=[]
+					// tmpCity=''
+					// tmpAreaList=[]
+					// tmpArea=''
+					// tmpRowList=[]
+					// tmpRow=""
+					// tmpDeviceList=[]
+					// tmpDevice=''
+					// 11 01 19 001 000
+					// 省 市 区 街道 居委
+					if(management.tmpProvinceList.length==0){
+						axios.post('./System/Core/Management.php', Qs.stringify({
+						    "getAreaList": '',
+						    'page': 1,
+						    'num': '9999999999999',
+						    'filter': 'level',
+						    'arg': '1'
+						}), ).then(function(res) {
+						    res.data = res.data.slice(1)
+							for(x in res.data)
+							{
+								management.tmpProvinceList.push({'label':res.data[x].name,"value":res.data[x].area.substr(0,2)})
+							}
+						})
+						tmpCityList=[]
+						tmpCity=''
+						tmpAreaList=[]
+						tmpArea=''
+						tmpRowList=[]
+						tmpRow=""
+						tmpDeviceList=[]
+						tmpDevice=''
+						return
+					}
+					if(management.tmpCityList.length==0 && v.length != 0) {
+						axios.post('./System/Core/Management.php', Qs.stringify({
+						    "getAreaList": '',
+						    'page': 1,
+						    'num': '9999999999999',
+						    'filter': 'areaLevel',
+						    'arg': JSON.stringify({
+                                'level': 2,
+                                "parentCode": v
+                            })
+						}), ).then(function(res) {
+						    res.data = res.data.slice(1)
+							for(x in res.data)
+							{
+								management.tmpCityList.push({'label':res.data[x].name,"value":res.data[x].area.substr(0,4)})
+							}
+						})
+						tmpAreaList=[]
+						tmpArea=''
+						tmpRowList=[]
+						tmpRow=""
+						tmpDeviceList=[]
+						tmpDevice=''
+						return
+					}
+					if(management.tmpAreaList.length==0 && v.length != 0){
+						axios.post('./System/Core/Management.php', Qs.stringify({
+						    "getAreaList": '',
+						    'page': 1,
+						    'num': '9999999999999',
+						    'filter': 'areaLevel',
+						    'arg': JSON.stringify({
+					            'level': 3,
+					            "parentCode": v
+					        })
+						}), ).then(function(res) {
+						    res.data = res.data.slice(1)
+							for(x in res.data)
+							{
+								management.tmpAreaList.push({'label':res.data[x].name,"value":res.data[x].area.substr(0,6)})
+							}
+						})
+						tmpRowList=[]
+						tmpRow=""
+						tmpDeviceList=[]
+						tmpDevice=''
+						return
+					}
+					if(management.tmpRowList.length==0 && v.length != 0){
+						axios.post('./System/Core/Management.php', Qs.stringify({
+						    "getAreaList": '',
+						    'page': 1,
+						    'num': '9999999999999',
+						    'filter': 'areaLevel',
+						    'arg': JSON.stringify({
+					            'level': 4,
+					            "parentCode": v
+					        })
+						}), ).then(function(res) {
+						    res.data = res.data.slice(1)
+							for(x in res.data)
+							{
+								management.tmpRowList.push({'label':res.data[x].name,"value":res.data[x].area.substr(0,9)})
+							}
+						})
+						tmpDeviceList=[]
+						tmpDevice=''
+						return
+					}
+					console.log(666)
+				    
 				},
                 getArea(arg) {
                     management.tmpAreaLoad = true
@@ -4459,6 +4547,18 @@
                     management.tmpFilter = ""
                     management.tmpArg = ""
                     management.tmpArg2 = ""
+					management.tmpProvinceList=[]
+					management.tmpProvince=""
+					management.tmpCityList=[]
+					management.tmpCity=''
+					management.tmpAreaList=[]
+					management.tmpArea=''
+					management.tmpRowList=[]
+					management.tmpRow=""
+					management.PlaceList=[]
+					management.Place=''
+					management.tmpDeviceList=[]
+					management.tmpDevice=''
                     switch (tab) {
                         case "控制面板":
                             if (management.rolePermission['searchCar'] == '1') {
@@ -4607,6 +4707,11 @@
                         case "删除人员":
                         case "更新人员":
                         case "查看人员":
+							
+							
+							
+							
+							this.getArea2()
                             axios.post('./System/Core/Management.php', Qs.stringify({
                                 "getPersonnelList": '',
                                 'page': management.page,

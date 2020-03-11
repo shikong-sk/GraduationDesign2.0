@@ -222,13 +222,14 @@ class  ManagementClass
 
     public function getPersonnelList($page, $num, $filter,$arg)
     {
+        error_reporting(2);
         if (!$this->rolePermission->checkSearchPersonnel()) {
             return json_encode(Array('error' => '查询失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
         $page = ($page - 1) * $num;
 //        $query = "SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,d.name device FROM $this->personnelTable pe,$this->areaTable a,$this->placeTable p,$this->deviceTable d WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code AND d.area = pe.area AND d.place = pe.place AND pe.device = d.deviceID";
 
-        $query = "SELECT pe.*,d.name device FROM (SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,pe.device deviceID FROM $this->areaTable a,$this->placeTable p,$this->personnelTable pe WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code) pe LEFT JOIN $this->deviceTable d ON pe.deviceID = d.deviceID";
+        $query = "SELECT pe.*,d.name device FROM (SELECT pe.time,pe.name,a.name area,p.name place,pe.idCard,pe.come,pe.temp,pe.device deviceID FROM $this->areaTable a,$this->placeTable p,$this->personnelTable pe WHERE pe.area = a.code AND pe.place = p.id AND pe.area = p.area AND p.area = a.code ";
 
         if(strlen($filter) != 0)
         {
@@ -247,11 +248,22 @@ class  ManagementClass
                 case 'come': $query .= "AND pe.come LIKE '%$arg%'";break;
                 case 'name': $query .= "AND pe.name LIKE '%$arg%'";break;
                 case 'area': $query .= "AND (a.name LIKE '%$arg%' OR p.name LIKE '%$arg%')";break;
+                case 'areaLevel' :
+                    //  JSON格式{"area":"4405","place":"00000","device":""}
+                    $json = json_decode($arg,true);
+                    if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+                    $query .= "WHERE d.deviceID IN (SELECT deviceID FROM $this->deviceTable WHERE area LIKE '".$json['area']."%' AND place LIKE '".$json['place']."%')";
+                    if(isset($json['device']) && strlen($json['device'])!=0 )
+                    {
+                        $query .= "AND d.device = '".$json['device']."'";
+                    }
+                    break;
                 default:
                     return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
             }
         }
 
+        $query.=" ) pe LEFT JOIN $this->deviceTable d ON pe.deviceID = d.deviceID";
         $count = $this->db->database->query($query)->num_rows;
         $json = Array('0'=>$count);
 
@@ -283,6 +295,12 @@ class  ManagementClass
             switch ($filter){
                 case 'name': $query .= "AND name LIKE '%$arg%'"; $count .= "AND name LIKE '%$arg%'";break;
                 case 'level': $query .= "AND level = $arg"; $count .= "AND level = $arg";break;
+                case 'areaLevel' :
+                    $json = json_decode($arg,true);
+                    if(!$json) return json_encode(Array('error' => '查询参数错误，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+                    $query .= " AND level = '".$json['level']."' AND parentCode LIKE '".$json['parentCode']."%'";
+                    $count .= " AND level = '".$json['level']."' AND parentCode LIKE '".$json['parentCode']."%'";
+                    break;
                 default:
                     return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
             }
