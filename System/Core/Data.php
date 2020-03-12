@@ -7,6 +7,9 @@ if(isset($_POST['device']) && isset($_POST['deviceName']) && isset($_POST['area'
     if(isset($_POST['pushPersonnel']) && isset($_POST['time']) && isset($_POST['name']) && isset($_POST['idCard']) && isset($_POST['come'])){
         die($device->pushPersonnel($_POST['time'],$_POST['name'],$_POST['idCard'],$_POST['come'],$_POST['temp']));
     }
+    if(isset($_POST['pushCar']) && isset($_POST['time']) && isset($_POST['licensePlate']) && isset($_POST['come'])){
+        die($device->pushCar($_POST['time'],$_POST['licensePlate'],$_POST['come']));
+    }
     die(json_encode(Array('error' => '操作失败，参数错误'), JSON_UNESCAPED_UNICODE));
 }
 else{

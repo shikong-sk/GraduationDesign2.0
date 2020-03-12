@@ -84,26 +84,64 @@ class  ManagementClass
             return json_encode(Array('error' => '查询失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        $query = "SELECT c.time,c.licensePlate,a.name area,p.name place,c.come FROM $this->carTable c,$this->areaTable a,$this->placeTable p WHERE c.area = a.code AND c.place = p.id AND c.area = p.area AND p.area = a.code ";
+//        $query = "SELECT c.time,c.licensePlate,a.name area,p.name place,c.come FROM $this->carTable c,$this->areaTable a,$this->placeTable p WHERE c.area = a.code AND c.place = p.id AND c.area = p.area AND p.area = a.code ";
+
+        $query = "SELECT * FROM (SELECT c.*,d.name device FROM (SELECT c.time,c.licensePlate,a.name area,p.name place,c.come,c.device deviceID FROM $this->areaTable a,$this->placeTable p,$this->carTable c WHERE c.area = a.code AND c.place = p.id AND c.area = p.area AND p.area = a.code ";
+
 
         $page = ($page - 1) * $num;
         if(strlen($filter) != 0)
         {
             switch ($filter){
-                case 'beforeTime': $query .= "AND c.time < '".base64_decode($arg)."'";break;//  base 64 加解密
-                case 'afterTime': $query .= "AND c.time > '".base64_decode($arg)."'";break;
+                case 'beforeTime': $query .= "AND c.time < '".$arg."'";break;//  base 64 加解密
+                case 'afterTime': $query .= "AND c.time > '".$arg."'";break;
                 case 'betweenTime':
                     //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"} base 64 加解密
-                    $json = json_decode(base64_decode($arg),true);
+                    $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
                     $query .= "AND c.time > '".$json["startTime"]."' AND c.time < '".$json["endTime"]."'";
                     break;
                 case 'licensePlate': $query .= "AND c.licensePlate LIKE '%$arg%'";break;
                 case 'come': $query .= "AND c.come LIKE '%$arg%'";break;
                 case 'area': $query .= "AND (a.name LIKE '%$arg%' OR p.name LIKE '%$arg%')";break;
+                case 'deviceName':
+                    $query .= "AND LENGTH(TRIM(c.device)) != 0 AND c.device is not null";
+                    $last_query = "WHERE c.device LIKE '%$arg%'";
+                    break;
+                case 'areaLevel' :
+                    //  JSON格式{"area":"4405","place":"00000","device":"","startTime":"2020-03-02 00:00:00","endTime":"2020-03-03 23:59:59"}
+                    $json = json_decode($arg,true);
+                    if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+                    $tmp_query = "WHERE d.deviceID IN (SELECT deviceID FROM $this->deviceTable WHERE area LIKE '".$json['area']."%' AND place LIKE '".$json['place']."%')";
+                    if(isset($json['device']) && strlen($json['device'])!=0 )
+                    {
+                        $tmp_query .= " AND d.deviceId = '".$json['device']."'";
+                    }
+                    if(isset($json['licensePlate']) && strlen($json['licensePlate']) != 0)
+                    {
+                        $query .= " AND c.licensePlate LIKE '%".$json['licensePlate']."%'";
+                    }
+                    if(isset($json['startTime']) && strlen($json['startTime']) != 0 && isset($json['endTime']) && strlen($json['endTime']) != 0)
+                    {
+                        $query .= " AND c.time > '".$json["startTime"]."' AND c.time < '".$json["endTime"]."'";
+                    }
+                    break;
                 default:
                     return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
             }
+        }
+
+        $query.=" ) c LEFT JOIN $this->deviceTable d ON c.deviceID = d.deviceID";
+
+        if(isset($tmp_query))
+        {
+            $query .= ' ' . $tmp_query;
+        }
+
+        $query .= ") c";
+        if(isset($last_query))
+        {
+            $query .= ' ' . $last_query;
         }
 
         $count = $this->db->database->query($query)->num_rows;
@@ -187,11 +225,11 @@ class  ManagementClass
         if(strlen($filter) != 0)
         {
             switch ($filter){
-                case 'beforeTime': $query .= "AND d.liveTime < '".base64_decode($arg)."'";break;//  base 64 加解密
-                case 'afterTime': $query .= "AND d.liveTime > '".base64_decode($arg)."'";break;
+                case 'beforeTime': $query .= "AND d.liveTime < '".$arg."'";break;//  base 64 加解密
+                case 'afterTime': $query .= "AND d.liveTime > '".$arg."'";break;
                 case 'betweenTime':
                     //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"} base 64 加解密
-                    $json = json_decode(base64_decode($arg),true);
+                    $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
                     $query .= "AND d.liveTime > '".$json["startTime"]."' AND d.liveTime < '".$json["endTime"]."'";
                     break;
@@ -203,7 +241,7 @@ class  ManagementClass
                     //  JSON格式{"area":"4405","place":"00000"}
                     $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
-                    $query .= "AND d.area = '".$json['area']."' AND d.place = '".$json['place']."'";
+                    $query .= "AND d.area LIKE '".$json['area']."%' AND d.place LIKE '%".$json['place']."%' AND d.name LIKE '%".$json['deviceName']."%'";
                     break;
                 default:
                     return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
@@ -240,11 +278,11 @@ class  ManagementClass
         if(strlen($filter) != 0)
         {
             switch ($filter){
-                case 'beforeTime': $query .= "AND pe.time < '".base64_decode($arg)."'";break;//  base 64 加解密
-                case 'afterTime': $query .= "AND pe.time > '".base64_decode($arg)."'";break;
+                case 'beforeTime': $query .= "AND pe.time < '".$arg."'";break;//  base 64 加解密
+                case 'afterTime': $query .= "AND pe.time > '".$arg."'";break;
                 case 'betweenTime':
                     //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"} base 64 加解密
-                    $json = json_decode(base64_decode($arg),true);
+                    $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
                     $query .= "AND pe.time > '".$json["startTime"]."' AND pe.time < '".$json["endTime"]."'";
                     break;
@@ -372,6 +410,10 @@ class  ManagementClass
                 case 'name': $query .= "AND p.name LIKE '%$arg%'";$count .= "AND p.name LIKE '%$arg%'";break;
                 case 'area': $query .= "AND (a.name LIKE '%$arg%')";$count .= "AND p.name LIKE '%$arg%'";break;
                 case 'areaCode': $query .= "AND a.code = '$arg'";$count .= "AND a.code = '$arg'";break;
+                case 'areaPlaceName':
+                    $json = json_decode($arg,true);
+                    if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+                    $query .= "AND a.code LIKE '".$json['area']."%' AND p.name LIKE '%".$json['place']."%'";$count .= "AND a.code LIKE '".$json['area']."%' AND p.name LIKE '%".$json['name']."%'";break;
                 default:
                     return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
             }
@@ -384,6 +426,7 @@ class  ManagementClass
         $res = $this->db->database->query($query);
         $resNum = 0;
 
+//        echo $query;
         while ($res->data_seek($resNum)) {
             $data = $res->fetch_assoc();
             array_push($json, $data);
@@ -803,7 +846,7 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        $time = base64_decode($time);
+        $time = $time;
 
         if ( strlen($time) == 0|| strlen($licensePlate) < 7 || strlen($area) == 0 || strlen($place) == 0 || strlen($come) == 0 ) {
             return json_encode(Array('success' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
@@ -835,7 +878,7 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        $time = base64_decode($time);
+        $time = $time;
 
 //        if (strlen($time) == 0 || strlen($name) == 0 || floatval($temp) <= 0 || floatval($temp) >= 100 || strlen($idCard) == 0 || strlen($area) == 0 || strlen($place) == 0 || strlen($come) == 0 || intval($come) < 0 || intval($come) > 1) {
 //            return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
@@ -1026,7 +1069,7 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        $time = base64_decode($time);
+        $time = $time;
 
         if (strlen($time) == 0 || strlen($licensePlate) < 7) {
             return json_encode(Array('success' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
@@ -1070,7 +1113,7 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        $time = base64_decode($time);
+        $time = $time;
 
         if (strlen($time) == 0 || strlen($name) == 0 || strlen($idCard) == 0) {
             return json_encode(Array('error' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
