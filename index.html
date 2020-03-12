@@ -199,18 +199,18 @@
 
                         <p class="text-center">最近活动过的10台设备</p>
                         <el-table border :data="DeviceData" style="width: 100%" v-if="DeviceData">
-                            <el-table-column prop="deviceId" label="设备ID">
+                            <el-table-column show-overflow-tooltip prop="deviceId" label="设备ID">
                             </el-table-column>
-                            <el-table-column prop="name" label="设备名称">
+                            <el-table-column show-overflow-tooltip prop="name" label="设备名称">
                             </el-table-column>
-                            <el-table-column label="设备状态">
+                            <el-table-column show-overflow-tooltip label="设备状态">
                                 <template slot-scope="scope">
 										<span v-if="scope.row.status == 0">离线</span>
 										<span v-if="scope.row.status == 1">在线</span>
 										<span v-if="scope.row.status == 8">异常</span>
 									</template>
                             </el-table-column>
-                            <el-table-column prop="liveTime" label="最后活动时间">
+                            <el-table-column show-overflow-tooltip prop="liveTime" label="最后活动时间">
                             </el-table-column>
                         </el-table>
                     </div>
@@ -246,18 +246,18 @@
                         <div v-if="rolePermission['searchDevice'] == '1'">
                             <p class="text-center">最近活动过的10台设备</p>
                             <el-table border :data="DeviceData" style="width: 100%" v-if="DeviceData">
-                                <el-table-column prop="deviceId" label="设备ID">
+                                <el-table-column show-overflow-tooltip prop="deviceId" label="设备ID">
                                 </el-table-column>
-                                <el-table-column prop="name" label="设备名称">
+                                <el-table-column show-overflow-tooltip prop="name" label="设备名称">
                                 </el-table-column>
-                                <el-table-column label="设备状态">
+                                <el-table-column show-overflow-tooltip label="设备状态">
                                     <template slot-scope="scope">
 											<span v-if="scope.row.status == 0">离线</span>
 											<span v-if="scope.row.status == 1">在线</span>
 											<span v-if="scope.row.status == 8">异常</span>
 										</template>
                                 </el-table-column>
-                                <el-table-column prop="liveTime" label="最后活动时间">
+                                <el-table-column show-overflow-tooltip prop="liveTime" label="最后活动时间">
                                 </el-table-column>
                             </el-table>
                         </div>
@@ -318,27 +318,27 @@
                         </el-row>
                     </div>
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="id" label="用户ID">
+                        <el-table-column show-overflow-tooltip prop="id" label="用户ID">
                         </el-table-column>
-                        <el-table-column prop="userName" label="用户名">
+                        <el-table-column show-overflow-tooltip prop="userName" label="用户名">
                         </el-table-column>
-                        <el-table-column prop="phone" label="联系方式">
+                        <el-table-column show-overflow-tooltip prop="phone" label="联系方式">
                         </el-table-column>
-                        <el-table-column prop="address" label="联系地址">
+                        <el-table-column show-overflow-tooltip prop="address" label="联系地址">
                         </el-table-column>
-                        <el-table-column prop="email" label="邮箱地址">
+                        <el-table-column show-overflow-tooltip prop="email" label="邮箱地址">
                         </el-table-column>
-                        <el-table-column prop="role" label="用户组">
+                        <el-table-column show-overflow-tooltip prop="role" label="用户组">
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="sex" label="性别">
+                        <el-table-column show-overflow-tooltip prop="sex" label="性别">
                         </el-table-column>
-                        <el-table-column prop="realName" label="真实姓名">
+                        <el-table-column show-overflow-tooltip prop="realName" label="真实姓名">
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码">
                         </el-table-column>
                     </el-table>
                     <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
@@ -366,29 +366,29 @@
                         </el-row>
                     </div>
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="id" label="用户ID">
+                        <el-table-column show-overflow-tooltip prop="id" label="用户ID">
                         </el-table-column>
-                        <el-table-column prop="userName" label="用户名">
+                        <el-table-column show-overflow-tooltip prop="userName" label="用户名">
                         </el-table-column>
-                        <el-table-column prop="phone" label="联系方式">
+                        <el-table-column show-overflow-tooltip prop="phone" label="联系方式">
                         </el-table-column>
-                        <el-table-column prop="address" label="联系地址">
+                        <el-table-column show-overflow-tooltip prop="address" label="联系地址">
                         </el-table-column>
-                        <el-table-column prop="email" label="邮箱地址">
+                        <el-table-column show-overflow-tooltip prop="email" label="邮箱地址">
                         </el-table-column>
-                        <el-table-column prop="role" label="用户组">
+                        <el-table-column show-overflow-tooltip prop="role" label="用户组">
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="sex" label="性别">
+                        <el-table-column show-overflow-tooltip prop="sex" label="性别">
                         </el-table-column>
-                        <el-table-column prop="realName" label="真实姓名">
+                        <el-table-column show-overflow-tooltip prop="realName" label="真实姓名">
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码">
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
@@ -491,11 +491,11 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="id" label="用户ID">
+                        <el-table-column show-overflow-tooltip prop="id" label="用户ID">
                         </el-table-column>
-                        <el-table-column prop="userName" label="用户名">
+                        <el-table-column show-overflow-tooltip prop="userName" label="用户名">
                         </el-table-column>
-                        <el-table-column label="联系方式">
+                        <el-table-column show-overflow-tooltip label="联系方式">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -506,7 +506,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="联系地址">
+                        <el-table-column show-overflow-tooltip label="联系地址">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -517,7 +517,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="email" label="邮箱地址">
+                        <el-table-column show-overflow-tooltip prop="email" label="邮箱地址">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -528,7 +528,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="用户组">
+                        <el-table-column show-overflow-tooltip label="用户组">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -543,7 +543,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -558,7 +558,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -574,7 +574,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="sex" label="性别">
+                        <el-table-column show-overflow-tooltip prop="sex" label="性别">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -589,7 +589,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="realName" label="真实姓名">
+                        <el-table-column show-overflow-tooltip prop="realName" label="真实姓名">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -600,7 +600,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -611,7 +611,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -670,24 +670,24 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="deviceId" label="设备ID">
+                        <el-table-column show-overflow-tooltip prop="deviceId" label="设备ID">
                         </el-table-column>
-                        <el-table-column prop="name" label="设备名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="设备名称">
                         </el-table-column>
-                        <el-table-column label="设备状态">
+                        <el-table-column show-overflow-tooltip label="设备状态">
                             <template slot-scope="scope">
 									<span v-if="scope.row.status == 0" class="text-danger">离线</span>
 									<span v-if="scope.row.status == 1" class="text-success">在线</span>
 									<span v-if="scope.row.status == 8">异常</span>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="liveTime" label="最后活动时间">
+                        <el-table-column show-overflow-tooltip prop="liveTime" label="最后活动时间">
                         </el-table-column>
-                        <el-table-column prop="ip" label="IP地址">
+                        <el-table-column show-overflow-tooltip prop="ip" label="IP地址">
                         </el-table-column>
                     </el-table>
                     <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
@@ -734,9 +734,9 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="deviceId" label="设备ID">
+                        <el-table-column show-overflow-tooltip prop="deviceId" label="设备ID">
                         </el-table-column>
-                        <el-table-column prop="name" label="设备名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="设备名称">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -747,7 +747,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="设备状态">
+                        <el-table-column show-overflow-tooltip label="设备状态">
                             <template slot-scope="scope">
 									<span v-if="scope.row.status == 0 && (Edit != scope.$index)">离线</span>
 									<span v-else-if="scope.row.status == 1 && (Edit != scope.$index)">在线</span>
@@ -760,7 +760,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -775,7 +775,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -791,10 +791,10 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="liveTime" label="最后活动时间">
+                        <el-table-column show-overflow-tooltip prop="liveTime" label="最后活动时间">
                         </el-table-column>
 
-                        <el-table-column prop="ip" label="IP地址">
+                        <el-table-column show-overflow-tooltip prop="ip" label="IP地址">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -806,7 +806,7 @@
 								</template>
                         </el-table-column>
 
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -864,26 +864,26 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="deviceId" label="设备ID">
+                        <el-table-column show-overflow-tooltip prop="deviceId" label="设备ID">
                         </el-table-column>
-                        <el-table-column prop="name" label="设备名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="设备名称">
                         </el-table-column>
-                        <el-table-column label="设备状态">
+                        <el-table-column show-overflow-tooltip label="设备状态">
                             <template slot-scope="scope">
 									<span v-if="scope.row.status == 0">离线</span>
 									<span v-if="scope.row.status == 1">在线</span>
 									<span v-if="scope.row.status == 8">异常</span>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="liveTime" label="最后活动时间">
+                        <el-table-column show-overflow-tooltip prop="liveTime" label="最后活动时间">
                         </el-table-column>
-                        <el-table-column prop="ip" label="IP地址">
+                        <el-table-column show-overflow-tooltip prop="ip" label="IP地址">
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
@@ -1073,25 +1073,25 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="出入时间" width="160">
+                        <el-table-column show-overflow-tooltip prop="time" label="出入时间" width="160">
                         </el-table-column>
-                        <el-table-column prop="name" label="姓名">
+                        <el-table-column show-overflow-tooltip prop="name" label="姓名">
                         </el-table-column>
-                        <el-table-column label="出入记录" width="80">
+                        <el-table-column show-overflow-tooltip label="出入记录" width="80">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0">进</span>
 									<span v-if="scope.row.come == 1">出</span>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="device" label="登记设备">
+                        <el-table-column show-overflow-tooltip prop="device" label="登记设备">
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码" width="180">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码" width="180">
                         </el-table-column>
-                        <el-table-column prop="temp" label="体温" width="60">
+                        <el-table-column show-overflow-tooltip prop="temp" label="体温" width="60">
                         </el-table-column>
                     </el-table>
 					<el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum"></el-pagination>
@@ -1235,9 +1235,9 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="出入时间" width="160">
+                        <el-table-column show-overflow-tooltip prop="time" label="出入时间" width="160">
                         </el-table-column>
-                        <el-table-column prop="name" label="姓名">
+                        <el-table-column show-overflow-tooltip prop="name" label="姓名">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1248,7 +1248,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="出入记录" width="80">
+                        <el-table-column show-overflow-tooltip label="出入记录" width="80">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0 && (Edit != scope.$index)">进</span>
 									<span v-else-if="scope.row.come == 1 && (Edit != scope.$index)">出</span>
@@ -1259,7 +1259,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1274,7 +1274,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1291,7 +1291,7 @@
 								</template>
                         </el-table-column>
 						
-                        <el-table-column prop="idCard" label="身份证号码" width="180">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码" width="180">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1302,7 +1302,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="temp" label="体温" width="60">
+                        <el-table-column show-overflow-tooltip prop="temp" label="体温" width="60">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1313,7 +1313,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -1469,27 +1469,27 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="出入时间" width="160">
+                        <el-table-column show-overflow-tooltip prop="time" label="出入时间" width="160">
                         </el-table-column>
-                        <el-table-column prop="name" label="姓名">
+                        <el-table-column show-overflow-tooltip prop="name" label="姓名">
                         </el-table-column>
-                        <el-table-column label="出入记录" width="80">
+                        <el-table-column show-overflow-tooltip label="出入记录" width="80">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0">进</span>
 									<span v-if="scope.row.come == 1">出</span>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-						<el-table-column prop="device" label="登记设备">
+						<el-table-column show-overflow-tooltip prop="device" label="登记设备">
 						</el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码" width="180">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码" width="180">
                         </el-table-column>
-                        <el-table-column prop="temp" label="体温" width="60">
+                        <el-table-column show-overflow-tooltip prop="temp" label="体温" width="60">
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
@@ -1683,21 +1683,21 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="时间">
+                        <el-table-column show-overflow-tooltip prop="time" label="时间">
                         </el-table-column>
-                        <el-table-column prop="licensePlate" label="车牌号码">
+                        <el-table-column show-overflow-tooltip prop="licensePlate" label="车牌号码">
                         </el-table-column>
-                        <el-table-column label="出入记录">
+                        <el-table-column show-overflow-tooltip label="出入记录">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0">进</span>
 									<span v-if="scope.row.come == 1">出</span>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-						<el-table-column prop="device" label="登记设备">
+						<el-table-column show-overflow-tooltip prop="device" label="登记设备">
 						</el-table-column>
                     </el-table>
                     <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
@@ -1839,9 +1839,9 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="时间">
+                        <el-table-column show-overflow-tooltip prop="time" label="时间">
                         </el-table-column>
-                        <el-table-column prop="licensePlate" label="车牌号码">
+                        <el-table-column show-overflow-tooltip prop="licensePlate" label="车牌号码">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1852,7 +1852,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="出入记录">
+                        <el-table-column show-overflow-tooltip label="出入记录">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0 && (Edit != scope.$index)">进</span>
 									<span v-else-if="scope.row.come == 1 && (Edit != scope.$index)">出</span>
@@ -1863,7 +1863,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1878,7 +1878,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -1894,9 +1894,9 @@
 									</div>
 								</template>
                         </el-table-column>
-						<el-table-column prop="device" label="登记设备">
+						<el-table-column show-overflow-tooltip prop="device" label="登记设备">
 						</el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -2049,23 +2049,23 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="time" label="时间">
+                        <el-table-column show-overflow-tooltip prop="time" label="时间">
                         </el-table-column>
-                        <el-table-column prop="licensePlate" label="车牌号码">
+                        <el-table-column show-overflow-tooltip prop="licensePlate" label="车牌号码">
                         </el-table-column>
-                        <el-table-column label="出入记录">
+                        <el-table-column show-overflow-tooltip label="出入记录">
                             <template slot-scope="scope">
 									<span v-if="scope.row.come == 0">进</span>
 									<span v-if="scope.row.come == 1">出</span>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-						<el-table-column prop="device" label="登记设备">
+						<el-table-column show-overflow-tooltip prop="device" label="登记设备">
 						</el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
@@ -2146,13 +2146,13 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="area" label="区域代码">
+                        <el-table-column show-overflow-tooltip prop="area" label="区域代码">
                         </el-table-column>
-                        <el-table-column prop="name" label="区域名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="区域名称">
                         </el-table-column>
-                        <el-table-column prop="level" label="区域级别">
+                        <el-table-column show-overflow-tooltip prop="level" label="区域级别">
                         </el-table-column>
-                        <el-table-column prop="parentCode" label="父级区域代码">
+                        <el-table-column show-overflow-tooltip prop="parentCode" label="父级区域代码">
                         </el-table-column>
                     </el-table>
                     <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
@@ -2190,7 +2190,7 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="area" label="区域代码">
+                        <el-table-column show-overflow-tooltip prop="area" label="区域代码">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2201,7 +2201,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="name" label="区域名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="区域名称">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2212,7 +2212,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="level" label="区域级别">
+                        <el-table-column show-overflow-tooltip prop="level" label="区域级别">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2227,7 +2227,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="parentCode" label="父级区域代码">
+                        <el-table-column show-overflow-tooltip prop="parentCode" label="父级区域代码">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2239,7 +2239,7 @@
 								</template>
                         </el-table-column>
 
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -2317,11 +2317,11 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="place" label="场所代码">
+                        <el-table-column show-overflow-tooltip prop="place" label="场所代码">
                         </el-table-column>
-                        <el-table-column prop="name" label="场所名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="场所名称">
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
                     </el-table>
                     <el-pagination @size-change="(v)=>{num = v ;CurrentChange(page,Tab) }" @current-change="(v)=>{CurrentChange(v,Tab)}" :total="maxNum" :current-page.sync="page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="num" layout="total,sizes,prev, pager, next, jumper" :total="maxNum">
@@ -2351,7 +2351,7 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="place" label="场所代码">
+                        <el-table-column show-overflow-tooltip prop="place" label="场所代码">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2362,7 +2362,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="name" label="场所名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="场所名称">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2373,7 +2373,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span size="mini" type="primary" class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2389,7 +2389,7 @@
 								</template>
                         </el-table-column>
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -2439,7 +2439,7 @@
 
                 <div v-else-if="Tab == '编辑角色' && rolePermission['editRole'] == '1'">
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="role" label="角色代码">
+                        <el-table-column show-overflow-tooltip prop="role" label="角色代码">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2450,7 +2450,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column prop="name" label="角色名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="角色名称">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<span class="mx-auto text-center" v-if="(Edit != scope.$index)">
@@ -2461,7 +2461,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -2482,9 +2482,9 @@
 
                 <div v-else-if="Tab == '查看角色' && rolePermission['editRole'] == '1'">
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="role" label="角色代码">
+                        <el-table-column show-overflow-tooltip prop="role" label="角色代码">
                         </el-table-column>
-                        <el-table-column prop="name" label="角色名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="角色名称">
                         </el-table-column>
                     </el-table>
                 </div>
@@ -2510,141 +2510,141 @@
 
                 <div v-else-if="Tab == '查看角色权限' && rolePermission['editRolePermission'] == '1'">
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="name" label="角色名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="角色名称">
                         </el-table-column>
-                        <el-table-column label="登录">
+                        <el-table-column show-overflow-tooltip label="登录">
                             <template slot-scope="scope">
 									<span v-if="scope.row.login == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.login == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加用户">
+                        <el-table-column show-overflow-tooltip label="添加用户">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addUser == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.addUser == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除用户">
+                        <el-table-column show-overflow-tooltip label="删除用户">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteUser =='0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.deleteUser == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新用户信息">
+                        <el-table-column show-overflow-tooltip label="更新用户信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updateUser == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.updateUser == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索用户">
+                        <el-table-column show-overflow-tooltip label="查询/搜索用户">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchUser == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.searchUser == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加设备">
+                        <el-table-column show-overflow-tooltip label="添加设备">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addDevice == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.addDevice == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除设备">
+                        <el-table-column show-overflow-tooltip label="删除设备">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteDevice == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.deleteDevice == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新设备信息">
+                        <el-table-column show-overflow-tooltip label="更新设备信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updateDevice == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.updateDevice == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索设备">
+                        <el-table-column show-overflow-tooltip label="查询/搜索设备">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchDevice == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.searchDevice == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加人员">
+                        <el-table-column show-overflow-tooltip label="添加人员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addPersonnel == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.addPersonnel == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除人员">
+                        <el-table-column show-overflow-tooltip label="删除人员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deletePersonnel == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.deletePersonnel == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新人员信息">
+                        <el-table-column show-overflow-tooltip label="更新人员信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updatePersonnel == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.updatePersonnel == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索人员">
+                        <el-table-column show-overflow-tooltip label="查询/搜索人员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchPersonnel == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.searchPersonnel == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加车辆">
+                        <el-table-column show-overflow-tooltip label="添加车辆">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addCar == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.addCar == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除车辆">
+                        <el-table-column show-overflow-tooltip label="删除车辆">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteCar == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.deleteCar == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新车辆信息">
+                        <el-table-column show-overflow-tooltip label="更新车辆信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updateCar == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.updateCar == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索车辆">
+                        <el-table-column show-overflow-tooltip label="查询/搜索车辆">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchCar == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.searchCar == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑区域">
+                        <el-table-column show-overflow-tooltip label="编辑区域">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editArea == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.editArea == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑场所">
+                        <el-table-column show-overflow-tooltip label="编辑场所">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editPlace == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.editPlace == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑角色">
+                        <el-table-column show-overflow-tooltip label="编辑角色">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editRole == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.editRole == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑角色权限">
+                        <el-table-column show-overflow-tooltip label="编辑角色权限">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editRolePermission == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.editRolePermission == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加管理员">
+                        <el-table-column show-overflow-tooltip label="添加管理员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addAdmin == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.addAdmin == '1'" class="text-success"><b>√</b></span>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除管理员">
+                        <el-table-column show-overflow-tooltip label="删除管理员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteAdmin == '0'" class="text-danger"><b>×</b></span>
 									<span v-if="scope.row.deleteAdmin == '1'" class="text-success"><b>√</b></span>
@@ -2655,9 +2655,9 @@
 
                 <div v-else-if="Tab == '编辑角色权限' && rolePermission['editRolePermission'] == '1'">
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="name" label="角色名称">
+                        <el-table-column show-overflow-tooltip prop="name" label="角色名称">
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="primary" class="mx-auto text-center" @click="edit(Tab,scope)" v-if="(Edit != scope.$index)">
@@ -2670,7 +2670,7 @@
 									</div>
 								</template>
                         </el-table-column>
-                        <el-table-column label="登录">
+                        <el-table-column show-overflow-tooltip label="登录">
                             <template slot-scope="scope">
 									<span v-if="scope.row.login == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.login == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2681,7 +2681,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加用户">
+                        <el-table-column show-overflow-tooltip label="添加用户">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addUser == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.addUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2692,7 +2692,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除用户">
+                        <el-table-column show-overflow-tooltip label="删除用户">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteUser == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.deleteUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2703,7 +2703,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新用户信息">
+                        <el-table-column show-overflow-tooltip label="更新用户信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updateUser == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.updateUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2714,7 +2714,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索用户">
+                        <el-table-column show-overflow-tooltip label="查询/搜索用户">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchUser == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.searchUser == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2725,7 +2725,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加设备">
+                        <el-table-column show-overflow-tooltip label="添加设备">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addDevice == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.addDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2736,7 +2736,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除设备">
+                        <el-table-column show-overflow-tooltip label="删除设备">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteDevice == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.deleteDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2747,7 +2747,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新设备信息">
+                        <el-table-column show-overflow-tooltip label="更新设备信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updateDevice == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.updateDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2758,7 +2758,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索设备">
+                        <el-table-column show-overflow-tooltip label="查询/搜索设备">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchDevice == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.searchDevice == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2769,7 +2769,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加人员">
+                        <el-table-column show-overflow-tooltip label="添加人员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addPersonnel == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.addPersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2780,7 +2780,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除人员">
+                        <el-table-column show-overflow-tooltip label="删除人员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deletePersonnel == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.deletePersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2791,7 +2791,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新人员信息">
+                        <el-table-column show-overflow-tooltip label="更新人员信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updatePersonnel == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.updatePersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2802,7 +2802,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索人员">
+                        <el-table-column show-overflow-tooltip label="查询/搜索人员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchPersonnel == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.searchPersonnel == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2813,7 +2813,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加车辆">
+                        <el-table-column show-overflow-tooltip label="添加车辆">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addCar == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.addCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2824,7 +2824,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除车辆">
+                        <el-table-column show-overflow-tooltip label="删除车辆">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteCar == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.deleteCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2835,7 +2835,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="更新车辆信息">
+                        <el-table-column show-overflow-tooltip label="更新车辆信息">
                             <template slot-scope="scope">
 									<span v-if="scope.row.updateCar == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.updateCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2846,7 +2846,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="查询/搜索车辆">
+                        <el-table-column show-overflow-tooltip label="查询/搜索车辆">
                             <template slot-scope="scope">
 									<span v-if="scope.row.searchCar == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.searchCar == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2857,7 +2857,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑区域">
+                        <el-table-column show-overflow-tooltip label="编辑区域">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editArea == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.editArea == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2868,7 +2868,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑场所">
+                        <el-table-column show-overflow-tooltip label="编辑场所">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editPlace == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.editPlace == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2879,7 +2879,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑角色">
+                        <el-table-column show-overflow-tooltip label="编辑角色">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editRole == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.editRole == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2890,7 +2890,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="编辑角色权限">
+                        <el-table-column show-overflow-tooltip label="编辑角色权限">
                             <template slot-scope="scope">
 									<span v-if="scope.row.editRolePermission == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.editRolePermission == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2901,7 +2901,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="添加管理员">
+                        <el-table-column show-overflow-tooltip label="添加管理员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.addAdmin == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.addAdmin == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2912,7 +2912,7 @@
 									</el-select>
 								</template>
                         </el-table-column>
-                        <el-table-column label="删除管理员">
+                        <el-table-column show-overflow-tooltip label="删除管理员">
                             <template slot-scope="scope">
 									<span v-if="scope.row.deleteAdmin == '0' && (Edit != scope.$index)" class="text-danger"><b>×</b></span>
 									<span v-else-if="scope.row.deleteAdmin == '1' && (Edit != scope.$index)" class="text-success"><b>√</b></span>
@@ -2929,56 +2929,56 @@
 
                 <div v-else-if="Tab == '查看管理员' && (rolePermission['role'] == '001' || rolePermission['role'] == '000')">
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="id" label="用户ID">
+                        <el-table-column show-overflow-tooltip prop="id" label="用户ID">
                         </el-table-column>
-                        <el-table-column prop="userName" label="用户名">
+                        <el-table-column show-overflow-tooltip prop="userName" label="用户名">
                         </el-table-column>
-                        <el-table-column prop="phone" label="联系方式">
+                        <el-table-column show-overflow-tooltip prop="phone" label="联系方式">
                         </el-table-column>
-                        <el-table-column prop="address" label="联系地址">
+                        <el-table-column show-overflow-tooltip prop="address" label="联系地址">
                         </el-table-column>
-                        <el-table-column prop="email" label="邮箱地址">
+                        <el-table-column show-overflow-tooltip prop="email" label="邮箱地址">
                         </el-table-column>
-                        <el-table-column prop="role" label="用户组">
+                        <el-table-column show-overflow-tooltip prop="role" label="用户组">
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="sex" label="性别">
+                        <el-table-column show-overflow-tooltip prop="sex" label="性别">
                         </el-table-column>
-                        <el-table-column prop="realName" label="真实姓名">
+                        <el-table-column show-overflow-tooltip prop="realName" label="真实姓名">
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码">
                         </el-table-column>
                     </el-table>
                 </div>
 
                 <div v-else-if="Tab == '删除管理员' && rolePermission['role'] == '000'">
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="id" label="用户ID">
+                        <el-table-column show-overflow-tooltip prop="id" label="用户ID">
                         </el-table-column>
-                        <el-table-column prop="userName" label="用户名">
+                        <el-table-column show-overflow-tooltip prop="userName" label="用户名">
                         </el-table-column>
-                        <el-table-column prop="phone" label="联系方式">
+                        <el-table-column show-overflow-tooltip prop="phone" label="联系方式">
                         </el-table-column>
-                        <el-table-column prop="address" label="联系地址">
+                        <el-table-column show-overflow-tooltip prop="address" label="联系地址">
                         </el-table-column>
-                        <el-table-column prop="email" label="邮箱地址">
+                        <el-table-column show-overflow-tooltip prop="email" label="邮箱地址">
                         </el-table-column>
-                        <el-table-column prop="role" label="用户组">
+                        <el-table-column show-overflow-tooltip prop="role" label="用户组">
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="sex" label="性别">
+                        <el-table-column show-overflow-tooltip prop="sex" label="性别">
                         </el-table-column>
-                        <el-table-column prop="realName" label="真实姓名">
+                        <el-table-column show-overflow-tooltip prop="realName" label="真实姓名">
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码">
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="danger" class="mx-auto text-center" @click="Delete(Tab,scope)">
@@ -3013,29 +3013,29 @@
                     </div>
 
                     <el-table border :data="data" style="width: 100%" v-loading="load">
-                        <el-table-column prop="id" label="用户ID">
+                        <el-table-column show-overflow-tooltip prop="id" label="用户ID">
                         </el-table-column>
-                        <el-table-column prop="userName" label="用户名">
+                        <el-table-column show-overflow-tooltip prop="userName" label="用户名">
                         </el-table-column>
-                        <el-table-column prop="phone" label="联系方式">
+                        <el-table-column show-overflow-tooltip prop="phone" label="联系方式">
                         </el-table-column>
-                        <el-table-column prop="address" label="联系地址">
+                        <el-table-column show-overflow-tooltip prop="address" label="联系地址">
                         </el-table-column>
-                        <el-table-column prop="email" label="邮箱地址">
+                        <el-table-column show-overflow-tooltip prop="email" label="邮箱地址">
                         </el-table-column>
-                        <el-table-column prop="role" label="用户组">
+                        <el-table-column show-overflow-tooltip prop="role" label="用户组">
                         </el-table-column>
-                        <el-table-column prop="area" label="所属区域">
+                        <el-table-column show-overflow-tooltip prop="area" label="所属区域">
                         </el-table-column>
-                        <el-table-column prop="place" label="所属场所">
+                        <el-table-column show-overflow-tooltip prop="place" label="所属场所">
                         </el-table-column>
-                        <el-table-column prop="sex" label="性别">
+                        <el-table-column show-overflow-tooltip prop="sex" label="性别">
                         </el-table-column>
-                        <el-table-column prop="realName" label="真实姓名">
+                        <el-table-column show-overflow-tooltip prop="realName" label="真实姓名">
                         </el-table-column>
-                        <el-table-column prop="idCard" label="身份证号码">
+                        <el-table-column show-overflow-tooltip prop="idCard" label="身份证号码">
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column show-overflow-tooltip label="操作">
                             <template slot-scope="scope">
 									<div class="text-center">
 										<el-button size="mini" type="warning" class="mx-auto text-center" @click="setAdmin(Tab,scope)">
