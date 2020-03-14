@@ -106,7 +106,7 @@
                 onSubmit() {
                     login.$refs['form'].validate((valid) => {
                         if (valid) {
-                            axios.post('/System/Core/User.php', Qs.stringify({
+                            axios.post('./System/Core/User.php', Qs.stringify({
                                 "login": '',
                                 'user': login.form.user,
                                 'password': login.form.password,

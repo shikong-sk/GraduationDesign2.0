@@ -12,6 +12,7 @@ require_once(dirname(__FILE__) . '/RolePermissionClass.php');
 
 require_once(dirname(__FILE__) . '/Abstract/UserClass.php');
 
+require_once(dirname(__FILE__) . '/Abstract/FileClass.php');
 
 class  ManagementClass
 {
@@ -93,10 +94,10 @@ class  ManagementClass
         if(strlen($filter) != 0)
         {
             switch ($filter){
-                case 'beforeTime': $query .= "AND c.time < '".$arg."'";break;//  base 64 加解密
+                case 'beforeTime': $query .= "AND c.time < '".$arg."'";break;// 
                 case 'afterTime': $query .= "AND c.time > '".$arg."'";break;
                 case 'betweenTime':
-                    //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"} base 64 加解密
+                    //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"}
                     $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
                     $query .= "AND c.time > '".$json["startTime"]."' AND c.time < '".$json["endTime"]."'";
@@ -225,10 +226,10 @@ class  ManagementClass
         if(strlen($filter) != 0)
         {
             switch ($filter){
-                case 'beforeTime': $query .= "AND d.liveTime < '".$arg."'";break;//  base 64 加解密
+                case 'beforeTime': $query .= "AND d.liveTime < '".$arg."'";break;// 
                 case 'afterTime': $query .= "AND d.liveTime > '".$arg."'";break;
                 case 'betweenTime':
-                    //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"} base 64 加解密
+                    //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"}
                     $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
                     $query .= "AND d.liveTime > '".$json["startTime"]."' AND d.liveTime < '".$json["endTime"]."'";
@@ -278,10 +279,10 @@ class  ManagementClass
         if(strlen($filter) != 0)
         {
             switch ($filter){
-                case 'beforeTime': $query .= "AND pe.time < '".$arg."'";break;//  base 64 加解密
+                case 'beforeTime': $query .= "AND pe.time < '".$arg."'";break;// 
                 case 'afterTime': $query .= "AND pe.time > '".$arg."'";break;
                 case 'betweenTime':
-                    //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"} base 64 加解密
+                    //  JSON格式{"startTime":"2020-03-02 0:0:0","endTime":"2020-03-03 0:0:0"}
                     $json = json_decode($arg,true);
                     if(!$json) return json_encode(Array('error' => '查询失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
                     $query .= "AND pe.time > '".$json["startTime"]."' AND pe.time < '".$json["endTime"]."'";
@@ -1113,10 +1114,25 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
         }
 
-        $time = $time;
 
         if (strlen($time) == 0 || strlen($name) == 0 || strlen($idCard) == 0) {
             return json_encode(Array('error' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
+        }
+
+        $query = "SELECT personImg,idCardImg FROM $this->personnelTable WHERE `time` = '$time' AND `name` = '$name' AND `idCard` = '$idCard'";
+
+        $res = $this->db->database->query($query)->fetch_assoc();
+
+        $f = new FileManager();
+
+        if($res['personImg'] != null && strlen($res['personImg'])!=0)
+        {
+            $f->deleteImage($res['personImg'],'personnel');
+        }
+
+        if($res['idCardImg'] != null && strlen($res['idCardImg'])!=0)
+        {
+            $f->deleteImage($res['idCardImg'],'personnel');
         }
 
         $query = "DELETE FROM $this->personnelTable WHERE `time` = '$time' AND `name` = '$name' AND `idCard` = '$idCard'";

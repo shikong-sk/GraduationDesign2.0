@@ -56,17 +56,50 @@ $img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAABWEAYAAAA/OsCCAAAACX
 //$_POST['id'];
 //$device = $this->db->database->query("SELECT deviceID FROM $this->deviceTable WHERE deviceID = '$this->device'")->fetch_assoc()['deviceID'];
 
-$_POST['time'] = '2020-01-01 00:00:00';
-$blacklist = Array("order by",'or','and','rpad','concat',' ','union','%a0',',','if','xor','join','rand','floor','outfile','mid','#','\|\|','--+','0[xX][0-9a-fA-F]+');
-foreach ($_POST as $key => $value)
-{
-    foreach ($blacklist as $blackItem){
-        if (preg_match('/\b' . $blackItem . '\b/im', $value)) {
-            if($key = 'time' && $blackItem = ' ')
-            {
-                continue;
-            }
-            die('非法参数'.$value);
-        }
-    }
-}
+//$_POST['time'] = '2020-01-01 00:00:00';
+////$blacklist = Array("order by",'or','and','rpad','concat',' ','union','%a0',',','if','xor','join','rand','floor','outfile','mid','#','\|\|','--+','0[xX][0-9a-fA-F]+');
+////foreach ($_POST as $key => $value)
+////{
+////    foreach ($blacklist as $blackItem){
+////        if (preg_match('/\b' . $blackItem . '\b/im', $value)) {
+////            if($key = 'time' && $blackItem = ' ')
+////            {
+////                continue;
+////            }
+////            die('非法参数'.$value);
+////        }
+////    }
+////}
+////
+////
+////
+
+session_start();
+
+require_once(dirname(__FILE__). '/Core.php');
+
+//echo get_real_ip();
+//
+//echo '<br>';
+//
+//echo date('Y-m-d H:i:s');
+//
+//$d = strtotime('2020-01-01 23:00:00');
+//var_dump(date('m',$d));
+//var_dump(date('d',$d));
+//var_dump(date('H',$d));
+
+include_once './Class/Abstract/FileClass.php';
+
+
+
+$_SESSION['user'] = '1';
+$_SESSION['device'] = '1';
+
+$f = new FileManager();
+//echo $f->_root_ . $f->allowDirs[0];
+
+
+var_dump(json_decode($f->uploadImage($img,'car','2020-01-01 23:00:00'),true)[0]);
+
+//echo $f->deleteImage('\/Storage\/Car\/2020\/01\/01\/23\/00\/64E437A5-20C3-6270-5E18-1C6C80C75D1D.png','car');
