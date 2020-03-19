@@ -15,7 +15,7 @@ interface SqlMethod{
 
     public function delete();
 
-    public function search();
+    public function select();
 
 }
 

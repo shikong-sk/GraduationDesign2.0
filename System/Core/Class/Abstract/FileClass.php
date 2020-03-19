@@ -1,7 +1,7 @@
 <?php
 
 require_once(dirname(__FILE__). '/../Abstract/UserClass.php');
-require_once(dirname(__FILE__). '/../RolePermissionClass.php');
+require_once(dirname(__FILE__). '/../RoleClass.php');
 
 header('Content-Type:application/json; charset=utf-8');
 
@@ -26,21 +26,77 @@ abstract class FileClass
         else{
             $this->_root_ = dirname(__FILE__) .'/../../../../Storage';
             $this->user = new User();
-            $this->rolePermission = new rolePermissionClass($this->user->getRole());
-            if($this->rolePermission->checkAddCar() || $this->rolePermission->checkUpdateCar() || $this->rolePermission->checkDeleteCar()){
-                $this->allowDirs['car']='/Car';
+            if($this->user->getPermission()->fetch_assoc()['permission'] == 0)
+            {
+//                die(json_encode(Array('error'=>'您没有该权限'), JSON_UNESCAPED_UNICODE));
+                $this->allowDirs['user']='/User';
             }
-            if($this->rolePermission->checkAddPersonnel() || $this->rolePermission->checkUpdatePersonnel() || $this->rolePermission->checkDeletePersonnel()){
+            else{
+                $this->allowDirs['user']='/User';
+                $this->allowDirs['car']='/Car';
                 $this->allowDirs['personnel']='/Personnel';
             }
-
-            if(count($this->allowDirs) <= 0){
-                die(json_encode(Array('error'=>'您没有该权限'), JSON_UNESCAPED_UNICODE));
+            if($_SESSION['device'] == 1)
+            {
+                $this->allowDirs['car']='/Car';
+                $this->allowDirs['personnel']='/Personnel';
             }
+//            $this->rolePermission = new rolePermissionClass($this->user->getRole());
+//            if($this->rolePermission->checkAddCar() || $this->rolePermission->checkUpdateCar() || $this->rolePermission->checkDeleteCar()){
+//                $this->allowDirs['car']='/Car';
+//            }
+//            if($this->rolePermission->checkAddPersonnel() || $this->rolePermission->checkUpdatePersonnel() || $this->rolePermission->checkDeletePersonnel()){
+//                $this->allowDirs['personnel']='/Personnel';
+//            }
+
+//            if(count($this->allowDirs) <= 0){
+//                die(json_encode(Array('error'=>'您没有该权限'), JSON_UNESCAPED_UNICODE));
+//            }
         }
     }
 
-    public function uploadImage($imgData,$source,$time){
+    public function uploadUserImage($imgData){
+        $dir = $this->_root_.$this->allowDirs['user'];
+        $file_path = '/Storage'.$this->allowDirs['user'];
+
+        if(!file_exists($dir))
+        {
+            mkdir($dir);
+        }
+
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $imgData, $result)) {
+            if(!isset($result[0]) && !isset($result[1]) && !isset($result[2]))
+            {
+                return json_encode(Array('error' => "操作失败，图片数据错误"), JSON_UNESCAPED_UNICODE);
+            }
+
+            $type = $result[2];
+
+            $file_name = trim(guid(), '{}').".$type";
+            $new_file = $dir."/".$file_name;
+
+            $img = str_replace($result[1], '', $imgData);
+            $imgLen = strlen($img);
+            $imgSize = $imgLen - ($imgLen / 8) * 2;
+
+            $imgSize = $imgSize / 1024;
+            if($imgSize > $this->MaxFileSize)
+            {
+                return json_encode(Array('error' => "操作失败，文件大小不能大于 $this->MaxFileSize kB"), JSON_UNESCAPED_UNICODE);
+            }
+
+            if (file_put_contents($new_file, base64_decode($img))) {
+                return json_encode(Array(0=>$file_path.'/'.$file_name,'success' => '文件上传成功'), JSON_UNESCAPED_UNICODE);
+            }
+
+        }
+    }
+
+    public function uploadImage($imgData,$source,$time,$fileName=''){
+        if(!isset($this->allowDirs['personnel']) && !isset($this->allowDirs['car'])){
+            die(json_encode(Array('error'=>'您没有该权限'), JSON_UNESCAPED_UNICODE));
+        }
+
         if(strlen($imgData) <= 0 && strlen($source) <= 0 && strlen($time) <= 0)
         {
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
@@ -88,7 +144,7 @@ abstract class FileClass
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $imgData, $result)) {
             $type = $result[2];
 
-            $file_name = trim(guid(), '{}').".$type";
+            $file_name = $fileName.'_'.trim(guid(), '{}').".$type";
             $new_file = $dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i."/".$file_name;
 
             $img = str_replace($result[1], '', $imgData);
@@ -98,7 +154,7 @@ abstract class FileClass
             $imgSize = $imgSize / 1024;
             if($imgSize > $this->MaxFileSize)
             {
-                return json_encode(Array('error' => "操作失败，文件大小不能大于 $this->MaxFileSize kB"), JSON_UNESCAPED_UNICODE);
+                die(json_encode(Array('error' => "操作失败，文件大小不能大于 $this->MaxFileSize kB"), JSON_UNESCAPED_UNICODE));
             }
 
             if (file_put_contents($new_file, base64_decode($img))) {
@@ -118,6 +174,7 @@ abstract class FileClass
         switch ($source){
             case 'personnel' : break;
             case 'car' : break;
+            case 'user':break;
             default :
                 return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
         }

@@ -10,14 +10,14 @@ $User = new User();
 
 header('Content-Type:application/json; charset=utf-8');
 
-if(isset($_POST['login']) &&  isset($_POST['user']) && isset($_POST['password']))
+if(isset($_POST['login']) &&  isset($_POST['userName']) && isset($_POST['password']))
 {
-    die($User->login($_POST['user'],$_POST['password']));
+    die($User->login($_POST['userName'],$_POST['password']));
 }
 
-if(isset($_POST['register']) && isset($_POST['user']) && isset($_POST['password']) && isset($_POST['phone']) && isset($_POST['address']) && isset($_POST['email']) && isset($_POST['area']) && isset($_POST['place']) && isset($_POST["sex"]) && isset($_POST["realName"]) && isset($_POST["idCard"]))
+if(isset($_POST['register']) && isset($_POST['userName']) && isset($_POST['password']) && isset($_POST['contact']) && isset($_POST["gender"]) && isset($_POST["name"]) && isset($_POST['email']) && isset($_POST["idCard"]) && isset($_POST["cardType"]) && isset($_POST['userImg']))
 {
-    die($User->register($_POST['user'],$_POST['password'],$_POST['phone'],$_POST['address'],$_POST['email'],$_POST['area'],$_POST['place'],$_POST['sex'],$_POST['realName'],$_POST['idCard']));
+    die($User->register($_POST['userName'],$_POST['password'],$_POST['contact'],$_POST['gender'],$_POST['name'],$_POST['email'],$_POST['idCard'],$_POST['cardType'],$_POST['userImg']));
 }
 
 if(isset($_REQUEST['logout']))
@@ -25,8 +25,8 @@ if(isset($_REQUEST['logout']))
     die($User->logout());
 }
 
-if(isset($_POST['updateUser']) && isset($_POST['password']) && isset($_POST["phone"]) && isset($_POST["address"]) && isset($_POST["email"]) && isset($_POST["area"]) && isset($_POST["place"]) && isset($_POST["sex"]) && isset($_POST["realName"]) && isset($_POST["idCard"])){
-    die($User->updateUser($_POST["password"],$_POST["phone"],$_POST["address"],$_POST["email"],$_POST["area"],$_POST["place"],$_POST["sex"],$_POST["realName"],$_POST["idCard"]));
+if(isset($_POST['updateUser']) && isset($_POST['password']) && isset($_POST["contact"]) && isset($_POST['email']) && isset($_POST["gender"]) && isset($_POST["name"]) && isset($_POST["idCard"]) && isset($_POST['cardType']) && isset($_POST['userImg']) ){
+    die($User->updateUser($_POST["password"],$_POST["contact"],$_POST["email"],$_POST["gender"],$_POST["name"],$_POST["idCard"],$_POST["cardType"],$_POST["userImg"]));
 }
 
 if(isset($_POST['getUserInfo']))
@@ -34,9 +34,9 @@ if(isset($_POST['getUserInfo']))
     die($User->getUserInfo());
 }
 
-if(isset($_POST['getRolePermission']))
+if(isset($_POST['getPermission']))
 {
-    die($User->getRolePermission());
+    die(json_encode(Array($User->getPermission()->fetch_assoc()['permission']),JSON_UNESCAPED_UNICODE));
 }
 
 die('<h1>ForBidden</h1>');

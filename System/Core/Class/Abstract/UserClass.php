@@ -8,33 +8,32 @@ require_once(dirname(__FILE__) .'/../Interface/SqlMethod.php');
 
 require_once(dirname(__FILE__) .'/../SqlHelper.php');
 
-require_once(dirname(__FILE__) .'/../RolePermissionClass.php');
+require_once(dirname(__FILE__) .'/FileClass.php');
 
 abstract class UserClass implements SqlMethod,UserMethod {
 
     var $db;
-    var $table;
+    var $userTable;
     var $roleTable;
     var $areaTable;
-    var $placeTable;
-    var $rolePermissionTable;
+    var $planTable;
 
-    var $rolePermission;
 
     var $userName;
     var $password;
 
     var $id;
     var $salt;
-    var $phone;
-    var $address;
+    var $contact;
     var $email;
-    var $role = "002";
     var $area;
     var $place;
-    var $sex;
-    var $realName;
+    var $gender;
+    var $name;
     var $idCard;
+    var $cardType;
+    var $userImg;
+    var $permission = '0';
 
     public function __construct()
     {
@@ -42,34 +41,33 @@ abstract class UserClass implements SqlMethod,UserMethod {
         if(isset($_SESSION['user']))
         {
             $this->userName = $_SESSION['user'];
+            $this->id = $_SESSION['uid'];
         }
-        $this->table = $this->db->db_table_prefix."_".SqlHelper::User;
+        $this->userTable = $this->db->db_table_prefix."_".SqlHelper::User;
         $this->roleTable = $this->db->db_table_prefix."_".SqlHelper::Role;
-        $this->areaTable = $this->db->db_table_prefix."_".SqlHelper::Area;
-        $this->placeTable = $this->db->db_table_prefix."_".SqlHelper::Place;
-        $this->rolePermissionTable = $this->db->db_table_prefix."_".SqlHelper::RolePermission;
+        $this->planTable = $this->db->db_table_prefix."_".SqlHelper::Plan;
     }
 
-    public function register($user,$password,$phone,$address,$email,$area,$place,$sex,$realName,$idCard)
+    public function register($userName,$password,$contact,$gender,$name,$email,$idCard,$cardType='1',$userImg='',$permission='0')
     {
         if(isset($_SESSION['user'])){
             return json_encode(Array('error'=>'您已登录，无需进行此操作'), JSON_UNESCAPED_UNICODE);
         }
 
-        $this->userName = $user;
-        $this->password = $password;
-        $this->phone = $phone;
-        $this->address = $address;
-        $this->email = $email;
-        $this->area = $area;
-        $this->place = $place;
-        $this->sex = $sex;
-        $this->realName = $realName;
-        $this->idCard = $idCard;
-
-        if (strlen($user) == 0 || strlen($password) == 0 || strlen($area) == 0 || strlen($place) == 0) {
+        if (strlen($userName) == 0 || strlen($password) == 0) {
             return json_encode(Array('success' => '用户注册失败，请检查信息是否完整'), JSON_UNESCAPED_UNICODE);
         }
+
+        $this->userName = $userName;
+        $this->password = $password;
+        $this->contact = $contact;
+        $this->gender = $gender;
+        $this->name = $name;
+        $this->email = $email;
+        $this->idCard = $idCard;
+        $this->cardType = $cardType;
+        $this->userImg = $userImg;
+        $this->permission = $permission;
 
         $this->id = trim(guid(), '{}');
 
@@ -81,32 +79,33 @@ abstract class UserClass implements SqlMethod,UserMethod {
         $this->salt = $salt;
         $this->password = sha1($password . $salt); // sha1哈希加密
 
-        $res = $this->insert();
-        if ($res) {
+        $this->insert();
+
+        if ($this->db->database->affected_rows == 1) {
             return json_encode(Array('success' => '用户注册成功'), JSON_UNESCAPED_UNICODE);
         } else {
-            return json_encode(Array('error' => '用户注册失败,该用户名已存在'), JSON_UNESCAPED_UNICODE);
+            return json_encode(Array('error' => '用户注册失败,该用户已存在'), JSON_UNESCAPED_UNICODE);
         }
 
     }
 
-    public function updateUser($password,$phone,$address,$email,$area,$place,$sex,$realName,$idCard){
+    public function updateUser($password,$contact,$email,$gender,$name,$idCard,$cardType,$userImg){
         if(!isset($_SESSION['user'])){
             return json_encode(Array('error'=>'请先登录再进行此操作'), JSON_UNESCAPED_UNICODE);
         }
-        if(strlen($password.$phone.$address.$email.$area.$sex.$realName.$idCard) == 0)
+        if(strlen($password.$contact.$email.$gender.$name.$idCard.$cardType.$userImg) == 0)
         {
-            return json_encode(Array('success'=>'用户信息更新成功'), JSON_UNESCAPED_UNICODE);
+            return json_encode(Array('info'=>'信息未更改'), JSON_UNESCAPED_UNICODE);
         }
 
         $this->userName = $_SESSION['user'];
         $this->id = $_SESSION['uid'];
 
-        $old = $this->search()->fetch_assoc();
+        $old = $this->select()->fetch_assoc();
 
-        if(sha1($password.$old['salt']).$phone.$address.$email.$area.$place.$sex.$realName.$idCard === $old['password'].$old['phone'].$old['address'].$old['email'].$old['area'].$old['place'].$old['sex'].$old['realName'].$old['idCard'])
+        if(sha1($password.$old['salt']).$contact.$email.$gender.$name.$idCard.$cardType.$userImg === $old['password'].$old['contact'].$old['email'].$old['gender'].$old['name'].$old['idCard'].$old['cardType'].$old['userImg'])
         {
-            return json_encode(Array('success'=>'用户信息更新成功'), JSON_UNESCAPED_UNICODE);
+            return json_encode(Array('info'=>'信息未更改'), JSON_UNESCAPED_UNICODE);
         }
 
         if(strlen($password) == 0){
@@ -123,19 +122,38 @@ abstract class UserClass implements SqlMethod,UserMethod {
             $this->password = sha1($password . $salt); // sha1哈希加密
         }
 
-        $this->phone = strlen($phone) == 0 ? $old["phone"] : $phone;
-        $this->address = strlen($address) == 0 ? $old["address"] : $address;
-        $this->email = strlen($email) == 0 ? $old["email"] : $email;
-        $this->area = strlen($area) == 0 ? $old["area"] : $area;
-        $this->place = strlen($place) == 0 ? $old["place"] : $place;
-        $this->sex = strlen($sex) == 0 ? $old["sex"] : $sex;
-        $this->realName = strlen($realName) == 0 ? $old["realName"] : $realName;
+        $this->contact = strlen($contact) == 0 ? $old["contact"] : $contact;
+        $this->gender = strlen($gender) == 0 ? $old["gender"] : $gender;
+        $this->name = strlen($name) == 0 ? $old["name"] : $name;
         $this->idCard = strlen($idCard) == 0 ? $old["idCard"] : $idCard;
+        $this->cardType = strlen($cardType) == 0 ? $old["cardType"] : $cardType;
+        $this->userImg = strlen($userImg) == 0 ? $old["userImg"] : $userImg;
+        $this->email = strlen($email) == 0 ? $old["email"] : $email;
+
+        $f = new FileManager();
+        if(strlen($userImg)!=0)
+        {
+            $userImg = json_decode($f->uploadUserImage($userImg),true)[0];
+        }
+        else{
+            $userImg = $old["userImg"];
+        }
+
+        $this->userImg = $userImg;
 
         $res = $this->update();
 
-        if($res && ($this->db->database->affected_rows >= 0 && $this->db->database->affected_rows <= 1) ){
-            return json_encode(Array('success' => '用户信息更新成功'), JSON_UNESCAPED_UNICODE);
+        if($res){
+            if($this->db->database->affected_rows == 1 ){
+                if($userImg != $old['userImg'])
+                {
+                    $f->deleteImage($old['userImg'],'user');
+                }
+                return json_encode(Array('success' => '用户信息更新成功'), JSON_UNESCAPED_UNICODE);
+            }
+            else if($this->db->database->affected_rows == 0){
+                return json_encode(Array('info'=>'信息未更改'), JSON_UNESCAPED_UNICODE);
+            }
         }
         else{
             return json_encode(Array('error' => '用户信息更新出错'), JSON_UNESCAPED_UNICODE);
@@ -144,13 +162,15 @@ abstract class UserClass implements SqlMethod,UserMethod {
 
     public function insert()
     {
-        return $this->db->database->
-        query("INSERT INTO ".$this->table ."(`id`, `userName`, `salt`, `password`, `phone`, `address`, `email`, `role`, `area`,`place`, `sex`, `realName`, `idCard`) VALUES ('$this->id', '$this->userName', '$this->salt', '$this->password', '$this->phone', '$this->address', '$this->email', '$this->role', '$this->area','$this->place', '$this->sex', '$this->realName', '$this->idCard')");
+        $query = "INSERT INTO ".$this->userTable ."(`id`, `userName`, `salt`, `password`, `name`, `gender`, `contact`, `idCard`,`cardType`,`userImg`,`email`,`permission`) 
+        VALUES ('$this->id', '$this->userName', '$this->salt', '$this->password', '$this->name', '$this->gender', '$this->contact', '$this->idCard', '$this->cardType','$this->userImg', '$this->email','$this->permission')";
+
+        return $this->db->database->query($query);
     }
 
     public function update()
     {
-        return $this->db->database->query("UPDATE ".$this->table." SET `salt` = '$this->salt', `password` = '$this->password', `phone` = '$this->phone', `address` = '$this->address', `email` = '$this->email', `area` = '$this->area' , `place` = '$this->place' , `sex` = '$this->sex' , `realName` = '$this->realName' , `idCard` = '$this->idCard' WHERE `id` = '$this->id' AND `userName` = '$this->userName'");
+        return $this->db->database->query("UPDATE ".$this->userTable." SET `salt` = '$this->salt', `password` = '$this->password', `name` = '$this->name', `gender` = '$this->gender', `contact` = '$this->contact', `idCard` = '$this->idCard' , `cardType` = '$this->cardType' , `userImg` = '$this->userImg' , `email` = '$this->email' WHERE `id` = '$this->id' AND `userName` = '$this->userName'");
     }
 
     public function delete()
@@ -158,33 +178,26 @@ abstract class UserClass implements SqlMethod,UserMethod {
         // TODO: Implement delete() method.
     }
 
-    public function search()
+    public function select()
     {
-        return $this->db->database->query("SELECT * FROM ".$this->table." WHERE userName = '$this->userName'");
+        return $this->db->database->query("SELECT * FROM ".$this->userTable." WHERE userName = '$this->userName'");
     }
 
-    public function login($user,$password)
+    public function login($userName,$password)
     {
 
         if(isset($_SESSION['user'])){
             return json_encode(Array('error'=>'您已登录，无需进行此操作'), JSON_UNESCAPED_UNICODE);
         }
 
-        $this->userName = $user;
+        $this->userName = $userName;
         $this->password = $password;
 
-        $res = $this->search()->fetch_assoc();
-
-        $this->rolePermission = new rolePermissionClass($res['role']);
-
-        if(!$this->rolePermission->checkLogin())
-        {
-            return json_encode(Array('error'=>'登录失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
-        }
+        $res = $this->select()->fetch_assoc();
 
         if(!$res)
         {
-            return json_encode(Array('error'=>'，登录失败，账号或密码错误'), JSON_UNESCAPED_UNICODE);
+            return json_encode(Array('error'=>'登录失败，账号或密码错误'), JSON_UNESCAPED_UNICODE);
         }
         else
         {
@@ -221,7 +234,7 @@ abstract class UserClass implements SqlMethod,UserMethod {
             return json_encode(Array('error'=>'请先登录再进行此操作'), JSON_UNESCAPED_UNICODE);
         }
 
-        $res = $this->db->database->query("SELECT u.userName,u.phone,u.address,u.email,r.name role,a.name area,p.name place,u.sex,u.realName,u.idCard FROM $this->table u,$this->roleTable r,$this->areaTable a,$this->placeTable p WHERE u.id = '".$_SESSION['uid']."' AND u.userName = '".$_SESSION['user']."' AND r.role = u.role AND a.code = u.area AND p.area = u.area AND p.id = u.place AND a.code = p.area");
+        $res = $this->db->database->query("SELECT userName,name,gender,contact,idCard,cardType,userImg,permission FROM ".$this->userTable." WHERE userName = '$this->userName' AND id = '$this->id'");
         $resNum = 0;
 
         $json = Array();
@@ -235,31 +248,15 @@ abstract class UserClass implements SqlMethod,UserMethod {
 
     }
 
-    public function getRole(){
+    public function getPermission(){
         if(!isset($_SESSION['user'])){
             die(json_encode(Array('error'=>'请先登录再进行此操作'), JSON_UNESCAPED_UNICODE));
         }
 
-        $this->role = $this->search()->fetch_assoc()["role"];
-        return $this->role;
-    }
+        $res = $this->db->database->query("SELECT permission FROM ".$this->userTable." WHERE userName = '$this->userName' AND id = '$this->id'");
 
-    public function getRolePermission(){
-        if(!isset($_SESSION['user'])){
-            die(json_encode(Array('error'=>'请先登录再进行此操作'), JSON_UNESCAPED_UNICODE));
-        }
-        $this->getRole();
-        $res = $this->db->database->query("SELECT * FROM $this->rolePermissionTable WHERE role = '$this->role'");
-        $resNum = 0;
+        return $res;
 
-        $json = Array();
-        while ($res->data_seek($resNum)) {
-            $data = $res->fetch_assoc();
-            array_push($json, $data);
-            $resNum++;
-        }
-        $json = json_encode($json, JSON_UNESCAPED_UNICODE);
-        return $json;
     }
 }
 

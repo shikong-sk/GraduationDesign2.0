@@ -7,14 +7,14 @@ session_start();
 abstract class KeepAliveClass implements KeepAliveMethod,SqlMethod
 {
     var $db;
-    var $try = 3; // 默认重连3次
-    var $checkTime = 5; // 默认 60 秒检测一次
+    var $equipmentTable;
+    
+    var $try = 3; // 默认重试3-1次
+    var $checkTime = 30; // 默认 30 秒检测一次
     var $live; // 存活状态 (0：离线 1：在线 6:重连 8：异常)
     var $lastTime; // 上一次存活时间
-    var $ip; // 设备IP
 
-    var $device; // 设备ID
-    var $deviceTable;
+    var $equipmentId; // 设备ID
 
     public function setTry(int $try): void
     {
@@ -26,15 +26,15 @@ abstract class KeepAliveClass implements KeepAliveMethod,SqlMethod
         $this->checkTime = $checkTime;
     }
 
-    public function __construct($device)
+    public function __construct($equipmentId)
     {
         error_reporting(2);
 
         $this->db = new SqlHelper();
 
-        $this->deviceTable = $this->db->db_table_prefix.'_'.SqlHelper::Device;
+        $this->equipmentTable = $this->db->db_table_prefix . "_" . SqlHelper::Equipment;
 
-        $this->device = $device;
+        $this->equipmentId = $equipmentId;
 
     }
 
@@ -45,171 +45,52 @@ abstract class KeepAliveClass implements KeepAliveMethod,SqlMethod
         set_time_limit($this->checkTime * ($this->try));//程序执行时间无限制
 
 
-        $device = $this->db->database->query("SELECT deviceID FROM $this->deviceTable WHERE deviceID = '$this->device'")->fetch_assoc()['deviceID'];
+        $equipmentId = $this->db->database->query("SELECT equipmentId FROM $this->equipmentTable WHERE equipmentId = '$this->equipmentId'")->fetch_assoc()['equipmentId'];
 
 
-        if(!$device)
+        if(!$equipmentId)
         {
             die(json_encode(Array('error' => '此设备不存在或尚未登记'), JSON_UNESCAPED_UNICODE));
         }
 
-//        flock();
-//
-        $this->search();
-//
-//        if(time() - $this->lastTime < $this->checkTime )
-//        {
-//            var_dump(time() - $this->lastTime );
-//            echo '早于检测时间';
-//        }
-//
+        $this->select();
+
+
+        if(strtotime($this->lastTime)<0)
+        {
+            $this->lastTime = 0;
+        }
+        else
+        {
+            $this->lastTime = strtotime($this->lastTime);
+        }
+
+
         if($this->lastTime < (time() - ($this->checkTime * $this->try)))
         {
-            $query = "UPDATE $this->deviceTable SET `status` = '0',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
+            $query = "UPDATE $this->equipmentTable SET `equipmentStatus` = '1',`checkTime` = from_unixtime(" . time() . ") WHERE `equipmentId` = '$equipmentId'";
             $this->db->database->query($query);
-            echo json_encode(Array('info' => '设备已离线'), JSON_UNESCAPED_UNICODE);
+            echo json_encode(Array('info' => '设备在线'), JSON_UNESCAPED_UNICODE);
+//            die($query);
         }
         else{
-            $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
+            $query = "UPDATE $this->equipmentTable SET `equipmentStatus` = '1',`checkTime` = from_unixtime(" . time() . ") WHERE `equipmentId` = '$equipmentId'";
             $this->db->database->query($query);
             echo json_encode(Array('info' => '设备在线'), JSON_UNESCAPED_UNICODE);
         }
-//
-//        sleep($this->checkTime * 2 + 1);
-        sleep($this->checkTime * 2);
-//
-        $this->search();
 
-//        $log = fopen('log.txt','w+');
+        sleep($this->checkTime * ($this->try-1));
 //
-//        fwrite($log,$this->lastTime.'\n');
-//        fwrite($log,time() - ($this->checkTime * 2) + 1);
+        $this->select();
 
-//        if($this->lastTime < (time() - ($this->checkTime * 2) + 1))
-            if($this->lastTime <= (time() - ($this->checkTime * 2)))
+        $this->lastTime = strtotime($this->lastTime);
+        if($this->lastTime <= (time() - ($this->checkTime * ($this->try - 2))))
         {
-            $query = "UPDATE $this->deviceTable SET `status` = '0',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
+            $query = "UPDATE $this->equipmentTable SET `equipmentStatus` = '0',`checkTime` = from_unixtime(" . time() . ") WHERE `equipmentId` = '$equipmentId'";
             $this->db->database->query($query);
             die(json_encode(Array('info' => '设备已离线'), JSON_UNESCAPED_UNICODE));
         }
-//        while (true)
-//        {
-//            if(time() - $this->lastTime < $this->checkTime )
-//            {
-//                var_dump(time() - $this->lastTime );
-//                echo '早于检测时间';
-//                break;
-//            }
-//
-//            if($this->lastTime < (time() - ($this->checkTime * $this->try)))
-//            {
-//                echo '离线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '0',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-//            else{
-//                echo '在线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-
-//            if($this->lastTime >= time() - $this->checkTime * 2 && $this->lastTime <= time() - $this->checkTime ){
-//                echo '在线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-
-//            sleep($this->checkTime);
-//            echo var_dump(time() - $this->lastTime );
-//            $this->search();
-//
-//            if($this->lastTime < (time() - ($this->checkTime * $this->try)))
-//            {
-//                echo '离线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '0',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-//            else{
-//                echo '在线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-
-//            if($this->lastTime > time() - $this->checkTime ){
-//                echo '在线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-//            break;
-
-//            elseif($this->lastTime > time() - ($this->checkTime * $this->try) )
-//            {
-//                echo '重连';
-//                $query = "UPDATE $this->deviceTable SET `status` = '6',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-
-//            elseif($this->lastTime >= time() - $this->checkTime * 2 && $this->lastTime <= time() - $this->checkTime ){
-//                echo '在线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//            }
-
-//            sleep($this->checkTime);
-//            $this->search();
-//            if($this->lastTime >= time())
-//            {   echo '在线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//                break;
-//            }
-//            elseif($this->lastTime < (time() - ($this->checkTime)))
-//            {
-//                echo '离线';
-//                $query = "UPDATE $this->deviceTable SET `status` = '0',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//                break;
-//            }
-//        }
-
-
-//        while($this->try >= 0){
-//            /*
-//             * 检测
-//             */
-//
-//            $this->search();
-//            // Code
-//
-//            $query = "UPDATE $this->deviceTable SET `status` = '1',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//            $this->db->database->query($query);
-//            /*
-//             * 重试
-//             */
-//            if($this->live != 1)
-//            {
-//                /*
-//                 *  Code
-//                 */
-//                $query = "UPDATE $this->deviceTable SET `status` = '6',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//
-//                if(time() < $this->lastTime)
-//                {
-//                    $this->live = 8;
-//                    continue;
-//                }
-//                $this->try --;
-//            }
-//            if($this->try <= 0)
-//            {
-//                $query = "UPDATE $this->deviceTable SET `status` = '0',`liveTime` = from_unixtime(" . time() . ") WHERE `deviceId` = '$device'";
-//                $this->db->database->query($query);
-//                break;
-//            }
-//            echo '检测完成';
-//            sleep($this->checkTime);
-//        }
+//        
     }
 
     public function update()
@@ -227,13 +108,26 @@ abstract class KeepAliveClass implements KeepAliveMethod,SqlMethod
         // TODO: Implement delete() method.
     }
 
-    public function search()
+    public function select()
     {
-        $res = $this->db->database->query("SELECT status,UNIX_TIMESTAMP(liveTime) liveTime,ip FROM ".$this->db->db_table_prefix."_".SqlHelper::Device." WHERE deviceID = '$this->device'")->fetch_assoc();
+//        $res = $this->db->database->query("SELECT status,UNIX_TIMESTAMP(checkTime) checkTime,ip FROM ".$this->db->db_table_prefix."_".SqlHelper::equipmentId." WHERE equipmentId = '$this->equipmentId'")->fetch_assoc();
+        $res = $this->getEquipmentList($this->equipmentId);
         $this->live = $res["status"];
-        $this->lastTime = $res["liveTime"];
-        $this->ip = $res["ip"];
+        $this->lastTime = $res["checkTime"];
     }
 
+    public function getEquipmentList($equipmentId)
+    {
+        
+        $selectFilter = '';
+        
 
+        $selectFilter .= "AND equipmentId = '" . $equipmentId . "' ";
+
+        $query = "SELECT * FROM $this->equipmentTable WHERE 1=1 " . $selectFilter;
+        
+        return $this->db->database->query($query)->fetch_assoc();
+
+    }
+    
 }

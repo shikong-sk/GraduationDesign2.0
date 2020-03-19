@@ -7,23 +7,29 @@ header('Content-Type:application/json; charset=utf-8');
  * 设备上传数据
  */
 
-if(isset($_POST['device']) && isset($_POST['deviceName']) && isset($_POST['area']) && isset($_POST['place']) )
+if(isset($_POST['equipmentId']) && isset($_POST['equipmentName']) && isset($_POST['areaCode']) && isset($_POST['dareaCode']) )
 {
-    $device = new DataClass($_POST['device'],$_POST['deviceName'],$_POST['area'],$_POST['place']);
+
+    $equipment = new DataClass($_POST['equipmentId'],$_POST['equipmentName'],$_POST['areaCode'],$_POST['dareaCode']);
     /*
      * 来访人员数据提交
      */
-    if(isset($_POST['pushPersonnel']) && isset($_POST['passTime']) && isset($_POST['name']) && isset($_POST['idCard']) && isset($_POST['come'])){
-        die($device->pushPersonnel(
-            $_POST['passTime'],$_POST['name'],$_POST['idCard'],$_POST['come'],$_POST['temp'],$_POST['cardType'],$_POST['sex'],
-            $_POST['nation'],$_POST['countryAreaCode'],$_POST['countryAreaName'],$_POST['cardVersion'],$_POST['personImg'],$_POST['idCardImg']));
+    if(isset($_POST['pushPersonnel']) && isset($_POST['passTime']) && isset($_POST['name']) && isset($_POST['idCard']) && isset($_POST['status'])){
+
+        die($equipment->pushPersonnel(
+        $_POST['passTime'],$_POST['name'],$_POST['gender'],$_POST['nation'],$_POST['idCard'],$_POST['cardType'],$_POST['countryOrAreaCode'],$_POST['countryOrAreaName'],$_POST['cardVersion'],
+        $_POST['currentApplyOrgCode'],$_POST['signNum'],$_POST['birthDay'],$_POST['address'],$_POST['authority'],$_POST['validtyStart'],$_POST['validtyEnd'],
+        $_POST['personImg'],$_POST['idCardImg'],$_POST['temp'],$_POST['areaCode'],$_POST['x'],$_POST['y'],$_POST['equipmentId'],$_POST['equipmentName'],$_POST['equipmentType'],$_POST['stationId'],$_POST['stationName'],
+        $_POST['location'],$_POST['status'],$_POST['dareaName'],$_POST['dareaCode'],$_POST['dareaType'],$_POST['identity'],$_POST['homedarea'],$_POST['contact'],$_POST['isConsist'],$_POST['compareScore'],
+        $_POST['openMode'],$_POST['visitReason'],$_POST['mac'],$_POST['imsi'],$_POST['imei'],$_POST['visitor']
+        ));
     }
 
     /*
      * 来访车辆数据提交
      */
     if(isset($_POST['pushCar']) && isset($_POST['passTime']) && isset($_POST['licensePlate']) && isset($_POST['come'])){
-        die($device->pushCar($_POST['passTime'],$_POST['licensePlate'],$_POST['come']));
+        die($equipment->pushCar($_POST['passTime'],$_POST['licensePlate'],$_POST['come']));
     }
     die(json_encode(Array('error' => '操作失败，参数错误'), JSON_UNESCAPED_UNICODE));
 }
