@@ -1319,7 +1319,10 @@ class  ManagementClass
                 return json_encode(Array('error' => 'plateNum 参数错误'), JSON_UNESCAPED_UNICODE);
             } else {
                 if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
-                    $data['vehicleImg'] = json_decode($f->uploadImage($data['vehicleImg'], 'car', $data['passTime'], $data['plateNum']), true)[0];
+                    $data['vehicleImg'] = json_decode($f->uploadImage($data['vehicleImg'], 'car', $data['passTime'], $data['plateNum'].'_车辆'), true)[0];
+                }
+                if (isset($data['plateImg']) && strlen($data['plateImg']) != 0) {
+                    $data['plateImg'] = json_decode($f->uploadImage($data['plateImg'], 'car', $data['passTime'], $data['plateNum'].'_车牌'), true)[0];
                 }
             }
             if (!isset($data['equipmentId'])) {
@@ -1385,18 +1388,36 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该场所不存在'), JSON_UNESCAPED_UNICODE);
         }
 
-        $query = "INSERT INTO $this->carTable(`passTime`, `plateNum`, `plateColor`, `vehicleType`, `vehicleImg`, `area`, `x`, `y`, `equipmentId`, `equipmentName`, `equipmentType`, `stationId`, `stationName`, `location`, `vehicleColor`, `status`, `darea`, `dareaName`, `placeType`, `carType`, `visitReason`, `visitor`, `driverData`, `passengerData`) VALUES ('{$data['passTime']}', '{$data['plateNum']}', '{$data['plateColor']}', '{$data['vehicleType']}', '{$data['vehicleImg']}', '{$area}', '{$data['x']}', '{$data['y']}', '{$data['equipmentId']}', '{$data['equipmentName']}', '{$data['equipmentType']}', '{$data['stationId']}', '{$data['stationName']}', '{$data['location']}', '{$data['vehicleColor']}', '{$data['status']}', '{$darea}', '{$dareaName}', '{$data['placeType']}', '{$data['carType']}', '{$data['visitReason']}', '{$data['visitor']}', '{$data['driverData']}', '{$data['passengerData']}')";
+        $query = "INSERT INTO $this->carTable(`passTime`, `plateNum`, `plateColor`, `vehicleType`, `vehicleImg`, `area`, `x`, `y`, `equipmentId`, `equipmentName`, `equipmentType`, `stationId`, `stationName`, `location`, `vehicleColor`, `status`, `darea`, `dareaName`, `placeType`, `carType`, `visitReason`, `visitor`, `driverData`, `passengerData`,`plateImg`) VALUES ('{$data['passTime']}', '{$data['plateNum']}', '{$data['plateColor']}', '{$data['vehicleType']}', '{$data['vehicleImg']}', '{$area}', '{$data['x']}', '{$data['y']}', '{$data['equipmentId']}', '{$data['equipmentName']}', '{$data['equipmentType']}', '{$data['stationId']}', '{$data['stationName']}', '{$data['location']}', '{$data['vehicleColor']}', '{$data['status']}', '{$darea}', '{$dareaName}', '{$data['placeType']}', '{$data['carType']}', '{$data['visitReason']}', '{$data['visitor']}', '{$data['driverData']}', '{$data['passengerData']}', '{$data['plateImg']}')";
 
         $res = $this->db->database->query($query);
         $err = $this->db->database->errno;
 
         if ($err == 1062) {
+            if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
+                $f->deleteImage($data['vehicleImg'], 'car');
+            }
+            if (isset($data['plateImg']) && strlen($data['plateImg']) != 0) {
+                $f->deleteImage($data['plateImg'], 'car');
+            }
             return json_encode(Array('error' => '该数据已存在'), JSON_UNESCAPED_UNICODE);
         }
+
+//        if ($res && $this->db->database->affected_rows == 1) {
+//            return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
+//        } else {
+//            return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+//        }
 
         if ($res && $this->db->database->affected_rows == 1) {
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
+            if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
+                $f->deleteImage($data['vehicleImg'], 'car');
+            }
+            if (isset($data['plateImg']) && strlen($data['plateImg']) != 0) {
+                $f->deleteImage($data['plateImg'], 'car');
+            }
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
         }
 
@@ -2406,8 +2427,12 @@ class  ManagementClass
             }
 
             if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
-                $data['vehicleImg'] = json_decode($f->uploadImage($data['vehicleImg'], 'car', $data['passTime'], $data['plateNum']), true)[0];
+                $data['vehicleImg'] = json_decode($f->uploadImage($data['vehicleImg'], 'car', $data['passTime'], $data['plateNum'].'_车辆'), true)[0];
                 $queryArg .= "`vehicleImg` = '{$data["vehicleImg"]}', ";
+            }
+            if (isset($data['plateImg']) && strlen($data['plateImg']) != 0) {
+                $data['plateImg'] = json_decode($f->uploadImage($data['plateImg'], 'car', $data['passTime'], $data['plateNum'].'_车牌'), true)[0];
+                $queryArg .= "`plateImg` = '{$data["plateImg"]}', ";
             }
 
             if (isset($data['plateColor'])) {
@@ -2498,6 +2523,9 @@ class  ManagementClass
             if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
                 $f->deleteImage($data['vehicleImg'], 'car');
             }
+            if (isset($data['plateImg']) && strlen($data['plateImg']) != 0) {
+                $f->deleteImage($data['plateImg'], 'car');
+            }
             return json_encode(Array('error' => '该数据已存在'), JSON_UNESCAPED_UNICODE);
         }
 
@@ -2507,10 +2535,18 @@ class  ManagementClass
                     $f->deleteImage($carData[1]['vehicleImg'], 'car');
                 }
             }
+            if (isset($data['plateImg']) && strlen($data['plateImg']) != 0) {
+                if ($data['plateImg'] != $carData[1]['plateImg']) {
+                    $f->deleteImage($carData[1]['plateImg'], 'car');
+                }
+            }
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
             if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
                 $f->deleteImage($data['vehicleImg'], 'car');
+            }
+            if (isset($data['plateImg']) && strlen($data['plateImg']) != 0) {
+                $f->deleteImage($data['plateImg'], 'car');
             }
             return json_encode(Array('info' => '数据未更改'), JSON_UNESCAPED_UNICODE);
         }

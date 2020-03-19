@@ -145,6 +145,46 @@ abstract class FileClass
             $type = $result[2];
 
             $file_name = $fileName.'_'.trim(guid(), '{}').".$type";
+
+
+            if($source == 'personnel')
+            {
+                if(!file_exists($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/证件'))
+                {
+                    mkdir($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/证件');
+                }
+                if(!file_exists($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/现场'))
+                {
+                    mkdir($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/现场');
+                }
+                if(strstr($fileName,'_证件'))
+                {
+                    $file_name = '证件/'.$file_name;
+                }
+                else if(strstr($fileName,'_现场')){
+                    $file_name = '现场/'.$file_name;
+                }
+            }
+
+            if($source == 'car')
+            {
+                if(!file_exists($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/车辆'))
+                {
+                    mkdir($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/车辆');
+                }
+                if(!file_exists($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/车牌'))
+                {
+                    mkdir($dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/车牌');
+                }
+                if(strstr($fileName,'_车辆'))
+                {
+                    $file_name = '车辆/'.$file_name;
+                }
+                else if(strstr($fileName,'_车牌')){
+                    $file_name = '车牌/'.$file_name;
+                }
+            }
+
             $new_file = $dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i."/".$file_name;
 
             $img = str_replace($result[1], '', $imgData);

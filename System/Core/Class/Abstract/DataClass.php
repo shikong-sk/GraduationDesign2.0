@@ -121,6 +121,8 @@ class DataClass{
 //        echo $query;
 
         if ($err == 1062) {
+            $f->deleteImage($personImg,'personnel');
+            $f->deleteImage($idCardImg,'personnel');
             return json_encode(Array('error' => '该数据已存在'), JSON_UNESCAPED_UNICODE);
         }
 
@@ -134,17 +136,85 @@ class DataClass{
         
     }
 
-    public function pushCar($time,$licensePlate,$come){
-        // time 为 标准24小时制时间 例：2020-03-10 17:15:00
-        $query = "INSERT INTO $this->carTable(`time`, `licensePlate`, `area`, `darea`, `come`, `device`) VALUES ('$time', '$licensePlate', '$this->area', '$this->darea', $come, '$this->device')";
+    public function pushCar(
+        $passTime,$plateNum,$plateColor,$vehicleType,$area,$x,$y,$equipmentId,$equipmentName,$equipmentType,$stationId="",$stationName="",
+        $location="",$vehicleColor,$status,$dareaName,$darea,$placeType,$carType,$visitReason="",$visitor="",$driverData="",$passengerData="",$vehicleImg="",$plateImg=""
+    ){
+
+        if (strlen($area) != 9) {
+            return json_encode(Array('error' => '行政区域代码错误'), JSON_UNESCAPED_UNICODE);
+        }
+
+        if (strlen(strval($darea)) != 19) {
+            return json_encode(Array('error' => '场所代码错误'), JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($area !== substr($darea, 0, 9)) {
+            return json_encode(Array('error' => '地区与场所不符'), JSON_UNESCAPED_UNICODE);
+        }
+
+        $areaName = $this->getAreaName($area);
+        $dareaName = $this->getDareaName($darea);
+
+
+        if (strlen(mb_split(':', $dareaName)[1]) == 0) {
+            return json_encode(Array('error' => '操作失败，该场所不存在'), JSON_UNESCAPED_UNICODE);
+        }
+
+        if (strlen($equipmentId) != 18) {
+            return json_encode(Array('error' => 'equipmentId 参数错误'), JSON_UNESCAPED_UNICODE);
+        } else if ($area !== substr($equipmentId, 0, 9)) {
+            return json_encode(Array('error' => 'equipmentId 参数错误'), JSON_UNESCAPED_UNICODE);
+        }
+
+        if (strlen($equipmentType) != 2 || $equipmentType !== substr($equipmentId, 13, 2)) {
+            return json_encode(Array('error' => 'equipmentType 参数错误'), JSON_UNESCAPED_UNICODE);
+        }
+
+        $f = new FileManager();
+
+        if (isset($vehicleImg) && strlen($vehicleImg) != 0) {
+            $vehicleImg = json_decode($f->uploadImage($vehicleImg, 'car', $passTime, $plateNum.'_车辆'), true)[0];
+        }
+        if (isset($plateImg) && strlen($plateImg) != 0) {
+            $plateImg = json_decode($f->uploadImage($plateImg, 'car', $passTime, $plateNum.'_车牌'), true)[0];
+        }
+
+        if (strlen($status) != 1) {
+            return json_encode(Array('error' => 'status 参数错误'), JSON_UNESCAPED_UNICODE);
+        }
+
+        if (is_array($visitor)) {
+            $visitor = json_encode($visitor, JSON_UNESCAPED_UNICODE);
+        }
+        if (is_array($driverData)) {
+            $driverData = json_encode($driverData, JSON_UNESCAPED_UNICODE);
+        }
+        if (is_array($passengerData)) {
+            $passengerData = json_encode($passengerData, JSON_UNESCAPED_UNICODE);
+        }
+
+        $query = "INSERT INTO $this->carTable(`passTime`, `plateNum`, `plateColor`, `vehicleType`, `vehicleImg`, `area`, `x`, `y`, `equipmentId`, `equipmentName`, `equipmentType`, `stationId`, `stationName`, `location`, `vehicleColor`, `status`, `darea`, `dareaName`, `placeType`, `carType`, `visitReason`, `visitor`, `driverData`, `passengerData`,`plateImg`) VALUES ('{$passTime}', '{$plateNum}', '{$plateColor}', '{$vehicleType}', '{$vehicleImg}', '{$area}', '{$x}', '{$y}', '{$equipmentId}', '{$equipmentName}', '{$equipmentType}', '{$stationId}', '{$stationName}', '{$location}', '{$vehicleColor}', '{$status}', '{$darea}', '{$dareaName}', '{$placeType}', '{$carType}', '{$visitReason}', '{$visitor}', '{$driverData}', '{$passengerData}', '{$plateImg}')";
 
         $res = $this->db->database->query($query);
+        $err = $this->db->database->errno;
+
+//        echo $query;
+
+        if ($err == 1062) {
+            $f->deleteImage($vehicleImg,'car');
+            $f->deleteImage($plateImg,'car');
+            return json_encode(Array('error' => '该数据已存在'), JSON_UNESCAPED_UNICODE);
+        }
 
         if ($res && $this->db->database->affected_rows == 1) {
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
+            $f->deleteImage($vehicleImg,'car');
+            $f->deleteImage($plateImg,'car');
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
         }
+
     }
 
     public function getAreaName($area)
