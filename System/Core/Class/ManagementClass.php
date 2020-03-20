@@ -4102,9 +4102,9 @@ class  ManagementClass
 
 
         if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
-            $equipmentData = json_decode($this->getEquipmentList('', $data['$areaList'], '', $data['dareaList'], '1', '9999999999999', $selectFilterArray), true);
+            $equipmentData = json_decode($this->getEquipmentList('', $data['$areaList'], '', $data['dareaList'], '1', '0', $selectFilterArray), true);
         } else {
-            $equipmentData = json_decode($this->getEquipmentList($data['area'], '', $data['darea'], '', '1', '9999999999999', $selectFilterArray), true);
+            $equipmentData = json_decode($this->getEquipmentList($data['area'], '', $data['darea'], '', '1', '0', $selectFilterArray), true);
         }
 
         if ($equipmentData[0] == 0) {
@@ -4126,6 +4126,47 @@ class  ManagementClass
         } else {
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
         }
+
+//        if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
+//            $equipmentDataNum = json_decode($this->getEquipmentList('', $data['areaList'], '', $data['dareaList'], '1', '0', $selectFilterArray), true)[0];
+//
+//        } else {
+//            $equipmentDataNum = json_decode($this->getEquipmentList($data['area'], '', $data['darea'], '', '1', '0', $selectFilterArray), true)[0];
+//        }
+//
+//        if ($equipmentDataNum == 0) {
+//            return json_encode(Array('info' => '所选条件范围内无记录'), JSON_UNESCAPED_UNICODE);
+//        }
+//
+//
+//        if (strlen($selectFilter) == 0) {
+//            return json_encode(Array('error' => '条件 参数错误'), JSON_UNESCAPED_UNICODE);
+//        }
+//
+//        $query .= $selectPlan . $selectFilter . ' LIMIT 5000';
+//        for($page = 1;$equipmentDataNum - (5000*($page-1))>0;$page++){
+//            if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
+//                $equipmentData =
+//                    array_slice(
+//                        json_decode($this->getEquipmentList('', $data['areaList'], '', $data['dareaList'], $page, '5000', $selectFilterArray), true)
+//                        ,1);
+//            } else {
+//                $equipmentData =
+//                    array_slice(
+//                        json_decode($this->getEquipmentList($data['area'], '', $data['darea'], '', $page, '5000', $selectFilterArray), true)
+//                        ,1);
+//            }
+//
+//            $res = $this->db->database->query($query);
+//
+//            if ($res && $this->db->database->affected_rows >= 1) {
+//                continue;
+//            }
+//            else {
+//                return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+//            }
+//        }
+//        return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
 
     }
 //    public function deletePersonnel($time, $name, $idCard)
