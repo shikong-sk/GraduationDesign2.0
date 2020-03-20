@@ -78,7 +78,7 @@
 								{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
 							</span>
 							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item><a href="index.html">个人中心</a></el-dropdown-item>
+								<el-dropdown-item v-if="role.indexOf('管理员') != -1"><span @click="linkTo('./management.html')">管理中心</span></el-dropdown-item>
 								<el-dropdown-item divided>
 									<div @click="(x)=>{logout()}">退出登录</div>
 								</el-dropdown-item>
@@ -137,7 +137,32 @@
 						</el-col>
 					</el-row>
 					<div id="equipment">
-
+						<el-row>
+							<el-divider><i class="el-icon-s-platform"></i></el-divider>
+							
+							<el-col :span="12"> 设备总数目 </el-col>
+							<el-col :span="12"> {{equipmentData.allNum}} </el-col>
+							<el-col :span="12"> 设备在线数 </el-col>
+							<el-col :span="12"> {{equipmentData.onlineNum}} </el-col>
+						</el-row>
+						<el-row>
+							<el-divider><i class="el-icon-cpu"></i></el-divider>
+							 
+							<div v-for="(v,k) in equipmentType">
+								<div v-for="(val,key) in v">
+									<el-col :span="12">
+										{{val}}
+									</el-col>
+									<el-col  :span="12" v-if="equipmentData.equipmentType[k] !== undefined">
+										{{equipmentData.equipmentType[k][key]}}
+									</el-col>
+									<el-col v-else :span="12">
+										--
+									</el-col>
+								</div>		
+							</div>
+							
+						</el-row>
 					</div>
 				</el-col>
 				<el-col class="text-center border" :xs="24" :sm="24" :md="8">
@@ -174,6 +199,8 @@
 			let carEcharts = null
 			let carEchartsInterVal = null
 			
+			let equipmentInterVal = null
+			
 			var dashboard = new Vue({
 				el: '#dashboard',
 				watch: {
@@ -209,6 +236,12 @@
 				},
 				data() {
 					return {
+						equipmentType : [
+							{'01':'访客机'},
+							{'02':'门禁机'},
+							{'03':'车辆道闸'},
+						],
+						
 						dashboardFlag: false,
 						activeIndex: '1',
 						userName: '',
@@ -238,8 +271,8 @@
 						dareaList: {},
 
 
-						getTimeData: 12,
-						getTimeSleep: (1000 * 10),
+						getTimeData: 24,
+						getTimeSleep: (1000 * 60 * 0.5),
 
 						personnelOption: null,
 						personnelData: {
@@ -257,9 +290,62 @@
 							time: []
 						},
 
+						equipmentData:{
+							allNum:0,
+							onlineNum:0,
+							equipmentType:[],
+						}
 					}
 				},
 				methods: {
+					linkTo(target){
+						window.location = target
+					},
+					getEquipmentData(){
+						axios.post('./System/Core/Management.php', Qs.stringify({
+							"getEquipmentList": '',
+							"area": dashboard.equipmentArea,
+							"darea": dashboard.equipmentDarea,
+							"page": "1",
+							"num": "0",
+						}), ).then(function(res) {
+							dashboard.equipmentData.allNum = res.data[0]
+						})
+						
+						axios.post('./System/Core/Management.php', Qs.stringify({
+							"getEquipmentList": '',
+							"area": dashboard.equipmentArea,
+							"darea": dashboard.equipmentDarea,
+							"page": "1",
+							"num": "0",
+							"filter": JSON.stringify({
+								"status": '1',
+							})
+						}), ).then(function(res) {
+							dashboard.equipmentData.onlineNum = res.data[0]
+						})
+						
+						dashboard.equipmentType.forEach(async function(i){
+							// console.log(i)
+							
+							await axios.post('./System/Core/Management.php', Qs.stringify({
+									"getEquipmentList": '',
+									"area": dashboard.equipmentArea,
+									"darea": dashboard.equipmentDarea,
+									"page": "1",
+									"num": "0",
+									"filter": JSON.stringify({
+										"equipmentType": Object.keys(i)[0],
+									})
+								}), ).then((res)=> {
+									tmp = Object()
+									tmp[Object.keys(i)[0]] = res.data[0]
+									dashboard.equipmentData.equipmentType[dashboard.equipmentType.indexOf(i)] = (tmp)
+									dashboard.$set(dashboard.equipmentData.equipmentType,dashboard.equipmentData.equipmentType)
+								})
+						})			
+						
+					},
 					loadArea(v, filter) {
 						if (dashboard.permission != '8') {
 							return dashboard.areaList
@@ -325,6 +411,14 @@
 					loadDarea(v, filter) {
 						switch (filter) {
 							case 'equipment':
+								window.clearInterval(equipmentInterVal)
+								
+								dashboard.getEquipmentData()
+								
+								personnelEchartsInterVal = setInterval(function(){
+									dashboard.getEquipmentData()
+								},parseInt(dashboard.getTimeSleep/6))
+								
 								break;
 							case 'personnel':
 								window.clearInterval(personnelEchartsInterVal)
@@ -337,7 +431,7 @@
 										"area": dashboard.personnelArea,
 										"darea": dashboard.personnelDarea,
 										"page": "1",
-										"num": "1",
+										"num": "0",
 										"filter": JSON.stringify({
 											"betweenTime": JSON.stringify(time),
 										})
@@ -400,7 +494,7 @@
 										"area": dashboard.personnelArea,
 										"darea": dashboard.personnelDarea,
 										"page": "1",
-										"num": "1",
+										"num": "0",
 										"filter": JSON.stringify({
 											"betweenTime": JSON.stringify(time),
 										})

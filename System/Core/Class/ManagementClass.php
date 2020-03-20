@@ -178,16 +178,19 @@ class  ManagementClass
     public function getPersonnelList($area, $areaList, $darea, $dareaList, $page, $num, $filter)
     {
 
-        if ((!$area || strlen($area) == 0) && (!$areaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        } else if (strlen($area) != 9 && (!$areaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        }
+        if($this->user->getPermission()->fetch_assoc()['permission'] != '8')
+        {
+            if ((!$area || strlen($area) == 0) && (!$areaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            } else if (strlen($area) != 9 && (!$areaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            }
 
-        if ((!$darea || strlen($darea) == 0) && (!$dareaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        } else if (strlen(strval($darea)) != 19 && (!$dareaList)) {
-            return json_encode(Array('error' => '4参数错误'), JSON_UNESCAPED_UNICODE);
+            if ((!$darea || strlen($darea) == 0) && (!$dareaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            } else if (strlen(strval($darea)) != 19 && (!$dareaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            }
         }
 
 //      $areaList 格式 ["440511000","110000000"]
@@ -283,7 +286,10 @@ class  ManagementClass
             }
             $selectPlan .= ") ";
 
-        } else if ($this->user->getPermission()->fetch_assoc()['permission'] == '8') {
+        } else if ($this->user->getPermission()->fetch_assoc()['permission'] == '8' &&
+            (strlen($area) != 0 || is_array($areaList) || strlen($areaList) !=0) &&
+            (strlen($darea) != 0 || is_array($dareaList) || strlen($dareaList) !=0)
+        ) {
             if (!$area || strlen($area) == 0) {
                 if (!is_array($areaList)) {
                     $areaList = json_decode($areaList, true);
@@ -428,6 +434,12 @@ class  ManagementClass
             if (isset($filter['imei'])) {
                 $selectFilter .= "AND imei LIKE '%" . $filter['imei'] . "%' ";
             }
+            if (isset($filter['personImg'])) {
+                $selectFilter .= "AND personImg = '" . $filter['personImg'] . "' ";
+            }
+            if (isset($filter['idCardImg'])) {
+                $selectFilter .= "AND idCardImg = '" . $filter['idCardImg'] . "' ";
+            }
         }
 
         $query = "SELECT * FROM $this->personnelTable WHERE 1=1 " . $selectPlan . $selectFilter;
@@ -543,17 +555,21 @@ class  ManagementClass
     public function getCarList($area, $areaList, $darea, $dareaList, $page, $num, $filter)
     {
 
-        if ((!$area || strlen($area) == 0) && (!$areaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        } else if (strlen($area) != 9 && (!$areaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+        if($this->user->getPermission()->fetch_assoc()['permission'] != '8')
+        {
+            if ((!$area || strlen($area) == 0) && (!$areaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            } else if (strlen($area) != 9 && (!$areaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            }
+
+            if ((!$darea || strlen($darea) == 0) && (!$dareaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            } else if (strlen(strval($darea)) != 19 && (!$dareaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            }
         }
 
-        if ((!$darea || strlen($darea) == 0) && (!$dareaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        } else if (strlen(strval($darea)) != 19 && (!$dareaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        }
 
 //      $areaList 格式 ["440511000","110000000"]
 
@@ -654,7 +670,11 @@ class  ManagementClass
             }
             $selectPlan .= ") ";
 
-        } else if ($this->user->getPermission()->fetch_assoc()['permission'] == '8') {
+        } else if (
+            $this->user->getPermission()->fetch_assoc()['permission'] == '8' &&
+            (strlen($area) != 0 || is_array($areaList) || strlen($areaList) !=0) &&
+            (strlen($darea) != 0 || is_array($dareaList) || strlen($dareaList) !=0)
+        ) {
             if (!$area || strlen($area) == 0) {
                 if (!is_array($areaList)) {
                     $areaList = json_decode($areaList, true);
@@ -732,6 +752,12 @@ class  ManagementClass
             }
             if (isset($filter['carType'])) {
                 $selectFilter .= "AND carType = '" . $filter['carType'] . "' ";
+            }
+            if (isset($filter['plateImg'])) {
+                $selectFilter .= "AND plateImg = '" . $filter['plateImg'] . "' ";
+            }
+            if (isset($filter['vehicleImg'])) {
+                $selectFilter .= "AND vehicleImg = '" . $filter['vehicleImg'] . "' ";
             }
         }
 
