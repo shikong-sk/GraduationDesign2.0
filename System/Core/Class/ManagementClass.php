@@ -3389,11 +3389,11 @@ class  ManagementClass
 
                 if (!$data['darea'] || strlen($data['darea']) == 0) {
                     if (!is_array($data['dareaList'])) {
-                        $dareaList = json_decode($data['dareaList'], true);
+                        $data['dareaList'] = json_decode($data['dareaList'], true);
                     }
 
                     $selectPlan .= "AND ( 1 = 0 ";
-                    foreach ($dareaList as $d) {
+                    foreach ($data['dareaList'] as $d) {
                         $selectPlan .= "OR darea = '$d' ";
                     }
                 } else {
@@ -3461,13 +3461,44 @@ class  ManagementClass
         }
 
 
+//        if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
+//            $carData = json_decode($this->getCarList('', $data['$areaList'], '', $data['dareaList'], '1', '9999999999999', $selectFilterArray), true);
+//        } else {
+//            $carData = json_decode($this->getCarList($data['area'], '', $data['darea'], '', '1', '9999999999999', $selectFilterArray), true);
+//        }
+//
+//        if ($carData[0] == 0) {
+//            return json_encode(Array('info' => '所选条件范围内无记录'), JSON_UNESCAPED_UNICODE);
+//        }
+//
+//
+//        if (strlen($selectFilter) == 0) {
+//            return json_encode(Array('error' => '条件 参数错误'), JSON_UNESCAPED_UNICODE);
+//        }
+//        $query .= $selectPlan . $selectFilter;
+//
+//        $res = $this->db->database->query($query);
+//
+//        if ($res && $this->db->database->affected_rows >= 1) {
+//            $f = new FileManager();
+//            foreach (array_splice($carData, 1) as $t) {
+//                if (isset($t['vehicleImg']) && strlen($t['vehicleImg']) != 0) {
+//                    $f->deleteImage($t['vehicleImg'], 'car');
+//                }
+//            }
+//            return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
+//        } else {
+//            return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+//        }
+
         if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
-            $carData = json_decode($this->getCarList('', $data['$areaList'], '', $data['dareaList'], '1', '9999999999999', $selectFilterArray), true);
+            $carDataNum = json_decode($this->getCarList('', $data['areaList'], '', $data['dareaList'], '1', '0', $selectFilterArray), true)[0];
+
         } else {
-            $carData = json_decode($this->getCarList($data['area'], '', $data['darea'], '', '1', '9999999999999', $selectFilterArray), true);
+            $carDataNum = json_decode($this->getCarList($data['area'], '', $data['darea'], '', '1', '0', $selectFilterArray), true)[0];
         }
 
-        if ($carData[0] == 0) {
+        if ($carDataNum == 0) {
             return json_encode(Array('info' => '所选条件范围内无记录'), JSON_UNESCAPED_UNICODE);
         }
 
@@ -3475,22 +3506,40 @@ class  ManagementClass
         if (strlen($selectFilter) == 0) {
             return json_encode(Array('error' => '条件 参数错误'), JSON_UNESCAPED_UNICODE);
         }
-        $query .= $selectPlan . $selectFilter;
 
-        $res = $this->db->database->query($query);
+        $query .= $selectPlan . $selectFilter . ' LIMIT 5000';
+        for($page = 1;$carDataNum - (5000*($page-1))>0;$page++){
+            if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
+                $carData =
+                    array_slice(
+                        json_decode($this->getCarList('', $data['areaList'], '', $data['dareaList'], $page, '5000', $selectFilterArray), true)
+                        ,1);
+            } else {
+                $carData =
+                    array_slice(
+                        json_decode($this->getCarList($data['area'], '', $data['darea'], '', $page, '5000', $selectFilterArray), true)
+                        ,1);
+            }
 
-        if ($res && $this->db->database->affected_rows >= 1) {
-            $f = new FileManager();
-            foreach (array_splice($carData, 1) as $t) {
-                if (isset($t['vehicleImg']) && strlen($t['vehicleImg']) != 0) {
-                    $f->deleteImage($t['vehicleImg'], 'car');
+            $res = $this->db->database->query($query);
+
+            if ($res && $this->db->database->affected_rows >= 1) {
+                $f = new FileManager();
+                foreach ($carData as $t) {
+                    if (isset($t['vehicleImg']) && strlen($t['vehicleImg']) != 0) {
+                        $f->deleteImage($t['vehicleImg'], 'car');
+                    }
+                    if (isset($t['plateImg']) && strlen($t['plateImg']) != 0) {
+                        $f->deleteImage($t['plateImg'], 'car');
+                    }
                 }
             }
-            return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
-        } else {
-            return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+            else {
+                return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+            }
         }
-
+        return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
+        
     }
 //    public function deleteCar($time, $licensePlate)
 //    {
@@ -3641,11 +3690,11 @@ class  ManagementClass
 
                 if (!$data['darea'] || strlen($data['darea']) == 0) {
                     if (!is_array($data['dareaList'])) {
-                        $dareaList = json_decode($data['dareaList'], true);
+                        $data['dareaList'] = json_decode($data['dareaList'], true);
                     }
 
                     $selectPlan .= "AND ( 1 = 0 ";
-                    foreach ($dareaList as $d) {
+                    foreach ($data['dareaList'] as $d) {
                         $selectPlan .= "OR darea = '$d' ";
                     }
                 } else {
@@ -3656,6 +3705,7 @@ class  ManagementClass
         } else {
             return json_encode(Array('error' => 'data 参数错误'), JSON_UNESCAPED_UNICODE);
         }
+
 
         $selectFilterArray = Array();
 
@@ -3800,14 +3850,17 @@ class  ManagementClass
             $selectFilterArray['imei'] = $data['imei'];
         }
 
+        // error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
 
         if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
-            $personnelData = json_decode($this->getPersonnelList('', $data['$areaList'], '', $data['dareaList'], '1', '9999999999999', $selectFilterArray), true);
+            $personnelDataNum = json_decode($this->getPersonnelList('', $data['areaList'], '', $data['dareaList'], '1', '0', $selectFilterArray), true)[0];
+
         } else {
-            $personnelData = json_decode($this->getPersonnelList($data['area'], '', $data['darea'], '', '1', '9999999999999', $selectFilterArray), true);
+            $personnelDataNum = json_decode($this->getPersonnelList($data['area'], '', $data['darea'], '', '1', '0', $selectFilterArray), true)[0];
         }
 
-        if ($personnelData[0] == 0) {
+        if ($personnelDataNum == 0) {
             return json_encode(Array('info' => '所选条件范围内无记录'), JSON_UNESCAPED_UNICODE);
         }
 
@@ -3815,24 +3868,39 @@ class  ManagementClass
         if (strlen($selectFilter) == 0) {
             return json_encode(Array('error' => '条件 参数错误'), JSON_UNESCAPED_UNICODE);
         }
-        $query .= $selectPlan . $selectFilter;
 
-        $res = $this->db->database->query($query);
-
-        if ($res && $this->db->database->affected_rows >= 1) {
-            $f = new FileManager();
-            foreach (array_splice($personnelData, 1) as $t) {
-                if (isset($t['personImg']) && strlen($t['personImg']) != 0) {
-                    $f->deleteImage($t['personImg'], 'personnel');
-                }
-                if (isset($t['idCardImg']) && strlen($t['idCardImg']) != 0) {
-                    $f->deleteImage($t['idCardImg'], 'personnel');
-                }
+        $query .= $selectPlan . $selectFilter . ' LIMIT 5000';
+        for($page = 1;$personnelDataNum - (5000*($page-1))>0;$page++){
+            if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
+                $personnelData = 
+                    array_slice(
+                        json_decode($this->getPersonnelList('', $data['areaList'], '', $data['dareaList'], $page, '5000', $selectFilterArray), true)
+                    ,1);
+            } else {
+                $personnelData = 
+                    array_slice(
+                        json_decode($this->getPersonnelList($data['area'], '', $data['darea'], '', $page, '5000', $selectFilterArray), true)
+                    ,1);
             }
-            return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
-        } else {
-            return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+            
+            $res = $this->db->database->query($query);
+
+            if ($res && $this->db->database->affected_rows >= 1) {
+                $f = new FileManager();
+                foreach ($personnelData as $t) {
+                    if (isset($t['personImg']) && strlen($t['personImg']) != 0) {
+                        $f->deleteImage($t['personImg'], 'personnel');
+                    }
+                    if (isset($t['idCardImg']) && strlen($t['idCardImg']) != 0) {
+                        $f->deleteImage($t['idCardImg'], 'personnel');
+                    }
+                }
+            } 
+            else {
+                return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
+            }
         }
+        return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
 
     }
     /*
@@ -3985,11 +4053,11 @@ class  ManagementClass
 
                 if (!$data['darea'] || strlen($data['darea']) == 0) {
                     if (!is_array($data['dareaList'])) {
-                        $dareaList = json_decode($data['dareaList'], true);
+                        $data['dareaList'] = json_decode($data['dareaList'], true);
                     }
 
                     $selectPlan .= "AND ( 1 = 0 ";
-                    foreach ($dareaList as $d) {
+                    foreach ($data['dareaList'] as $d) {
                         $selectPlan .= "OR darea = '$d' ";
                     }
                 } else {
