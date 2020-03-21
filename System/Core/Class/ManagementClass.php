@@ -29,6 +29,11 @@ class  ManagementClass
     var $carTable;
     var $personnelTable;
 
+
+    var $file_maxSize;
+    var $disk_maxSize;
+    var $max_record;
+
     public function __construct()
     {
         $this->db = new SqlHelper();
@@ -46,6 +51,14 @@ class  ManagementClass
         $this->carTable = $this->db->db_table_prefix . "_" . SqlHelper::Car;
         $this->personnelTable = $this->db->db_table_prefix . "_" . SqlHelper::Personnel;
 
+        $f = new FileManager();
+        $this->file_maxSize = $f->MaxFileSize;
+        $this->disk_maxSize = intval(disk_free_space('./')/1024) - 1048576;
+        $this->max_record = $this->file_maxSize / $this->max_record / 2 / 2;
+        if($this->max_record > 50000)
+        {
+            $this->max_record = 50000;
+        }
     }
 
     /*
@@ -1436,6 +1449,52 @@ class  ManagementClass
 //        }
 
         if ($res && $this->db->database->affected_rows == 1) {
+
+            $carRecord = $this->db->database->query("SELECT count(*) num FROM $this->carTable")->fetch_assoc()['num'];
+
+            if($carRecord > $this->max_record)
+            {
+                $maxNum = intval(($carRecord - $this->max_record));
+
+                $maxPage = ceil(($maxNum)/5000);
+
+                for($page=0;$page<$maxPage;$page++)
+                {
+                    if($maxNum>5000)
+                    {
+                        $num = 5000;
+                        $maxNum -= 5000;
+                    }
+                    else{
+                        $num = $maxNum;
+                    }
+
+                    $carData = Array();
+                    $res = $this->db->database->query("SELECT vehicleImg,plateImg FROM $this->carTable WHERE 1=1 ORDER BY passTime ASC LIMIT $page,$num");
+
+                    $resNum = 0;
+                    while ($res->data_seek($resNum)) {
+                        $data = $res->fetch_assoc();
+                        array_push($carData, $data);
+                        $resNum++;
+                    }
+
+                    $res = $this->db->database->query("DELETE FROM $this->carTable WHERE 1=1 ORDER BY passTime ASC LIMIT $num");
+                    if ($res && $this->db->database->affected_rows >= 1) {
+                        $f = new FileManager();
+                        foreach ($carData as $t) {
+                            if (isset($t['vehicleImg']) && strlen($t['vehicleImg']) != 0) {
+                                $f->deleteImage($t['vehicleImg'], 'car');
+                            }
+                            if (isset($t['plateImg']) && strlen($t['plateImg']) != 0) {
+                                $f->deleteImage($t['plateImg'], 'car');
+                            }
+                        }
+                    }
+                }
+
+            }
+            
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
             if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
@@ -1558,12 +1617,69 @@ class  ManagementClass
         $err = $this->db->database->errno;
 
         if ($err == 1062) {
+            if (isset($data['personImg']) && strlen($data['personImg']) != 0) {
+                $f->deleteImage($data['personImg'], 'personnel');
+            }
+            if (isset($data['idCardImg']) && strlen($data['idCardImg']) != 0) {
+                $f->deleteImage($data['idCardImg'], 'personnel');
+            }
             return json_encode(Array('error' => '该数据已存在'), JSON_UNESCAPED_UNICODE);
         }
 
         if ($res && $this->db->database->affected_rows == 1) {
+            
+            $personnelRecord = $this->db->database->query("SELECT count(*) num FROM $this->personnelTable")->fetch_assoc()['num'];
+
+            if($personnelRecord > $this->max_record)
+            {
+                $maxNum = intval(($personnelRecord - $this->max_record));
+
+                $maxPage = ceil(($maxNum)/5000);
+
+                for($page=0;$page<$maxPage;$page++)
+                {
+                    if($maxNum>5000)
+                    {
+                        $num = 5000;
+                        $maxNum -= 5000;
+                    }
+                    else{
+                        $num = $maxNum;
+                    }
+
+                    $personnelData = Array();
+                    $res = $this->db->database->query("SELECT personImg,idCardImg FROM $this->personnelTable WHERE 1=1 ORDER BY passTime ASC LIMIT $page,$num");
+
+                    $resNum = 0;
+                    while ($res->data_seek($resNum)) {
+                        $data = $res->fetch_assoc();
+                        array_push($personnelData, $data);
+                        $resNum++;
+                    }
+
+                    $res = $this->db->database->query("DELETE FROM $this->personnelTable WHERE 1=1 ORDER BY passTime ASC LIMIT $num");
+                    if ($res && $this->db->database->affected_rows >= 1) {
+                        $f = new FileManager();
+                        foreach ($personnelData as $t) {
+                            if (isset($t['personImg']) && strlen($t['personImg']) != 0) {
+                                $f->deleteImage($t['personImg'], 'personnel');
+                            }
+                            if (isset($t['idCardImg']) && strlen($t['idCardImg']) != 0) {
+                                $f->deleteImage($t['idCardImg'], 'personnel');
+                            }
+                        }
+                    }
+                }
+
+            }
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
+            if (isset($data['personImg']) && strlen($data['personImg']) != 0) {
+                $f->deleteImage($data['personImg'], 'personnel');
+            }
+            if (isset($data['idCardImg']) && strlen($data['idCardImg']) != 0) {
+                $f->deleteImage($data['idCardImg'], 'personnel');
+            }
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
         }
 
@@ -3534,7 +3650,7 @@ class  ManagementClass
         }
 
         $query .= $selectPlan . $selectFilter . ' LIMIT 5000';
-        for($page = 1;$carDataNum - (5000*($page-1))>0;$page++){
+        for($page = 1;(5000*($page-1))<$carDataNum;$page++){
             if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
                 $carData =
                     array_slice(
@@ -3896,7 +4012,7 @@ class  ManagementClass
         }
 
         $query .= $selectPlan . $selectFilter . ' LIMIT 5000';
-        for($page = 1;$personnelDataNum - (5000*($page-1))>0;$page++){
+        for($page = 1;(5000*($page-1))<$personnelDataNum;$page++){
             if (strlen($data['area']) == 0 && strlen($data['darea']) == 0) {
                 $personnelData = 
                     array_slice(

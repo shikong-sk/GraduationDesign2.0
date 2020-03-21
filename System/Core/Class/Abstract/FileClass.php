@@ -10,7 +10,7 @@ abstract class FileClass
     var $fileName;
     var $fileSize;
     var $allowDirs = Array();
-    var $MaxFileSize = 500;
+    var $MaxFileSize = 512;
     var $_root_;
 
     var $user;
@@ -36,7 +36,7 @@ abstract class FileClass
                 $this->allowDirs['car']='/Car';
                 $this->allowDirs['personnel']='/Personnel';
             }
-            if($_SESSION['device'] == 1)
+            if(isset($_SESSION['device']))
             {
                 $this->allowDirs['car']='/Car';
                 $this->allowDirs['personnel']='/Personnel';

@@ -12,6 +12,8 @@ require_once(dirname(__FILE__).'/../Core.php');
 
 require_once(dirname(__FILE__) .'/../../Config/db.config.php');
 
+require_once(dirname(__FILE__).'/../Class/Abstract/FileClass.php');
+
 class SqlHelper
 {
 

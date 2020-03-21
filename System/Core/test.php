@@ -32,7 +32,7 @@
 //
 //}
 
-//include_once './Class/Abstract/FileClass.php';
+include_once './Class/Abstract/FileClass.php';
 //
 //class FileManager extends FileClass{
 //
@@ -111,51 +111,83 @@ session_start();
 //
 //echo $r->getRoleList();
 
-$data = "[
-    {
-        \"id\": \"91A41A60-3F2F-7C35-ADA9-7FC3B4D17403\",
-        \"areaCode\": \"440511000\",
-        \"dareaCode\": \"4405110000000990000\",
-        \"addPersonnel\": \"1\",
-        \"delPersonnel\": \"1\",
-        \"updatePersonnel\": \"1\",
-        \"selectPersonnel\": \"1\",
-        \"addCar\": \"1\",
-        \"delCar\": \"1\",
-        \"updateCar\": \"1\",
-        \"selectCar\": \"1\",
-        \"addEquipment\": \"0\",
-        \"delEquipment\": \"0\",
-        \"updateEquipment\": \"0\",
-        \"selectEquipment\": \"0\"
-    },
-    {
-        \"id\": \"91A41A60-3F2F-7C35-ADA9-7FC3B4D17403\",
-        \"areaCode\": \"440511005\",
-        \"dareaCode\": \"4405110000000990000\",
-        \"addPersonnel\": \"1\",
-        \"delPersonnel\": \"1\",
-        \"updatePersonnel\": \"1\",
-        \"selectPersonnel\": \"1\",
-        \"addCar\": \"1\",
-        \"delCar\": \"1\",
-        \"updateCar\": \"1\",
-        \"selectCar\": \"0\",
-        \"addEquipment\": \"0\",
-        \"delEquipment\": \"0\",
-        \"updateEquipment\": \"0\",
-        \"selectEquipment\": \"0\"
-    }
-]";
+//$data = "[
+//    {
+//        \"id\": \"91A41A60-3F2F-7C35-ADA9-7FC3B4D17403\",
+//        \"areaCode\": \"440511000\",
+//        \"dareaCode\": \"4405110000000990000\",
+//        \"addPersonnel\": \"1\",
+//        \"delPersonnel\": \"1\",
+//        \"updatePersonnel\": \"1\",
+//        \"selectPersonnel\": \"1\",
+//        \"addCar\": \"1\",
+//        \"delCar\": \"1\",
+//        \"updateCar\": \"1\",
+//        \"selectCar\": \"1\",
+//        \"addEquipment\": \"0\",
+//        \"delEquipment\": \"0\",
+//        \"updateEquipment\": \"0\",
+//        \"selectEquipment\": \"0\"
+//    },
+//    {
+//        \"id\": \"91A41A60-3F2F-7C35-ADA9-7FC3B4D17403\",
+//        \"areaCode\": \"440511005\",
+//        \"dareaCode\": \"4405110000000990000\",
+//        \"addPersonnel\": \"1\",
+//        \"delPersonnel\": \"1\",
+//        \"updatePersonnel\": \"1\",
+//        \"selectPersonnel\": \"1\",
+//        \"addCar\": \"1\",
+//        \"delCar\": \"1\",
+//        \"updateCar\": \"1\",
+//        \"selectCar\": \"0\",
+//        \"addEquipment\": \"0\",
+//        \"delEquipment\": \"0\",
+//        \"updateEquipment\": \"0\",
+//        \"selectEquipment\": \"0\"
+//    }
+//]";
+//
+//$a = ["440511000","4405110000000990000"];
+//$data = json_decode($data,true);
+//
+//foreach ($a as $t){
+//    if(!in_array($t,$d = array_shift($data))){
+//        echo $t;
+//        var_dump($d);
+//    }
+//}
+//require_once './Class/SqlHelper.php';
+//error_reporting(E_ALL);
+//$f = new FileManager();
+//$db = new SqlHelper();
+//$file_maxSize = $f->MaxFileSize;
+//$disk_maxSize = intval(disk_free_space('./')/1024) - 51200;
+//$personnelTable = $db->db_table_prefix . "_" . SqlHelper::Personnel;
+//$personnelRecord = $db->database->query("SELECT count(*) num FROM $personnelTable")->fetch_assoc()['num'];
+//$max_record = $disk_maxSize / $file_maxSize / 2 / 2;
+//if($personnelRecord > $max_record)
+//{
+//
+//}
+$maxNum = 123000 - 120000;
+$maxPage =  ceil(($maxNum)/5000);
 
-$a = ["440511000","4405110000000990000"];
-$data = json_decode($data,true);
-//var_dump($data);
-//var_dump(in_array('440511000',$data[0]));
-
-foreach ($a as $t){
-    if(!in_array($t,$d = array_shift($data))){
-        echo $t;
-        var_dump($d);
+for($page=0;$page<$maxPage;$page++)
+{
+    if($maxNum>5000)
+    {
+        $num = 5000;
+        $maxNum -= 5000;
     }
+    else{
+        $num = $maxNum;
+    }
+    echo "$page".','."$num\n";
 }
+
+$url = '1';
+$v = 'result';
+$k = 'url';
+$$k = $v;
+echo $url;
