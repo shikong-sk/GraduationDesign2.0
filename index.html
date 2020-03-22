@@ -119,7 +119,7 @@
 					<div class="text-center"> 设备信息概览</div>
 					<el-row>
 						<el-col class="text-center border" :span="12">
-							<el-select v-model="equipmentArea" remote :remote-method="(v)=>{loadArea(v,'equipment')}"  @change="(v)=>{loadArea(v,'equipment')}" filterable placeholder="请选择区域">
+							<el-select v-model="equipmentArea" remote :remote-method="(v)=>{loadArea(v,'equipment')}"  @change="(v)=>{loadArea(v,'equipment');equipmentDarea = ''}" filterable placeholder="请选择区域">
 								<div v-for="(v,k) in areaList">
 									<el-option v-for="(val,key) in v" :key="k" :label="val" :value="k">
 									</el-option>
@@ -417,7 +417,7 @@
 								
 								personnelEchartsInterVal = setInterval(function(){
 									dashboard.getEquipmentData()
-								},parseInt(dashboard.getTimeSleep/6))
+								},parseInt(dashboard.getTimeSleep))
 								
 								break;
 							case 'personnel':
@@ -807,6 +807,8 @@
 										dashboard.$set(dashboard.areaList, dashboard.areaList)
 										dashboard.$set(dashboard.dareaList, dashboard.dareaList)
 
+										
+										
 										console.log(dashboard.dareaList)
 									})
 
@@ -993,9 +995,9 @@
 								};
 								carEcharts = echarts.init($('#car')[0]);
 								
-								
 								dashboard.$set(dashboard.personnelOption, dashboard.personnelOption)
 								dashboard.$set(dashboard.carOption, dashboard.carOption)
+								
 								
 								console.log(dashboard.personnelOption)
 

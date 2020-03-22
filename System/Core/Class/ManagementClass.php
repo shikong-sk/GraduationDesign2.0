@@ -224,9 +224,9 @@ class  ManagementClass
                 foreach ($areaList as $a) {
                     $flag = false;
                     foreach ($roleList as $r) {
-                        if ($r['selectPersonnel'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 人员信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectPersonnel'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 人员信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
 
                         if (in_array($a, $r)) {
                             $flag = true;
@@ -244,9 +244,9 @@ class  ManagementClass
                 foreach ($roleList as $r) {
                     if (in_array($area, $r)) {
                         $flag = true;
-                        if ($r['selectPersonnel'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($area) . '：' . $area . ' 人员信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectPersonnel'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($area) . '：' . $area . ' 人员信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
                         $selectPlan .= "AND (area = '$area' ";
                         break;
                     }
@@ -602,15 +602,15 @@ class  ManagementClass
                 foreach ($areaList as $a) {
                     $flag = false;
                     foreach ($roleList as $r) {
-                        if ($r['selectCar'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectCar'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
 
                         if (in_array($a, $r)) {
                             $flag = true;
-                            if ($r['selectCar'] == 0) {
-                                return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
-                            }
+//                            if ($r['selectCar'] == 0) {
+//                                return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+//                            }
                             $selectPlan .= "OR area = '$a' ";
                             break;
                         }
@@ -625,9 +625,9 @@ class  ManagementClass
                 foreach ($roleList as $r) {
                     if (in_array($area, $r)) {
                         $flag = true;
-                        if ($r['selectCar'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($area) . '：' . $area . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectCar'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($area) . '：' . $area . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
                         $selectPlan .= "AND (area = '$area' ";
                         break;
                     }
@@ -913,16 +913,20 @@ class  ManagementClass
 
     public function getEquipmentList($area, $areaList, $darea, $dareaList, $page, $num, $filter)
     {
-        if ((!$area || strlen($area) == 0) && (!$areaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        } else if (strlen($area) != 9 && (!$areaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        }
 
-        if ((!$darea || strlen($darea) == 0) && (!$dareaList)) {
-            return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
-        } else if (strlen(strval($darea)) != 19 && (!$dareaList)) {
-            return json_encode(Array('error' => '4参数错误'), JSON_UNESCAPED_UNICODE);
+        if($this->user->getPermission()->fetch_assoc()['permission'] != '8')
+        {
+            if ((!$area || strlen($area) == 0) && (!$areaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            } else if (strlen($area) != 9 && (!$areaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            }
+
+            if ((!$darea || strlen($darea) == 0) && (!$dareaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            } else if (strlen(strval($darea)) != 19 && (!$dareaList)) {
+                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            }
         }
 
 //      $areaList 格式 ["440511000","110000000"]
@@ -931,7 +935,6 @@ class  ManagementClass
         $selectFilter = '';
 
         $roleList = json_decode($this->getRoleList(), true);
-
         if ($this->user->getPermission()->fetch_assoc()['permission'] != '8') {
             if (!$area || strlen($area) == 0) {
                 if (!is_array($areaList)) {
@@ -943,9 +946,9 @@ class  ManagementClass
                 foreach ($areaList as $a) {
                     $flag = false;
                     foreach ($roleList as $r) {
-                        if ($r['selectEquipment'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 设备信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectEquipment'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($a) . '：' . $a . ' 设备信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
 
                         if (in_array($a, $r)) {
                             $flag = true;
@@ -963,9 +966,10 @@ class  ManagementClass
                 foreach ($roleList as $r) {
                     if (in_array($area, $r)) {
                         $flag = true;
-                        if ($r['selectEquipment'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($area) . '：' . $area . ' 设备信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectEquipment'] == 0) {
+////                            var_dump($area,$r);
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getAreaName($area) . '：' . $area . ' 设备信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
                         $selectPlan .= "AND (area = '$area' ";
                         break;
                     }
@@ -1018,7 +1022,9 @@ class  ManagementClass
             }
             $selectPlan .= ") ";
 
-        } else if ($this->user->getPermission()->fetch_assoc()['permission'] == '8') {
+        } else if ($this->user->getPermission()->fetch_assoc()['permission'] == '8'  &&
+            (strlen($area) != 0 || is_array($areaList) || strlen($areaList) !=0) &&
+            (strlen($darea) != 0 || is_array($dareaList) || strlen($dareaList) !=0)) {
             if (!$area || strlen($area) == 0) {
                 if (!is_array($areaList)) {
                     $areaList = json_decode($areaList, true);
@@ -1683,39 +1689,6 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
         }
 
-//        if (!$this->rolePermission->checkAddPersonnel()) {
-//            return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
-//        }
-//
-//
-//        if(strlen($temp) != 0)
-//        {
-//            if(floatval($temp) <= 0 || floatval($temp) >= 100)
-//            {
-//                return json_encode(Array('error' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
-//            }
-//        }
-//        else{
-//            $temp = 0;
-//        }
-//        if (strlen($name) == 0 || strlen($idCard) == 0 || strlen($area) == 0 || strlen($place) == 0 || strlen($come) == 0 || intval($come) < 0 || intval($come) > 1) {
-//            return json_encode(Array('error' => '操作失败，请检查信息是否正确'), JSON_UNESCAPED_UNICODE);
-//        }
-//
-//        $query = "INSERT INTO $this->personnelTable(`time`, `name`, `idCard`, `area`, `place`, `come`, `temp`) VALUES (from_unixtime(" . time() . "), '$name', '$idCard', '$area', '$place', $come, $temp)";
-//
-//        $res = $this->db->database->query($query);
-//        $err = $this->db->database->errno;
-//        if ($err == 1452) {
-//            return json_encode(Array('error' => '操作失败,区域 或 场所不存在'), JSON_UNESCAPED_UNICODE);
-//        }
-//
-//        if ($res && $this->db->database->affected_rows == 1) {
-//            return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
-//        } else {
-//            return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
-//        }
-
     }
 
     public function addEquipment($area, $darea, $data)
@@ -2052,6 +2025,10 @@ class  ManagementClass
                 $data['placeType'] = '99';
                 if ($data['placeType'] !== substr($data['darea'], 13, 2)) {
                     return json_encode(Array('error' => '场所代码错误'), JSON_UNESCAPED_UNICODE);
+                }
+                if(json_decode($this->getAreaList(1, 0, ['area' => $data['area']]), true)[0] != 0)
+                {
+                    return json_encode(Array('error' => '该区域代码已存在'), JSON_UNESCAPED_UNICODE);
                 }
                 $data['dareaName'] = '默认';
             } else if (isset($data['addDarea'])) {

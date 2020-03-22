@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<script src="Assets/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/popper.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/axios.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Assets/js/qs.min.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="Assets/css/bootstrap.min.css" />
+
+		<link rel="stylesheet" type="text/css" href="Assets/css/swiper.min.css" />
+
+		<script src="Assets/js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="Assets/js/element-ui.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="Assets/css/element-ui.css" />
+
+		<script src="Assets/js/vuex.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="Assets/js/tinymce/tinymce.min.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="Assets/js/jquery.base64.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="Assets/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+
+		<style type="text/css">
+			.text-danger {
+				color: #F56C6C !important;
+			}
+		</style>
+
+		<script type="text/javascript">
+			//公用函数定义
+			function sleep(fun, ms) {
+				setTimeout(fun, ms);
+			}
+
+			function loop(fun, ms) {
+				fun();
+				setInterval(fun, ms);
+			}
+
+			addEventListener(
+				"load",
+				function() {
+					setTimeout(hideURLbar, 0);
+				},
+				false
+			);
+
+			function hideURLbar() {
+				window.scrollTo(0, 1);
+			}
+		</script>
+	</head>
+
+	<body class="body">
+
+		<div id="management">
+			<el-row v-if="managementFlag">
+				<el-col :sm="4" class="text-center">
+					<img style="max-width: 120px;max-height: 50px;text-align: center;" src="Storage/global/Logo.png" alt="logo" class="img-fluid">
+				</el-col>
+				<el-col :sm="16" :xs="24">
+					<el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+						<el-menu-item index="1">平台概览</el-menu-item>
+					</el-menu>
+				</el-col>
+				<el-col :md="4" :xs="24">
+					<el-row>
+						<el-col :span="12">
+							<div style="padding-top: 10px; text-align: center;" class="mx-auto">
+								<div @click="()=>{areaDialog = true}" class="mx-auto w-100" style="font-size: 0.95rem;line-height: calc(0.95rem * 4);">
+									切换区域
+								</div>
+							</div>
+						</el-col>
+					
+						<el-col :span="12">
+							<div style="padding-top: 10px; text-align: center;" class="mx-auto">
+								<el-dropdown class="text-center">
+									<span class="el-dropdown-link">
+										{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
+									</span>
+									<el-dropdown-menu slot="dropdown">
+										<el-dropdown-item><span @click="linkTo('./')">返回首页</span></el-dropdown-item>
+										<el-dropdown-item divided>
+											<div @click="(x)=>{logout()}">退出登录</div>
+										</el-dropdown-item>
+									</el-dropdown-menu>
+								</el-dropdown>
+							</div>
+						</el-col>
+					</el-row>
+				</el-col>
+			</el-row>
+
+
+			<el-dialog title="请选择查看区域" :visible.sync="areaDialog">  
+			  <el-row>
+			  	<el-col class="text-center border" :xs="12" :sm="12" :md="6" style="height: 150px;">
+			  	</el-col>
+				<el-col class="text-center border" :xs="12" :sm="12" :md="6" style="height: 150px;">
+				</el-col>
+				<el-col class="text-center border" :xs="12" :sm="12" :md="6" style="height: 150px;">
+				</el-col>
+				<el-col class="text-center border" :xs="12" :sm="12" :md="6" style="height: 150px;">
+				</el-col>
+			  </el-row>
+			  
+			  <span slot="footer" class="dialog-footer">
+				<el-button @click="()=>{areaDialog = false}">取 消</el-button>
+				<el-button type="primary" :disabled="true" @click="dialogVisible = false">确 定</el-button>
+			  </span>
+			</el-dialog>
+
+			<el-row>
+				<el-col class="text-center border" :xs="24" :sm="24" :md="24">
+				</el-col>
+			</el-row>
+		</div>
+		<script>
+			var management = new Vue({
+				el: '#management',
+				watch: {},
+				computed: {},
+				mounted() {},
+				data() {
+					return {
+
+						areaDialog:true,
+						
+						managementFlag: false,
+						activeIndex: '1',
+						userName: '',
+						role: "",
+						permission: "",
+
+						Tab: "平台概览",
+
+						data: [],
+						userInfo: "",
+
+						dialogWidth: 0,
+
+						roleListPage: 1,
+						roleListNum: 1000,
+
+						roleList: [],
+
+						areaList: {},
+						area: '',
+						dareaList: {},
+						darea: "",
+					}
+				},
+				created() {
+				    this.setDialogWidth()
+				},
+				methods: {
+					setDialogWidth() {
+					      // console.log(document.body.clientWidth)
+					      var val = document.body.clientWidth
+					      const def = 800 // 默认宽度
+					      if (val < def) {
+					        this.dialogWidth = '100%'
+					      } else {
+					        this.dialogWidth = def + 'px'
+					      }
+					    },
+					linkTo(target) {
+						window.location = target
+					},
+					getSomeTime(n) {
+						return management.getTime(Date.parse(management.getTime(Math.ceil((new Date().getTime() / 100000) * 100000)).split(
+								':')[0] +
+							':' +
+							(parseInt(management.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) - parseInt(
+								management.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) % 5)) + 60 * 1000 * (5 *
+							n))
+					},
+					getTime(unixTime) {
+						unixTime = new Date(unixTime)
+						Y = unixTime.getFullYear()
+						M = (unixTime.getMonth() + 1) < 10 ? '0' + (unixTime.getMonth() + 1) : (unixTime.getMonth() + 1)
+						D = unixTime.getDate() < 10 ? '0' + unixTime.getDate() : unixTime.getDate()
+						H = unixTime.getHours() < 10 ? '0' + unixTime.getHours() : unixTime.getHours()
+						i = unixTime.getMinutes() < 10 ? '0' + unixTime.getMinutes() : unixTime.getMinutes()
+						S = unixTime.getSeconds() < 10 ? '0' + unixTime.getSeconds() : unixTime.getSeconds()
+						return Y + '-' + M + '-' + D + ' ' + H + ':' + i + ':' + S
+					},
+					handleSelect(key, keyPath) {
+						console.log(key, keyPath);
+					},
+					logout() {
+						axios.post('./System/Core/User.php', Qs.stringify({
+							"logout": '',
+						}), ).then(function(res) {
+							for (x in res.data) {
+								if ('success' === x) {
+									console.log(res.data['success'])
+									management.$alert(res.data['success'], '操作成功', {
+										confirmButtonText: '确定',
+										type: 'success',
+										center: true,
+										callback: action => {
+											window.location = 'login.html'
+										}
+									})
+								}
+							}
+						})
+					},
+				},
+				mounted() {
+					window.onresize = () => {
+					      return (() => {
+					        this.setDialogWidth()
+					      })()
+					}
+					axios.post('./System/Core/User.php', Qs.stringify({
+						"getUserInfo": '',
+					}), ).then(function(res) {
+						for (x in res.data) {
+							if ('error' === x) {
+								management.$alert(res.data[x], '错误', {
+									confirmButtonText: '确定',
+									type: 'error',
+									center: true,
+									callback: action => {
+										window.location = 'login.html'
+									}
+								})
+							} else {
+								management.userName = res.data[x]['userName']
+								management.userInfo = res.data[x]
+								management.permission = res.data[x]['permission']
+
+								if (management.permission == '8') {
+									management.role = '超级管理员'
+								} else if (management.permission == '1') {
+									management.role = '管理员'
+								} else {
+									management.role = '普通用户'
+								}
+
+								management.managementFlag = true
+
+								if (management.permission != '8') {
+									axios.post('./System/Core/Management.php', Qs.stringify({
+										"getRoleList": '',
+									}), ).then(function(res) {
+										if (res.data[0] == 0) {
+											management.$alert('您没有访问面板的权限，如需访问请联系超级管理员添加相应权限', '错误', {
+												confirmButtonText: '退出登录',
+												type: 'error',
+												center: true,
+												callback: action => {
+													management.logout()
+												}
+											})
+										}
+										// console.log(res.data)
+										management.roleList = res.data.slice(1)
+										for (t in management.roleList) {
+											// console.log(management.roleList[t]['areaCode'])
+
+											if (!(management.roleList[t]['areaCode'] in management.areaList)) {
+												management.areaList[management.roleList[t]['areaCode']] = {
+													'areaName': management.roleList[t]['areaName']
+												}
+											}
+
+											console.log(management.areaList,management.roleList[t]['areaCode'],management.roleList[t]['areaName'])
+
+											if (!(management.roleList[t]['areaCode'] in management.dareaList)) {
+												management.dareaList[management.roleList[t]['areaCode']] = {
+													'areaName': management.roleList[t]['areaName'],
+													'darea': {}
+												}
+											}
+
+											if (!(management.roleList[t]['dareaCode'] in management.dareaList[management.roleList[t]['areaCode']][
+													'darea'
+												])) {
+												management.dareaList[management.roleList[t]['areaCode']]['darea'][management.roleList[t]['dareaCode']] = {
+													'dareaName': management.roleList[t]['dareaName'],
+													'selectCar': management.roleList[t]['selectCar'] == 0 ? false : true,
+													'selectPersonnel': management.roleList[t]['selectPersonnel'] == 0 ? false : true,
+													'selectEquipment': management.roleList[t]['selectEquipment'] == 0 ? false : true
+												}
+											}
+
+										}
+
+										management.$set(management.areaList, management.areaList)
+										management.$set(management.dareaList, management.dareaList)
+
+										console.log(management.dareaList)
+									})
+								}
+							}
+						}
+					})
+				}
+			})
+		</script>
+
+		</div>
+
+		<script type="text/javascript">
+			var resetWindow = function() {
+				$('#management').css({
+					'min-height': $(window).height() - $('#head').height() - $('#foot').height()
+				})
+
+				if ($(window).width() <= 995) {
+					management.tabPosition = 'top'
+					$('#management').css({
+						'margin': '0 10px',
+						'margin-top': '5px'
+					})
+				} else {
+					management.tabPosition = 'left'
+					$('#management').css({
+						'margin': '0 5px',
+						'margin-top': '5px'
+					})
+				}
+			}
+			$(document).ready(function() {
+				resetWindow()
+				$(window).resize(function() {
+					resetWindow()
+				})
+			})
+		</script>
+
+</html>

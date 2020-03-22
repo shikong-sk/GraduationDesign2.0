@@ -1,303 +1,919 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title></title>
-		<script src="Assets/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="Assets/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="Assets/js/popper.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="Assets/js/vue.js" type="text/javascript" charset="utf-8"></script>
-		<script src="Assets/js/axios.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="Assets/js/qs.min.js" type="text/javascript" charset="utf-8"></script>
-		<link rel="stylesheet" type="text/css" href="Assets/css/bootstrap.min.css" />
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <script src="Assets/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/popper.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/axios.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/qs.min.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="Assets/css/bootstrap.min.css" />
 
-		<link rel="stylesheet" type="text/css" href="Assets/css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="Assets/css/swiper.min.css" />
 
-		<script src="Assets/js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
 
-		<script src="Assets/js/element-ui.js" type="text/javascript" charset="utf-8"></script>
-		<link rel="stylesheet" type="text/css" href="Assets/css/element-ui.css" />
+    <script src="Assets/js/element-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="Assets/css/element-ui.css" />
 
-		<script src="Assets/js/vuex.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/vuex.js" type="text/javascript" charset="utf-8"></script>
 
-		<script src="Assets/js/tinymce/tinymce.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/tinymce/tinymce.min.js" type="text/javascript" charset="utf-8"></script>
 
-		<script src="Assets/js/jquery.base64.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/jquery.base64.js" type="text/javascript" charset="utf-8"></script>
 
-		<script src="Assets/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
 
-		<style type="text/css">
-			.text-danger {
-				color: #F56C6C !important;
-			}
-		</style>
+    <script src="Assets/js/vue-router.js" type="text/javascript" charset="utf-8"></script>
 
-		<script type="text/javascript">
-			//公用函数定义
-			function sleep(fun, ms) {
-				setTimeout(fun, ms);
-			}
+    <style type="text/css">
+        .text-danger {
+            color: #F56C6C !important;
+        }
+    </style>
 
-			function loop(fun, ms) {
-				fun();
-				setInterval(fun, ms);
-			}
+    <script type="text/javascript">
+        //公用函数定义
+        function sleep(fun, ms) {
+            setTimeout(fun, ms);
+        }
 
-			addEventListener(
-				"load",
-				function() {
-					setTimeout(hideURLbar, 0);
-				},
-				false
-			);
+        function loop(fun, ms) {
+            fun();
+            setInterval(fun, ms);
+        }
 
-			function hideURLbar() {
-				window.scrollTo(0, 1);
-			}
-		</script>
-	</head>
+        addEventListener(
+            "load",
+            function() {
+                setTimeout(hideURLbar, 0);
+            },
+            false
+        );
 
-	<body class="body">
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+</head>
 
-		<div id="management">
-			<el-row v-if="managementFlag">
-				<el-col :sm="4" class="text-center">
-					<img style="max-width: 120px;max-height: 50px;text-align: center;" src="Storage/global/Logo.png" alt="logo" class="img-fluid">
-				</el-col>
-				<el-col :sm="18">
-					<el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
-						<el-menu-item index="1">平台概览</el-menu-item>
-					</el-menu>
-				</el-col>
-				<el-col :md="2" :xs="24">
-					<div style="padding-top: 10px; text-align: center;" class="mx-auto">
-						<el-dropdown class="text-center">
-							<span class="el-dropdown-link">
-								{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
-							</span>
-							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item><span @click="linkTo('./')">返回首页</span></el-dropdown-item>
-								<el-dropdown-item divided>
-									<div @click="(x)=>{logout()}">退出登录</div>
-								</el-dropdown-item>
-							</el-dropdown-menu>
-						</el-dropdown>
-					</div>
-				</el-col>
-			</el-row>
+<body class="body">
 
+    <div id="management">
+        <el-row v-if="managementFlag">
+            <el-col :sm="4" class="text-center">
+                <img style="max-width: 120px;max-height: 50px;text-align: center;" src="Storage/global/Logo.png" alt="logo" class="img-fluid">
+            </el-col>
+            <el-col :sm="16" :xs="24">
+                <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+                    <el-menu-item index="1">平台概览</el-menu-item>
+                </el-menu>
+            </el-col>
+            <el-col :md="4" :xs="24">
+                <el-row>
+                    <!-- 						<el-col :span="12" v-if="role != '超级管理员'">
+							<div style="padding-top: 10px; text-align: center;" class="mx-auto">
+								<div>{{dareaName}}</div>
+								<div @click="()=>{areaDialog = true}" class="mx-auto w-100" style="font-size: 0.95rem;line-height: calc(0.95rem * 2);">
+									切换区域
+								</div>
+							</div>
+						</el-col> -->
 
-			<el-row>
-				<el-col class="text-center border" :xs="24" :sm="24" :md="24">
-				</el-col>
-			</el-row>
-		</div>
-		<script>		
-			var management = new Vue({
-				el: '#management',
-				watch: {
-				},
-				computed: {},
-				mounted() {
-				},
-				data() {
-					return {
-						
-						managementFlag: false,
-						activeIndex: '1',
-						userName: '',
-						role: "",
-						permission: "",
-
-						Tab: "平台概览",
-
-						data: [],
-						userInfo: "",
-
-						roleListPage: 1,
-						roleListNum: 1000,
-
-						roleList: [],
-
-					}
-				},
-				methods: {
-					linkTo(target){
-						window.location = target
-					},
-					getSomeTime(n) {
-						return management.getTime(Date.parse(management.getTime(Math.ceil((new Date().getTime() / 100000) * 100000)).split(
-								':')[0] +
-							':' +
-							(parseInt(management.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) - parseInt(
-								management.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) % 5)) + 60 * 1000 * (5 *
-							n))
-					},
-					getTime(unixTime) {
-						unixTime = new Date(unixTime)
-						Y = unixTime.getFullYear()
-						M = (unixTime.getMonth() + 1) < 10 ? '0' + (unixTime.getMonth() + 1) : (unixTime.getMonth() + 1)
-						D = unixTime.getDate() < 10 ? '0' + unixTime.getDate() : unixTime.getDate()
-						H = unixTime.getHours() < 10 ? '0' + unixTime.getHours() : unixTime.getHours()
-						i = unixTime.getMinutes() < 10 ? '0' + unixTime.getMinutes() : unixTime.getMinutes()
-						S = unixTime.getSeconds() < 10 ? '0' + unixTime.getSeconds() : unixTime.getSeconds()
-						return Y + '-' + M + '-' + D + ' ' + H + ':' + i + ':' + S
-					},
-					handleSelect(key, keyPath) {
-						console.log(key, keyPath);
-					},
-					logout() {
-						axios.post('./System/Core/User.php', Qs.stringify({
-							"logout": '',
-						}), ).then(function(res) {
-							for (x in res.data) {
-								if ('success' === x) {
-									console.log(res.data['success'])
-									management.$alert(res.data['success'], '操作成功', {
-										confirmButtonText: '确定',
-										type: 'success',
-										center: true,
-										callback: action => {
-											window.location = 'login.html'
-										}
-									})
-								}
-							}
-						})
-					},
-				},
-				mounted() {
-					axios.post('./System/Core/User.php', Qs.stringify({
-						"getUserInfo": '',
-					}), ).then(function(res) {
-						for (x in res.data) {
-							if ('error' === x) {
-								management.$alert(res.data[x], '错误', {
-									confirmButtonText: '确定',
-									type: 'error',
-									center: true,
-									callback: action => {
-										window.location = 'login.html'
-									}
-								})
-							} else {
-								management.userName = res.data[x]['userName']
-								management.userInfo = res.data[x]
-								management.permission = res.data[x]['permission']
-
-								if (management.permission == '8') {
-									management.role = '超级管理员'
-								} else if (management.permission == '1') {
-									management.role = '管理员'
-								} else {
-									management.$alert('您没有访问此面板的权限', '错误', {
-										confirmButtonText: '返回首页',
-										type: 'error',
-										center: true,
-										callback: action => {
-											management.linkTo('./index.html')
-										}
-									})
-								}
-
-								management.managementFlag = true
-
-								if (management.permission != '8') {
-									axios.post('./System/Core/Management.php', Qs.stringify({
-										"getRoleList": '',
-									}), ).then(function(res) {
-										if (res.data[0] == 0) {
-											management.$alert('您没有访问面板的权限，如需访问请联系超级管理员添加相应权限', '错误', {
-												confirmButtonText: '退出登录',
-												type: 'error',
-												center: true,
-												callback: action => {
-													management.logout()
-												}
-											})
-										}
-										management.roleList = res.data.slice(1)
-										for (t in management.roleList) {
-											// console.log(management.roleList[t]['areaCode'])
-
-											if (!(management.roleList[t]['areaCode'] in management.areaList)) {
-												management.areaList[management.roleList[t]['areaCode']] = {
-													'areaName': management.roleList[t]['areaName']
-												}
-											}
-
-											// console.log(management.areaList,management.roleList[t]['areaCode'],management.roleList[t]['areaName'])
-
-											if (!(management.roleList[t]['areaCode'] in management.dareaList)) {
-												management.dareaList[management.roleList[t]['areaCode']] = {
-													'areaName': management.roleList[t]['areaName'],
-													'darea': {}
-												}
-											}
-
-											if (!(management.roleList[t]['dareaCode'] in management.dareaList[management.roleList[t]['areaCode']][
-													'darea'
-												])) {
-												management.dareaList[management.roleList[t]['areaCode']]['darea'][management.roleList[t]['dareaCode']] = {
-													'dareaName': management.roleList[t]['dareaName'],
-													'selectCar': management.roleList[t]['selectCar'] == 0 ? false : true,
-													'selectPersonnel': management.roleList[t]['selectPersonnel'] == 0 ? false : true,
-													'selectEquipment': management.roleList[t]['selectEquipment'] == 0 ? false : true
-												}
-											}
-
-										}
-
-										management.$set(management.areaList, management.areaList)
-										management.$set(management.dareaList, management.dareaList)
-
-										console.log(management.dareaList)
-									})
-
-								}
-								
-								console.log(management.personnelOption)
+                    <el-col :span="24">
+                        <div style="padding-top: 10px; text-align: center;" class="mx-auto">
+                            <el-dropdown class="text-center">
+                                <span class="el-dropdown-link">
+										{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item>
+                                        <div @click="linkTo('./')">返回首页</div>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item divided>
+                                        <div @click="(x)=>{logout()}">退出登录</div>
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-col>
+        </el-row>
 
 
+        <!-- 			<el-dialog title="请选择管理区域" v-if="role != '超级管理员'" :visible.sync="areaDialog" :show-close="false"
+			 :close-on-press-escape="false" :close-on-click-modal="false">
+				<el-row>
+					<el-row>
+						<el-col class="text-center border" :sm="12" :xs="24">
+							<el-select v-model="area" remote :remote-method="(v)=>{loadArea(v)}" @change="(v)=>{loadArea(v)}" filterable
+							 placeholder="请选择区域">
+								<div v-for="(v,k) in areaList">
+									<el-option v-for="(val,key) in v" :key="k" :label="val" :value="k">
+									</el-option>
+								</div>
+							</el-select>
+						</el-col>
+						<el-col class="text-center border" :sm="12" :xs="24">
+							<el-select v-model="darea" remote :remote-method="(v)=>{loadDarea(v)}" @change="(v)=>{loadDarea(v)}" filterable
+							 placeholder="请选择场所" :disabled="area.length == 0">
+								<div v-if="(Object.keys(areaList).length != 0 && area.length != 0)">
+									<el-option v-for="(v,k) in dareaList[area].darea" :key="k" :label="v.dareaName" :value="k">
+									</el-option>
+								</div>
+							</el-select>
+						</el-col>
+					</el-row>
+				</el-row>
 
-							}
-						}
-					})
+				<span slot="footer" class="dialog-footer">
+					<el-button :disabled="firstLoadDialog" @click="()=>{areaDialog = false}">取 消</el-button>
+					<el-button type="primary" :disabled="area.length == 0 || darea.length == 0" @click="()=>{firstLoadDialog=false;areaDialog = false}">确
+						定</el-button>
+				</span>
+			</el-dialog>
+ -->
+        <el-row v-if="role != '超级管理员'">
+            <el-col class="text-center" :xs="24" :sm="24" :md="24">
+                <h5>管理区域详细信息</h5>
+            </el-col>
+            <el-col class="text-center" :xs="24" :sm="24" :md="24">
+                <el-table :data="roleList" style="width: 100%" default-expand-all border>
+                    <el-table-column type="expand">
+                        <template slot-scope="props">
+								<el-form label-position="left" inline class="table-expand">
+									<el-form-item label="人员管理" v-if="props.row.selectPersonnel == 1 || props.row.addPersonnel == 1 || props.row.updatePersonnel == 1 || props.row.delPersonnel == 1">
+										<div @click="linkTo('personnel.html' + '?area=' + props.row.areaCode + '&darea=' + props.row.dareaCode)">
+											<el-tag type="success" v-if="props.row.selectPersonnel == 1">查看人员</el-tag>
+											<el-tag type="primary" v-if="props.row.addPersonnel == 1">添加人员</el-tag>
+											<el-tag type="warning" v-if="props.row.updatePersonnel == 1">更新人员</el-tag>
+											<el-tag type="danger" v-if="props.row.delPersonnel == 1">删除人员</el-tag>
+										</div>
+									</el-form-item>
+									<el-form-item label="车辆管理" v-if="props.row.selectCar == 1 || props.row.addCar == 1 || props.row.updateCar == 1 || props.row.delCar == 1">
+										<div @click="linkTo('car.html' + '?area=' + props.row.areaCode + '&darea=' + props.row.dareaCode)">
+											<el-tag type="success" v-if="props.row.selectCar == 1">查看车辆</el-tag>
+											<el-tag type="primary" v-if="props.row.addCar == 1">添加车辆</el-tag>
+											<el-tag type="warning" v-if="props.row.updateCar == 1">更新车辆</el-tag>
+											<el-tag type="danger" v-if="props.row.delCar == 1">删除车辆</el-tag>
+										</div>
+									</el-form-item>
+									<el-form-item label="设备管理" v-if="props.row.selectEquipment == 1 || props.row.addEquipment == 1 || props.row.updateEquipment == 1 || props.row.delEquipment == 1">
+										<div @click="linkTo('equipment.html' + '?area=' + props.row.areaCode + '&darea=' + props.row.dareaCode)">
+											<el-tag type="success" v-if="props.row.selectEquipment == 1">查看设备</el-tag>
+											<el-tag type="primary" v-if="props.row.addEquipment == 1">添加设备</el-tag>
+											<el-tag type="warning" v-if="props.row.updateEquipment == 1">更新设备</el-tag>
+											<el-tag type="danger" v-if="props.row.delEquipment == 1">删除设备</el-tag>
+										</div>
+									</el-form-item>
+								</el-form>
+							</template>
+                    </el-table-column>
+                    <el-table-column label="区域">
+                        <template slot-scope="scope">
+								{{scope.row.areaName}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="场所">
+                        <template slot-scope="scope">
+								{{scope.row.dareaName}}
+							</template>
+                    </el-table-column>
+                </el-table>
+        </el-row>
 
-				}
-			})
-		</script>
+        <el-row v-else>
+            <el-col class="text-center" :xs="24" :sm="24" :md="24">
+                <h5>平台信息概览</h5>
+                <el-row>
+                    <el-col :xs="12" :sm="12" :md="12">人员信息总数量</el-col>
+                    <el-col :xs="12" :sm="12" :md="12">{{personnelCount}}</el-col>
+                </el-row>
+                <el-row>
+                    <el-col :xs="12" :sm="12" :md="12">车辆信息总数量</el-col>
+                    <el-col :xs="12" :sm="12" :md="12">{{carCount}}</el-col>
+                </el-row>
+                <el-row>
+                    <el-col :xs="12" :sm="12" :md="12">设备信息总数量</el-col>
+                    <el-col :xs="12" :sm="12" :md="12">{{equipmentCount}}</el-col>
+                </el-row>
+            </el-col>
+            <el-col :span="24">
+                <el-divider></el-divider>
+            </el-col>
+            <el-row>
+                <el-col :xs="24" :sm="24" :md="8">
+                    <p class="text-center">最新人员数据</p>
+                    <el-table :data="personnelNewData" style="width: 100%" border>
+                        <el-table-column type="expand">
+                            <template slot-scope="props">
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="人员姓名">
+											<span>{{props.row.name}}</span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="性别">
+											<span>{{props.row.gender}}</span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="民族">
+											<span>{{props.row.nation}}</span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="证件号码">
+											<span>{{props.row.idCard}}</span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="证件类型">
+											<span v-if="props.row.cardType == '1'">居民身份证</span>
+											<span v-if="props.row.cardType == '2'">港澳台居住证</span>
+											<span v-if="props.row.cardType == '3'">中国护照</span>
+											<span v-if="props.row.cardType == '4'">国外护照</span>
+											<span v-if="props.row.cardType == '5'">永久居住证</span>
+											<span v-if="props.row.cardType == '9'">其他</span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="现场照片">
+											<el-image v-if="props.row.personImg != ''" :preview-src-list="
+											props.row.personImg != '' && props.row.idCardImg != ''
+											?[props.row.personImg,props.row.idCardImg]
+											: props.row.personImg != '' && props.row.idCardImg == '' 
+												? [props.row.personImg]
+												: [props.row.idCardImg]
+											" style="width: 10rem;height:10rem;" :src="props.row.personImg" fit="scale-down">
+											</el-image>
+											<span v-else> 未录入照片 </span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="证件照片">
+											<el-image v-if="props.row.idCardImg != ''" :preview-src-list="
+											props.row.personImg != '' && props.row.idCardImg != ''
+											?[props.row.personImg,props.row.idCardImg]
+											: props.row.personImg != '' && props.row.idCardImg == '' 
+												? [props.row.personImg]
+												: [props.row.idCardImg]
+											" style="width: 10rem;height:10rem;" :src="props.row.idCardImg" fit="scale-down">
+											</el-image>
+											<span v-else> 未录入照片 </span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="体温">
+											<span>{{props.row.temp}}</span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="出入标识">
+											<span v-if="props.row.status == '0'">入</span>
+											<span v-else>出</span>
+										</el-form-item>
+									</el-form>
+								</template>
+                        </el-table-column>
+                        <el-table-column label="时间" width="150">
+                            <template slot-scope="scope">
+									{{scope.row.passTime}}
+								</template>
+                        </el-table-column>
+                        <el-table-column label="场所">
+                            <template slot-scope="scope">
+									{{scope.row.dareaName}}
+								</template>
+                        </el-table-column>
+                        <el-table-column label="姓名">
+                            <template slot-scope="scope">
+									{{scope.row.name}}
+								</template>
+                        </el-table-column>
+                    </el-table>
+                </el-col>
+                <el-col :xs="24" :sm="24" :md="8">
+                    <p class="text-center">最新设备数据</p>
+                    <el-table :data="equipmentNewData" style="width: 100%" border>
+                        <el-table-column type="expand">
+                            <template slot-scope="props">
+								<el-form label-position="left" inline class="table-expand">
+									<el-form-item label="设备编号">
+										<span>{{props.row.equipmentId}}</span>
+									</el-form-item>
+								</el-form>
+								<el-form label-position="left" inline class="table-expand">
+									<el-form-item label="设备名称">
+										<span>{{props.row.equipmentName}}</span>
+									</el-form-item>
+								</el-form>
+								<el-form label-position="left" inline class="table-expand">
+									<el-form-item label="设备类型">
+										<span v-if="props.row.equipmentType == '01'">访客机</span>
+										<span v-if="props.row.equipmentType == '02'">门禁机</span>
+										<span v-if="props.row.equipmentType == '03'">车辆道闸</span>
+									</el-form-item>
+								</el-form>
+								<el-form label-position="left" inline class="table-expand">
+									<el-form-item label="设备状态">
+										<span v-if="props.row.equipmentStatus == '0'">离线</span>
+										<span v-if="props.row.equipmentStatus == '1'">在线</span>
+										<span v-if="props.row.equipmentStatus == '2'">设备维修</span>
+										<span v-if="props.row.equipmentStatus == '3'">其他</span>
+									</el-form-item>
+								</el-form>
+							</template>
+                        </el-table-column>
+                        <el-table-column label="时间" width="150">
+                            <template slot-scope="scope">
+									{{scope.row.checkTime}}
+								</template>
+                        </el-table-column>
+                        <el-table-column label="场所">
+                            <template slot-scope="scope">
+									{{scope.row.dareaName}}
+								</template>
+                        </el-table-column>
+                        <el-table-column label="设备名称">
+                            <template slot-scope="scope">
+									{{scope.row.equipmentName}}
+								</template>
+                        </el-table-column>
+                    </el-table>
+                </el-col>
+                <el-col :xs="24" :sm="24" :md="8">
+                    <p class="text-center">最新车辆数据</p>
+                    <el-table :data="carNewData" style="width: 100%" border>
+                        <el-table-column type="expand">
+                            <template slot-scope="props">
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="车牌号码">
+											<span>{{props.row.plateNum}}</span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="车辆照片">
+											<el-image v-if="props.row.vehicleImg != ''" :preview-src-list="
+											props.row.vehicleImg != '' && props.row.plateImg != ''
+											?[props.row.vehicleImg,props.row.plateImg]
+											: props.row.vehicleImg != '' && props.row.plateImg == '' 
+												? [props.row.vehicleImg]
+												: [props.row.plateImg]
+											" style="width: 10rem;height:10rem;" :src="props.row.vehicleImg" fit="scale-down">
+											</el-image>
+											<span v-else> 未录入照片 </span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="车牌照片">
+											<el-image v-if="props.row.plateImg != ''" :preview-src-list="
+											props.row.vehicleImg != '' && props.row.plateImg != ''
+											?[props.row.vehicleImg,props.row.plateImg]
+											: props.row.vehicleImg != '' && props.row.plateImg == '' 
+												? [props.row.vehicleImg]
+												: [props.row.plateImg]
+											" style="width: 10rem;height:10rem;" :src="props.row.plateImg" fit="scale-down">
+											</el-image>
+											<span v-else> 未录入照片 </span>
+										</el-form-item>
+									</el-form>
+									<el-form label-position="left" inline class="table-expand">
+										<el-form-item label="出入标识">
+											<span v-if="props.row.status == '0'">入</span>
+											<span v-else>出</span>
+										</el-form-item>
+									</el-form>
+								</template>
+                        </el-table-column>
+                        <el-table-column label="时间" width="150">
+                            <template slot-scope="scope">
+									{{scope.row.passTime}}
+								</template>
+                        </el-table-column>
+                        <el-table-column label="场所">
+                            <template slot-scope="scope">
+									{{scope.row.dareaName}}
+								</template>
+                        </el-table-column>
+                        <el-table-column label="车牌号码">
+                            <template slot-scope="scope">
+									{{scope.row.plateNum}}
+								</template>
+                        </el-table-column>
+                    </el-table>
+                </el-col>
+            </el-row>
+        </el-row>
 
-		</div>
+    </div>
+    <style>
+        .table-expand {
+            font-size: 0;
+        }
+        
+        .table-expand label {
+            width: 50%;
+            color: #99a9bf;
+        }
+        
+        .table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <script>
+        let dataInterVal = null
+        var management = new Vue({
+            el: '#management',
+            watch: {},
+            computed: {},
+            mounted() {},
+            data() {
+                return {
 
-		<script type="text/javascript">
-			var resetWindow = function() {
-				$('#management').css({
-					'min-height': $(window).height() - $('#head').height() - $('#foot').height()
-				})
+                    dataNum: 20,
+                    dataRefresh: 1000 * 30,
+                    personnelNewData: [],
+                    carNewData: [],
+                    equipmentNewData: [],
 
-				if ($(window).width() <= 995) {
-					management.tabPosition = 'top'
-					$('#management').css({
-						'margin': '0 10px',
-						'margin-top': '5px'
-					})
-				} else {
-					management.tabPosition = 'left'
-					$('#management').css({
-						'margin': '0 5px',
-						'margin-top': '5px'
-					})
-				}
-			}
-			$(document).ready(function() {
-				resetWindow()
-				$(window).resize(function() {
-					resetWindow()
-				})
-			})
-		</script>
+                    personnelCount: 0,
+                    carCount: 0,
+                    equipmentCount: 0,
+
+                    Request: new Object(),
+
+                    firstLoadDialog: true,
+                    areaDialog: false,
+
+                    managementFlag: false,
+                    activeIndex: '1',
+                    userName: '',
+                    role: "",
+                    permission: "",
+
+                    Tab: "平台概览",
+
+                    data: [],
+                    userInfo: "",
+
+                    dialogWidth: 0,
+
+                    roleListPage: 1,
+                    roleListNum: 1000,
+
+                    roleList: [],
+
+                    areaList: {},
+                    area: '',
+                    areaName: '',
+                    dareaList: {},
+                    darea: "",
+                    dareaName: '',
+                }
+            },
+            created() {
+                this.setDialogWidth()
+                this.GetRequest()
+            },
+            methods: {
+                adminGetData() {
+                    window.clearInterval(dataInterVal)
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getPersonnelList": '',
+                        'page': 1,
+                        'num': 0
+                    }), ).then(function(res) {
+                        management.personnelCount = res.data[0]
+                    })
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getCarList": '',
+                        'page': 1,
+                        'num': 0
+                    }), ).then(function(res) {
+                        management.carCount = res.data[0]
+                    })
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getEquipmentList": '',
+                        'page': 1,
+                        'num': 0
+                    }), ).then(function(res) {
+                        management.equipmentCount = res.data[0]
+                    })
+
+
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getPersonnelList": '',
+                        'page': 1,
+                        'num': management.dataNum,
+                        'filter': JSON.stringify({
+                            'afterTime': management.getTime(new Date().getTime() - management.dataRefresh),
+                            'beforeTime': management.getTime(new Date())
+                        })
+                    }), ).then(function(res) {
+                        data = res.data.slice(1)
+                        for (x in data) {
+                            if (management.personnelNewData.length >= management.dataNum) {
+                                management.personnelNewData.pop()
+                            }
+                            management.personnelNewData.unshift(data[data.length - 1 - x])
+                        }
+                    })
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getEquipmentList": '',
+                        'page': 1,
+                        'num': management.dataNum * 2,
+                        'filter': JSON.stringify({
+                            'afterTime': management.getTime(new Date().getTime() - management.dataRefresh),
+                            'beforeTime': management.getTime(new Date())
+                        })
+                    }), ).then(function(res) {
+                        data = res.data.slice(1)
+                        for (x in data) {
+                            if (management.equipmentNewData.length >= management.dataNum) {
+                                management.equipmentNewData.pop()
+                            }
+                            management.equipmentNewData.unshift(data[data.length - 1 - x])
+                        }
+                        // while(management.equipmentNewData.length < management.dataNum)
+                        // {
+                        // 	management.equipmentNewData.push({})
+                        // }
+                    })
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getCarList": '',
+                        'page': 1,
+                        'num': management.dataNum * 2,
+                        'filter': JSON.stringify({
+                            'afterTime': management.getTime(new Date().getTime() - management.dataRefresh),
+                            'beforeTime': management.getTime(new Date())
+                        })
+                    }), ).then(function(res) {
+                        data = res.data.slice(1)
+                        for (x in data) {
+                            if (management.carNewData.length >= management.dataNum) {
+                                management.carNewData.pop()
+                            }
+                            management.carNewData.unshift(data[data.length - 1 - x])
+                        }
+                        // while(management.carNewData.length < management.dataNum)
+                        // {
+                        // 	management.carNewData.push({})
+                        // }
+                    })
+
+                    dataInterVal = setInterval(function() {
+                        management.adminGetData()
+                    }, management.dataRefresh);
+                },
+                GetRequest() {
+                    var url = location.search; //获取url中"?"符后的字串
+                    var theRequest = new Object();
+                    if (url.indexOf("?") != -1) {
+                        var str = url.substr(1);
+                        strs = str.split("&");
+                        for (var i = 0; i < strs.length; i++) {
+                            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                        }
+                    }
+                    this.Request = theRequest
+                },
+                getPersonnelCount(page, num) {
+                    time = []
+                    t = management.getTime(new Date()).replace(/-/g, ' ').replace(/:/g, ' ').split(' ')
+                    time[0] = t[0] + '-' + t[1] + '-' + t[2]
+                    t = management.getTime(Date.parse(time[0]) + 1000 * 60 * 60 * 24).replace(/-/g, ' ').replace(/:/g, ' ').split(
+                        ' ')
+                    time[1] = t[0] + '-' + t[1] + '-' + t[2]
+
+                    if (management.role == '超级管理员') {
+                        data = Qs.stringify({
+                            "getPersonnelList": '',
+                            "page": "1",
+                            "num": "0",
+                            "filter": JSON.stringify({
+                                "betweenTime": JSON.stringify(time),
+                            })
+                        })
+                    } else {
+                        data = Qs.stringify({
+                            "getPersonnelList": '',
+                            "page": "1",
+                            "num": "0",
+                            'area': management.area,
+                            'darea': management.darea,
+                            "filter": JSON.stringify({
+                                "betweenTime": JSON.stringify(time),
+                            })
+                        })
+                    }
+                    axios.post('./System/Core/Management.php', data
+
+                        , ).then(function(res) {
+                        console.log(res)
+                    })
+                },
+                loadArea(v) {
+                    if (management.permission != '8') {
+                        return management.areaList
+                    }
+
+                    if (v.length != 0) {
+                        management.areaList = {}
+
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getPlanList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "areaName": v,
+                            })
+                        }), ).then(function(res) {
+                            data = res.data.slice(1)
+                            for (t in data) {
+
+                                if (!(data[t]['area'] in management.areaList)) {
+                                    management.areaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName']
+                                    }
+                                }
+
+                                // console.log(management.areaList,management.roleList[t]['areaCode'],management.roleList[t]['areaName'])
+
+                                if (!(data[t]['area'] in management.dareaList)) {
+                                    management.dareaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName'],
+                                        'darea': {}
+                                    }
+                                }
+
+                                if (!(data[t]['darea'] in management.dareaList[data[t]['area']]['darea'])) {
+                                    management.dareaList[data[t]['area']]['darea'][data[t]['darea']] = {
+                                        'dareaName': data[t]['dareaName'],
+                                    }
+                                }
+                            }
+                            management.$set(management.areaList, management.areaList)
+                            management.$set(management.dareaList, management.dareaList)
+                        })
+                    }
+
+                },
+                loadDarea(v) {
+                    management.areaName = management.dareaList[management.area].areaName
+                    management.dareaName = management.dareaList[management.area].darea[management.darea].dareaName
+                    if (management.permission != '8') {
+                        return management.dareaList
+                    }
+                },
+                setDialogWidth() {
+                    // console.log(document.body.clientWidth)
+                    var val = document.body.clientWidth
+                    const def = 800 // 默认宽度
+                    if (val < def) {
+                        this.dialogWidth = '100%'
+                    } else {
+                        this.dialogWidth = def + 'px'
+                    }
+                },
+                linkTo(target) {
+                    window.location = target
+                },
+                getSomeTime(n) {
+                    return management.getTime(Date.parse(management.getTime(Math.ceil((new Date().getTime() / 100000) * 100000)).split(
+                            ':')[0] +
+                        ':' +
+                        (parseInt(management.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) - parseInt(
+                            management.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) % 5)) + 60 * 1000 * (5 *
+                        n))
+                },
+                getTime(unixTime) {
+                    unixTime = new Date(unixTime)
+                    Y = unixTime.getFullYear()
+                    M = (unixTime.getMonth() + 1) < 10 ? '0' + (unixTime.getMonth() + 1) : (unixTime.getMonth() + 1)
+                    D = unixTime.getDate() < 10 ? '0' + unixTime.getDate() : unixTime.getDate()
+                    H = unixTime.getHours() < 10 ? '0' + unixTime.getHours() : unixTime.getHours()
+                    i = unixTime.getMinutes() < 10 ? '0' + unixTime.getMinutes() : unixTime.getMinutes()
+                    S = unixTime.getSeconds() < 10 ? '0' + unixTime.getSeconds() : unixTime.getSeconds()
+                    return Y + '-' + M + '-' + D + ' ' + H + ':' + i + ':' + S
+                },
+                handleSelect(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                logout() {
+                    axios.post('./System/Core/User.php', Qs.stringify({
+                        "logout": '',
+                    }), ).then(function(res) {
+                        for (x in res.data) {
+                            if ('success' === x) {
+                                console.log(res.data['success'])
+                                management.$alert(res.data['success'], '操作成功', {
+                                    confirmButtonText: '确定',
+                                    type: 'success',
+                                    center: true,
+                                    callback: action => {
+                                        window.location = 'login.html'
+                                    }
+                                })
+                            }
+                        }
+                    })
+                },
+            },
+            mounted() {
+                window.onresize = () => {
+                    return (() => {
+                        this.setDialogWidth()
+                    })()
+                }
+                axios.post('./System/Core/User.php', Qs.stringify({
+                    "getUserInfo": '',
+                }), ).then(function(res) {
+                    for (x in res.data) {
+                        if ('error' === x) {
+                            management.$alert(res.data[x], '错误', {
+                                confirmButtonText: '确定',
+                                type: 'error',
+                                center: true,
+                                callback: action => {
+                                    window.location = 'login.html'
+                                }
+                            })
+                        } else {
+                            management.userName = res.data[x]['userName']
+                            management.userInfo = res.data[x]
+                            management.permission = res.data[x]['permission']
+
+                            if (management.permission == '8') {
+                                management.role = '超级管理员'
+                                management.areaDialog = false
+                            } else if (management.permission == '1') {
+                                management.role = '管理员'
+                                management.areaDialog = true
+                            } else {
+                                management.linkTo('./')
+                            }
+
+                            management.managementFlag = true
+
+                            if (management.permission != '8') {
+                                axios.post('./System/Core/Management.php', Qs.stringify({
+                                    "getRoleList": '',
+                                }), ).then(function(res) {
+                                    if (res.data[0] == 0) {
+                                        management.$alert('您没有访问面板的权限，如需访问请联系超级管理员添加相应权限', '错误', {
+                                            confirmButtonText: '返回首页',
+                                            type: 'error',
+                                            center: true,
+                                            callback: action => {
+                                                management.linkTo('./')
+                                            }
+                                        })
+                                    }
+                                    // console.log(res.data)
+                                    management.roleList = res.data.slice(1)
+                                    for (t in management.roleList) {
+                                        // console.log(management.roleList[t]['areaCode'])
+
+                                        if (!(management.roleList[t]['areaCode'] in management.areaList)) {
+                                            management.areaList[management.roleList[t]['areaCode']] = {
+                                                'areaName': management.roleList[t]['areaName']
+                                            }
+                                        }
+
+                                        console.log(management.areaList, management.roleList[t]['areaCode'], management.roleList[t]['areaName'])
+
+                                        if (!(management.roleList[t]['areaCode'] in management.dareaList)) {
+                                            management.dareaList[management.roleList[t]['areaCode']] = {
+                                                'areaName': management.roleList[t]['areaName'],
+                                                'darea': {}
+                                            }
+                                        }
+
+                                        if (!(management.roleList[t]['dareaCode'] in management.dareaList[management.roleList[t]['areaCode']][
+                                                'darea'
+                                            ])) {
+                                            management.dareaList[management.roleList[t]['areaCode']]['darea'][management.roleList[t]['dareaCode']] = {
+                                                'dareaName': management.roleList[t]['dareaName'],
+                                                'selectCar': management.roleList[t]['selectCar'] == 0 ? false : true,
+                                                'selectPersonnel': management.roleList[t]['selectPersonnel'] == 0 ? false : true,
+                                                'selectEquipment': management.roleList[t]['selectEquipment'] == 0 ? false : true
+                                            }
+                                        }
+
+                                    }
+
+                                    management.$set(management.areaList, management.areaList)
+                                    management.$set(management.dareaList, management.dareaList)
+
+                                    console.log(management.dareaList)
+                                })
+                            } else {
+                                management.adminGetData()
+                                axios.post('./System/Core/Management.php', Qs.stringify({
+                                    "getPersonnelList": '',
+                                    'page': 1,
+                                    'num': management.dataNum,
+                                    'filter': JSON.stringify({
+                                        'beforeTime': management.getTime(new Date())
+                                    })
+                                }), ).then(function(res) {
+                                    data = res.data.slice(1)
+                                    for (x in data) {
+                                        if (management.personnelNewData.length >= management.dataNum) {
+                                            management.personnelNewData.pop()
+                                        }
+                                        management.personnelNewData.unshift(data[data.length - 1 - x])
+                                    }
+                                    // while(management.personnelNewData.length < management.dataNum)
+                                    // {
+                                    // 	management.personnelNewData.push({})
+                                    // }
+                                })
+                                axios.post('./System/Core/Management.php', Qs.stringify({
+                                    "getEquipmentList": '',
+                                    'page': 1,
+                                    'num': management.dataNum * 2,
+                                    'filter': JSON.stringify({
+                                        'beforeTime': management.getTime(new Date())
+                                    })
+                                }), ).then(function(res) {
+                                    data = res.data.slice(1)
+                                    for (x in data) {
+                                        if (management.equipmentNewData.length >= management.dataNum) {
+                                            management.equipmentNewData.pop()
+                                        }
+                                        management.equipmentNewData.unshift(data[data.length - 1 - x])
+                                    }
+                                    // while(management.equipmentNewData.length < management.dataNum)
+                                    // {
+                                    // 	management.equipmentNewData.push({})
+                                    // }
+                                })
+                                axios.post('./System/Core/Management.php', Qs.stringify({
+                                    "getCarList": '',
+                                    'page': 1,
+                                    'num': management.dataNum * 2,
+                                    'filter': JSON.stringify({
+                                        'beforeTime': management.getTime(new Date())
+                                    })
+                                }), ).then(function(res) {
+                                    data = res.data.slice(1)
+                                    for (x in data) {
+                                        if (management.carNewData.length >= management.dataNum) {
+                                            management.carNewData.pop()
+                                        }
+                                        management.carNewData.unshift(data[data.length - 1 - x])
+                                    }
+                                    // while(management.carNewData.length < management.dataNum)
+                                    // {
+                                    // 	management.carNewData.push({})
+                                    // }
+                                })
+
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    </script>
+
+    </div>
+
+    <script type="text/javascript">
+        var resetWindow = function() {
+            $('#management').css({
+                'min-height': $(window).height() - $('#head').height() - $('#foot').height()
+            })
+
+            if ($(window).width() <= 995) {
+                management.tabPosition = 'top'
+                $('#management').css({
+                    'margin': '0 10px',
+                    'margin-top': '5px'
+                })
+            } else {
+                management.tabPosition = 'left'
+                $('#management').css({
+                    'margin': '0 5px',
+                    'margin-top': '5px'
+                })
+            }
+        }
+        $(document).ready(function() {
+            resetWindow()
+            $(window).resize(function() {
+                resetWindow()
+            })
+        })
+    </script>
 
 </html>
