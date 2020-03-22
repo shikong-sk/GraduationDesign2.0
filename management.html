@@ -71,6 +71,11 @@
             <el-col :sm="16" :xs="24">
                 <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="1">平台概览</el-menu-item>
+					<el-menu-item index="2">人员管理</el-menu-item>
+					<el-menu-item index="3">车辆管理</el-menu-item>
+					<el-menu-item index="4">设备管理</el-menu-item>
+					<el-menu-item v-if="role == '超级管理员' " index="6">区域/场所管理</el-menu-item>
+					<el-menu-item v-if="role == '超级管理员' " index="7">用户管理</el-menu-item>
                 </el-menu>
             </el-col>
             <el-col :md="4" :xs="24">
@@ -140,7 +145,7 @@
  -->
         <el-row v-if="role != '超级管理员'">
             <el-col class="text-center" :xs="24" :sm="24" :md="24">
-                <h5>管理区域详细信息</h5>
+                <h5>管理区域权限信息</h5>
             </el-col>
             <el-col class="text-center" :xs="24" :sm="24" :md="24">
                 <el-table :data="roleList" style="width: 100%" default-expand-all border>
