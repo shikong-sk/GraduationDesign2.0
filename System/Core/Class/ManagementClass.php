@@ -266,9 +266,9 @@ class  ManagementClass
                 foreach ($dareaList as $d) {
                     $flag = false;
                     foreach ($roleList as $r) {
-                        if ($r['selectPersonnel'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 人员信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectPersonnel'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 人员信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
 
                         if (in_array($d, $r)) {
                             $flag = true;
@@ -647,9 +647,9 @@ class  ManagementClass
                 foreach ($dareaList as $d) {
                     $flag = false;
                     foreach ($roleList as $r) {
-                        if ($r['selectCar'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectCar'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
 
                         if (in_array($d, $r)) {
                             $flag = true;
@@ -989,9 +989,9 @@ class  ManagementClass
                 foreach ($dareaList as $d) {
                     $flag = false;
                     foreach ($roleList as $r) {
-                        if ($r['selectEquipment'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
-                        }
+//                        if ($r['selectEquipment'] == 0) {
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+//                        }
 
                         if (in_array($d, $r)) {
                             $flag = true;
