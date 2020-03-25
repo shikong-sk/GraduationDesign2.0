@@ -555,11 +555,6 @@
 								{{scope.row.passTime}}
 							</template>
                     </el-table-column>
-                    <el-table-column label="场所" :show-overflow-tooltip="true">
-                        <template slot-scope="scope">
-								{{scope.row.dareaName}}
-							</template>
-                    </el-table-column>
                     <el-table-column label="姓名" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
 								{{scope.row.name}}
@@ -573,6 +568,16 @@
                     <el-table-column label="民族" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
 								{{scope.row.nation}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="场所" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.dareaName}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="设备" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.equipmentName}}
 							</template>
                     </el-table-column>
                     <el-table-column label="现场照片" width="100">
@@ -624,9 +629,13 @@
 							</template>
                     </el-table-column>
                 </el-table>
-                <el-pagination @size-change="(v)=>{personnelData.num = v ;CurrentChange(personnelData.page) }" @current-change="(v)=>{CurrentChange(v)}" :total="personnelData.count" :current-page.sync="personnelData.page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="personnelData.num"
-                    layout="total,sizes,prev, pager, next, jumper">
-                </el-pagination>
+				
+				<el-col :span="24">
+					<el-pagination small @size-change="(v)=>{personnelData.num = v ;CurrentChange(personnelData.page) }" @current-change="(v)=>{CurrentChange(v)}" :total="personnelData.count" :current-page.sync="personnelData.page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="personnelData.num"
+					    layout="total,sizes,prev, pager, next, jumper">
+					</el-pagination>
+				</el-col>
+                
         </el-row>
 
 
