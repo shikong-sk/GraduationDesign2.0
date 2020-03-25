@@ -412,7 +412,7 @@ class  ManagementClass
                 $selectFilter .= "AND stationName LIKE '%" . $filter['stationName'] . "%' ";
             }
             if (isset($filter['placeType'])) {
-                $selectFilter .= "AND plateType = '" . $filter['placeType'] . "' ";
+                $selectFilter .= "AND placeType = '" . $filter['placeType'] . "' ";
             }
             if (isset($filter['identity'])) {
                 $selectFilter .= "AND identity = '" . $filter['identity'] . "' ";
@@ -458,6 +458,7 @@ class  ManagementClass
         $query = "SELECT * FROM $this->personnelTable WHERE 1=1 " . $selectPlan . $selectFilter;
         $count = "SELECT count(*) num FROM $this->personnelTable WHERE 1=1 " . $selectPlan . $selectFilter;
 
+//        echo $query;
         $page = ($page - 1) * $num;
 
 
@@ -990,7 +991,7 @@ class  ManagementClass
                     $flag = false;
                     foreach ($roleList as $r) {
 //                        if ($r['selectEquipment'] == 0) {
-//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+//                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 设备信息的权限'), JSON_UNESCAPED_UNICODE);
 //                        }
 
                         if (in_array($d, $r)) {
@@ -1000,7 +1001,7 @@ class  ManagementClass
                         }
                     }
                     if (!$flag) {
-                        return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+                        return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($d) . '：' . $d . ' 设备信息的权限'), JSON_UNESCAPED_UNICODE);
                     }
 
                 }
@@ -1010,14 +1011,14 @@ class  ManagementClass
                     if (in_array($darea, $r)) {
                         $flag = true;
                         if ($r['selectEquipment'] == 0) {
-                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($darea) . '：' . $darea . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+                            return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($darea) . '：' . $darea . ' 设备信息的权限1'), JSON_UNESCAPED_UNICODE);
                         }
                         $selectPlan .= "AND (darea = '$darea' ";
                         break;
                     }
                 }
                 if (!$flag) {
-                    return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($darea) . '：' . $darea . ' 车辆信息的权限'), JSON_UNESCAPED_UNICODE);
+                    return json_encode(Array('error' => '查询失败，您没有查询 ' . $this->getDareaName($darea) . '：' . $darea . ' 设备信息的权限'), JSON_UNESCAPED_UNICODE);
                 }
             }
             $selectPlan .= ") ";
@@ -1171,6 +1172,11 @@ class  ManagementClass
             if (isset($filter['level'])) {
                 $selectFilter .= "AND level = '" . $filter['level'] . "' ";
             }
+            if(isset($filter['fuzzy']))
+            {
+                $selectFilter .= "AND (areaName LIKE '%" . $filter['fuzzy'] . "%' ";
+                $selectFilter .= "OR dareaName LIKE '%" . $filter['fuzzy'] . "%') ";
+            }
             if (isset($filter['area'])) {
                 $selectFilter .= "AND area = '" . $filter['area'] . "' ";
             }
@@ -1270,6 +1276,10 @@ class  ManagementClass
             }
             if (isset($filter['areaName'])) {
                 $selectFilter .= "AND areaName LIKE '%" . $filter['areaName'] . "%' ";
+            }
+            if(isset($filter['fuzzy']))
+            {
+                $selectFilter .= "AND area LIKE '" . $filter['fuzzy'] . "%' ";
             }
         }
 
@@ -1500,7 +1510,7 @@ class  ManagementClass
                 }
 
             }
-            
+
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
             if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
@@ -1536,17 +1546,17 @@ class  ManagementClass
 
             $f = new FileManager();
             if (!isset($data['passTime'])) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'passTime 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['name'])) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'name 参数错误'), JSON_UNESCAPED_UNICODE);
             } else {
                 if (isset($data['personImg']) && strlen($data['personImg']) != 0) {
                     $data['personImg'] = json_decode($f->uploadImage($data['personImg'], 'personnel', $data['passTime'], $data['name'] . '_现场'), true)[0];
                 }
             }
             if (!isset($data['idCard'])) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'idCard 参数错误'), JSON_UNESCAPED_UNICODE);
             } else {
                 if (isset($data['idCardImg']) && strlen($data['idCardImg']) != 0) {
                     $data['idCardImg'] = json_decode($f->uploadImage($data['idCardImg'], 'personnel', $data['passTime'], $data['name'] . '_证件'), true)[0];
@@ -1561,7 +1571,7 @@ class  ManagementClass
                 return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['status']) || strlen($data['status']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'status 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (isset($data['placeType']) && (strlen($data['placeType']) != 2 || $data['placeType'] !== substr($darea, 13, 2))) {
                 return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
@@ -1633,7 +1643,7 @@ class  ManagementClass
         }
 
         if ($res && $this->db->database->affected_rows == 1) {
-            
+
             $personnelRecord = $this->db->database->query("SELECT count(*) num FROM $this->personnelTable")->fetch_assoc()['num'];
 
             if($personnelRecord > $this->max_record)
@@ -2986,6 +2996,7 @@ class  ManagementClass
                     $f->deleteImage($personnelData[1]['personImg'], 'personnel');
                 }
             }
+//            var_dump($personnelData[1]['personImg']);
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
             if (isset($data['personImg']) && strlen($data['personImg']) != 0) {
@@ -3658,7 +3669,7 @@ class  ManagementClass
             }
         }
         return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
-        
+
     }
 //    public function deleteCar($time, $licensePlate)
 //    {

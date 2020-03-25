@@ -220,6 +220,9 @@ abstract class FileClass
         }
 
 //        die($this->_root_.'/..'.$imgPath);
+
+//        var_dump($this->_root_.'/..'.stripcslashes($imgPath));
+
         if(unlink($this->_root_.'/..'.stripcslashes($imgPath))){
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         }

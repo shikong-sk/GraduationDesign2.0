@@ -135,7 +135,9 @@
 
             <span slot="footer" class="dialog-footer">
 					<el-button :disabled="firstLoadDialog" @click="()=>{areaDialog = false}">取 消</el-button>
-					<el-button type="primary" :disabled="area.length == 0 || darea.length == 0" @click="()=>{firstLoadDialog=false;areaDialog = false;CurrentChange()}">确
+					<el-button type="primary" :disabled="area.length == 0 || darea.length == 0" @click="()=>{
+						firstLoadDialog=false;areaDialog = false;CurrentChange();saveDefault()
+					}">确
 						定</el-button>
 				</span>
         </el-dialog>
@@ -143,17 +145,55 @@
         <el-row>
             <el-col class="text-center border" :xs="24" :sm="24" :md="24">
                 <h5>管理区域详细信息</h5>
-                <el-row>
+                <!--                <el-row>
                     <el-col :xs="12" :sm="12" :md="12">人员信息总数量</el-col>
                     <el-col :xs="12" :sm="12" :md="12">{{personnelNum}}</el-col>
-                </el-row>
+                </el-row> -->
             </el-col>
 
             <div>
                 <el-row>
-                    <el-col class="text-center border" :sm="24" :xs="24" :md="24">
-                        <el-select class="w-100" v-model="personnelData.searchPlan" remote :remote-method="(v)=>{searhDarea(v)}" @change="(v)=>{searhDarea(v)}" filterable placeholder="请选择搜索范围">
-                            <el-option label="所有可查询范围（包含其他区域）" :value="0">
+                    <!-- 					<el-col :span="24">
+						  <el-cascader
+							class="w-100"
+						    :options="[
+								{
+									value:1,
+									label:'广东',
+									children:[
+										{
+											value:2,
+											label:'汕头',
+											children:[
+												{
+													value:3,
+													label:'金平区',
+													children:[
+														{
+															value:4,
+															label:'大华街道',
+														},
+														{
+															value:5,
+															label:'东夏街道',
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+							]"
+						    :props="{ multiple: true }"
+							@change="(v)=>{searchDarea(v)}"
+						    collapse-tags
+							filterable
+						    clearable></el-cascader>
+					</el-col>
+ -->
+                    <el-col class="" :sm="24" :xs="8" :md="8">
+                        <el-select class="w-100" v-model="personnelData.searchPlan" remote :remote-method="(v)=>{searchDarea(v)}" @change="(v)=>{searchDarea(v)}" filterable placeholder="请选择搜索范围">
+                            <el-option label="所有可查询范围" :value="0">
                             </el-option>
                             <div v-if="(Object.keys(areaList).length != 0 && area.length != 0)">
                                 <el-option v-for="(v,k) in dareaList[area].darea" :key="k" :label="v.dareaName" :value="k" v-if="v.selectPersonnel == '1'">
@@ -161,25 +201,43 @@
                             </div>
                         </el-select>
                     </el-col>
+                    <el-col :sm="12" :xs="8" :md="8">
+                        <el-select class="w-100" v-model="area" remote :remote-method="(v)=>{loadArea(v)}" @change="(v)=>{loadArea(v);darea = '';}" filterable placeholder="请选择区域">
+                            <div v-for="(v,k) in areaList">
+                                <el-option v-for="(val,key) in v" :key="k" :label="val" :value="k">
+                                </el-option>
+                            </div>
+                        </el-select>
+                    </el-col>
+                    <el-col :sm="12" :xs="8" :md="8">
+                        <el-select class="w-100" v-model="darea" remote :remote-method="(v)=>{loadDarea(v)}" @change="(v)=>{loadDarea(v)}" filterable placeholder="请选择场所" :disabled="area.length == 0">
+                            <div v-if="(Object.keys(areaList).length != 0 && area.length != 0)">
+                                <el-option v-for="(v,k) in dareaList[area].darea" :key="k" :label="v.dareaName" :value="k" v-if="v.selectPersonnel == '1' || permission == '8' ">
+                                </el-option>
+                            </div>
+                            </el-selectclass="w-100">
+                    </el-col>
+
+
 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.name" placeholder="姓名" clearable @clear="()=>{personnelData.filter.name = clear()}" @change="(v)=>{personnelData.filter.name = change(v)}">
                         </el-input>
                     </el-col>
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-select class="w-100" filterable placeholder="性别" v-model="personnelData.filter.gender" clearable @clear="()=>{personnelData.filter.gender = clear()}">
                             <el-option label="男" value="男"></el-option>
                             <el-option label="女" value="女"></el-option>
                         </el-select>
-                    </el-col>
+                    </el-col> -->
 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.idCard" placeholder="证件号码" clearable @clear="()=>{personnelData.filter.idCard = clear()}" @change="(v)=>{personnelData.filter.idCard = change(v)}">
                         </el-input>
                     </el-col>
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-select class="w-100" filterable placeholder="证件类型" v-model="personnelData.filter.cardType" clearable @clear="()=>{personnelData.filter.cardType = clear()}">
                             <el-option label="居民身份证" value="1"></el-option>
                             <el-option label="港澳台居住证" value="2"></el-option>
@@ -188,9 +246,9 @@
                             <el-option label="永久居住证" value="5"></el-option>
                             <el-option label="其他" value="9"></el-option>
                         </el-select>
-                    </el-col>
+                    </el-col> -->
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.countryOrAreaCode" placeholder="国家/地区代码" clearable @clear="()=>{personnelData.filter.countryOrAreaCode = clear()}" @change="(v)=>{personnelData.filter.countryOrAreaCode = change(v)}">
                         </el-input>
                     </el-col>
@@ -203,42 +261,22 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.cardVersion" placeholder="证件版本号" clearable @clear="()=>{personnelData.filter.cardVersion = clear()}" @change="(v)=>{personnelData.filter.cardVersion = change(v)}">
                         </el-input>
-                    </el-col>
+                    </el-col> -->
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.currentApplyOrgCode" placeholder="受理机关代码" clearable @clear="()=>{personnelData.filter.currentApplyOrgCode = clear()}" @change="(v)=>{personnelData.filter.currentApplyOrgCode = change(v)}">
                         </el-input>
-                    </el-col>
+                    </el-col> -->
 
-                    <el-col :xs="24" :sm="8" :md="6">
+                    <!-- <el-col :xs="24" :sm="8" :md="6">
                         <el-input v-model="personnelData.filter.signNum" placeholder="签发次数" clearable @clear="()=>{personnelData.filter.signNum = clear()}" @change="(v)=>{personnelData.filter.signNum = change(v)}">
                         </el-input>
-                    </el-col>
+                    </el-col> -->
 
-                    <el-col :xs="24" :sm="16" :md="18">
+                    <!-- <el-col :xs="24" :sm="16" :md="18">
                         <el-input v-model="personnelData.filter.address" placeholder="联系地址" clearable @clear="()=>{personnelData.filter.address = clear()}" @change="(v)=>{personnelData.filter.address = change(v)}">
                         </el-input>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-select class="w-100" filterable placeholder="体温筛选" v-model="personnelData.tempFilter" clearable @clear="()=>{
-								personnelData.filter.higherTemp = clear()
-								personnelData.filter.lowerTemp = clear()
-							}" @change="(v)=>{
-								personnelData.filter.higherTemp = clear()
-								personnelData.filter.lowerTemp = clear()
-							}">
-                            <el-option label="体温高于" value="0"></el-option>
-                            <el-option label="体温低于" value="1"></el-option>
-                        </el-select>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-
-                        <el-input-number class="w-100" v-if="personnelData.tempFilter == 0" v-model="personnelData.filter.higherTemp" :precision="2" :step="0.05" :max="50"></el-input-number>
-                        <el-input-number class="w-100" v-if="personnelData.tempFilter == 1" v-model="personnelData.filter.lowerTemp" :precision="2" :step="0.05" :max="50"></el-input-number>
-
-                    </el-col>
+                    </el-col> -->
 
                     <el-col :xs="24" :sm="12" :md="4">
                         <el-select class="w-100" filterable placeholder="时间条件" v-model="personnelData.timeFilter" clearable @clear="()=>{
@@ -268,7 +306,25 @@
                         </el-date-picker>
 
                     </el-col>
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-select class="w-100" filterable placeholder="体温筛选" v-model="personnelData.tempFilter" clearable @clear="()=>{
+								personnelData.filter.higherTemp = clear()
+								personnelData.filter.lowerTemp = clear()
+							}" @change="(v)=>{
+								personnelData.filter.higherTemp = clear()
+								personnelData.filter.lowerTemp = clear()
+							}">
+                            <el-option label="体温高于" value="0"></el-option>
+                            <el-option label="体温低于" value="1"></el-option>
+                        </el-select>
+                    </el-col>
 
+                    <el-col :xs="24" :sm="12" :md="6">
+
+                        <el-input-number class="w-100" v-if="personnelData.tempFilter == 0" v-model="personnelData.filter.higherTemp" :min="0" :precision="2" :step="0.05" :max="50"></el-input-number>
+                        <el-input-number class="w-100" v-if="personnelData.tempFilter == 1" v-model="personnelData.filter.lowerTemp" :min="0" :precision="2" :step="0.05" :max="50"></el-input-number>
+
+                    </el-col>
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.equipmentName" placeholder="登记设备名称" clearable @clear="()=>{personnelData.filter.equipmentName = clear()}" @change="(v)=>{personnelData.filter.equipmentName = change(v)}">
                         </el-input>
@@ -294,7 +350,7 @@
                         </el-select>
                     </el-col>
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.stationId" placeholder="警务站编号" clearable @clear="()=>{personnelData.filter.stationId = clear()}" @change="(v)=>{personnelData.filter.stationId = change(v)}">
                         </el-input>
                     </el-col>
@@ -302,9 +358,9 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.stationName" placeholder="警务站名称" clearable @clear="()=>{personnelData.filter.stationName = clear()}" @change="(v)=>{personnelData.filter.stationName = change(v)}">
                         </el-input>
-                    </el-col>
+                    </el-col> -->
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-select class="w-100" filterable placeholder="场所类型" v-model="personnelData.filter.placeType" clearable @clear="()=>{personnelData.filter.placeType = clear()}">
                             <el-option label="封闭式小区" value="01"></el-option>
                             <el-option label="小区" value="02"></el-option>
@@ -324,22 +380,22 @@
                             <el-option label="旅游景点" value="16"></el-option>
                             <el-option label="其他" value="99"></el-option>
                         </el-select>
-                    </el-col>
+                    </el-col> -->
 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.dareaName" placeholder="场所名称" clearable @clear="()=>{personnelData.filter.dareaName = clear()}" @change="(v)=>{personnelData.filter.dareaName = change(v)}">
                         </el-input>
                     </el-col>
-
+                    <!-- 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-select class="w-100" filterable placeholder="人员类别" v-model="personnelData.filter.identity" clearable @clear="()=>{personnelData.filter.identity = clear()}">
                             <el-option label="业主" value="1"></el-option>
                             <el-option label="租户" value="2"></el-option>
                             <el-option label="访客" value="3"></el-option>
                         </el-select>
-                    </el-col>
+                    </el-col> -->
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.homePlace" placeholder="家庭住址" clearable @clear="()=>{personnelData.filter.homePlace = clear()}" @change="(v)=>{personnelData.filter.homePlace = change(v)}">
                         </el-input>
                     </el-col>
@@ -406,10 +462,14 @@
                     <el-col :xs="24" :sm="8" :md="8">
                         <el-input v-model="personnelData.filter.imei" placeholder="手机 IMEI（APP）" clearable @clear="()=>{personnelData.filter.imei = clear()}" @change="(v)=>{personnelData.filter.imei = change(v)}">
                         </el-input>
-                    </el-col>
+                    </el-col> -->
 
                     <el-col :xs="24" :sm="24" :md="24">
                         <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="24">
+                        <el-button type="danger" class="w-100" @click="()=>{showAddPersonnelDialog()}">添加人员信息</el-button>
                     </el-col>
 
                 </el-row>
@@ -490,19 +550,66 @@
 								</el-form>
 							</template>
                     </el-table-column>
-                    <el-table-column label="时间" width="155">
+                    <el-table-column label="时间" width="155" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
 								{{scope.row.passTime}}
 							</template>
                     </el-table-column>
-                    <el-table-column label="场所">
+                    <el-table-column label="场所" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
 								{{scope.row.dareaName}}
 							</template>
                     </el-table-column>
-                    <el-table-column label="姓名">
+                    <el-table-column label="姓名" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
 								{{scope.row.name}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="证件号码" :show-overflow-tooltip="true" width="180">
+                        <template slot-scope="scope">
+								{{scope.row.idCard}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="民族" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.nation}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="现场照片" width="100">
+                        <template slot-scope="scope">
+							<div class="mx-auto text-center">
+								<el-image v-if="scope.row.personImg != ''" :preview-src-list="
+								scope.row.personImg != '' && scope.row.idCardImg != ''
+								?[scope.row.personImg,scope.row.idCardImg]
+								: scope.row.personImg != '' && scope.row.idCardImg == '' 
+									? [scope.row.personImg]
+									: [scope.row.idCardImg]
+								"
+								 style="width: 100%;height:50px" :src="scope.row.personImg" fit="scale-down">
+								</el-image>
+								<span v-else> 未录入照片 </span>
+							</div>
+							</template>
+                    </el-table-column>
+                    <el-table-column label="证件照片" width="100">
+                        <template slot-scope="scope">
+							<div class="mx-auto text-center">
+								<el-image v-if="scope.row.idCardImg != ''" :preview-src-list="
+								scope.row.personImg != '' && scope.row.idCardImg != ''
+								?[scope.row.personImg,scope.row.idCardImg]
+								: scope.row.personImg != '' && scope.row.idCardImg == '' 
+									? [scope.row.personImg]
+									: [scope.row.idCardImg]
+								"
+								style="width: 100%;height:50px;" :src="scope.row.idCardImg" fit="scale-down">
+								</el-image>
+								<span v-else> 未录入照片 </span>
+							</div>
+							</template>
+                    </el-table-column>
+                    <el-table-column label="体温" :show-overflow-tooltip="true" width="65">
+                        <template slot-scope="scope">
+								{{scope.row.temp}}
 							</template>
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="150">
@@ -512,7 +619,7 @@
 									<el-button v-if="permission == '8' || dareaList[scope.row.area].darea[scope.row.darea].updatePersonnel" style="padding:5px 0;margin:0 auto"
 									 type="text" size="small" @click="edit(scope)">修改</el-button>
 									<el-button v-if="permission == '8' || dareaList[scope.row.area].darea[scope.row.darea].delPersonnel" style="padding:5px 0;margin:0 auto"
-									 type="text" size="small">删除</el-button>
+									 type="text" size="small" @click="del(scope)">删除</el-button>
 								</div>
 							</template>
                     </el-table-column>
@@ -692,7 +799,7 @@
 										: data.personImg != '' && data.idCardImg == '' 
 											? [data.personImg]
 											: [data.idCardImg]
-										" style="width: 10rem;height:10rem;" :src="data.personImg" fit="scale-down">
+										" style="width: 10rem;height:10rem;" :src="data.personImg == undefined?'./Storage/undefined.jpg':data.personImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                             </el-form-item>
@@ -708,7 +815,7 @@
 										: data.personImg != '' && data.idCardImg == '' 
 											? [data.personImg]
 											: [data.idCardImg]
-										" style="width: 10rem;height:10rem;" :src="data.idCardImg" fit="scale-down">
+										" style="width: 10rem;height:10rem;" :src="data.idCardImg== undefined?'./Storage/undefined.jpg':data.idCardImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                             </el-form-item>
@@ -826,9 +933,9 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="人员类型">
-                                <span v-if="data.identity == '1'">封闭式小区</span>
-                                <span v-if="data.identity == '2'">小区</span>
-                                <span v-if="data.identity == '3'">无人管理小区</span>
+                                <span v-if="data.identity == '1'">业主</span>
+                                <span v-if="data.identity == '2'">租户</span>
+                                <span v-if="data.identity == '3'">访客</span>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -980,10 +1087,10 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="性别">
                                 <!-- <span>{{data.gender}}</span> -->
-								<el-select class="w-100" filterable placeholder="性别" v-model="data.gender" clearable>
-								    <el-option label="男" value="男"></el-option>
-								    <el-option label="女" value="女"></el-option>
-								</el-select>
+                                <el-select class="w-100" filterable placeholder="性别" v-model="data.gender" clearable>
+                                    <el-option label="男" value="男"></el-option>
+                                    <el-option label="女" value="女"></el-option>
+                                </el-select>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -991,7 +1098,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="民族">
-                                <span>{{data.nation}}</span>
+                                <!-- <span>{{data.nation}}</span> -->
+                                <el-input class="w-100" v-model="data.nation" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -999,7 +1107,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="证件号码">
-                                <span>{{data.idCard}}</span>
+                                <!-- <span>{{data.idCard}}</span> -->
+                                <el-input class="w-100" v-model="data.idCard" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1007,20 +1116,14 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="证件类型">
-<!--                                <span v-if="data.cardType == '1'">居民身份证</span>
-                                <span v-if="data.cardType == '2'">港澳台居住证</span>
-                                <span v-if="data.cardType == '3'">中国护照</span>
-                                <span v-if="data.cardType == '4'">国外护照</span>
-                                <span v-if="data.cardType == '5'">永久居住证</span>
-                                <span v-if="data.cardType == '9'">其他</span> -->
-								<el-select class="w-100" filterable placeholder="证件类型" v-model="data.cardType" clearable >
-									<el-option label="居民身份证" value="1"></el-option>
-									<el-option label="港澳台居住证" value="2"></el-option>
-									<el-option label="中国护照" value="3"></el-option>
-									<el-option label="国外护照" value="4"></el-option>
-									<el-option label="永久居住证" value="5"></el-option>
-									<el-option label="其他" value="9"></el-option>
-								</el-select>
+                                <el-select class="w-100" filterable placeholder="证件类型" v-model="data.cardType" clearable>
+                                    <el-option label="居民身份证" value="1"></el-option>
+                                    <el-option label="港澳台居住证" value="2"></el-option>
+                                    <el-option label="中国护照" value="3"></el-option>
+                                    <el-option label="国外护照" value="4"></el-option>
+                                    <el-option label="永久居住证" value="5"></el-option>
+                                    <el-option label="其他" value="9"></el-option>
+                                </el-select>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1028,7 +1131,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="国家/地区代码">
-                                <span>{{data.countryOrAreaCode}}</span>
+                                <!-- <span>{{data.countryOrAreaCode}}</span> -->
+                                <el-input class="w-100" v-model="data.countryOrAreaCode" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1036,7 +1140,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="国家/地区名称">
-                                <span>{{data.countryOrAreaName}}</span>
+                                <!-- <span>{{data.countryOrAreaName}}</span> -->
+                                <el-input class="w-100" v-model="data.countryOrAreaName" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1044,7 +1149,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="证件版本号">
-                                <span>{{data.cardVersion}}</span>
+                                <!-- <span>{{data.cardVersion}}</span> -->
+                                <el-input class="w-100" v-model="data.cardVersion" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1052,7 +1158,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="受理机关代码">
-                                <span>{{data.currentApplyOrgCode}}</span>
+                                <!-- <span>{{data.currentApplyOrgCode}}</span> -->
+                                <el-input class="w-100" v-model="data.currentApplyOrgCode" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1060,7 +1167,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="签发次数">
-                                <span>{{data.signNum}}</span>
+                                <!-- <span>{{data.signNum}}</span> -->
+                                <el-input-number class="w-100" v-model="data.signNum" :precision="0" :min="0" :step="1" :max="50"></el-input-number>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1068,7 +1176,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="签发机关">
-                                <span>{{data.authority}}</span>
+                                <!-- <span>{{data.authority}}</span> -->
+                                <el-input class="w-100" v-model="data.authority" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1106,7 +1215,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="住址信息">
-                                <span>{{data.address}}</span>
+                                <!-- <span>{{data.address}}</span> -->
+                                <el-input class="w-100" v-model="data.address" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1120,7 +1230,7 @@
                 					: data.personImg != '' && data.idCardImg == '' 
                 						? [data.personImg]
                 						: [data.idCardImg]
-                					" style="width: 10rem;height:10rem;" :src="data.personImg" fit="scale-down">
+                					" style="width: 10rem;height:10rem;" :src="data.personImg == undefined?'./Storage/undefined.jpg':data.personImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                                 <br>
@@ -1138,7 +1248,7 @@
                 					: data.personImg != '' && data.idCardImg == '' 
                 						? [data.personImg]
                 						: [data.idCardImg]
-                					" style="width: 10rem;height:10rem;" :src="data.idCardImg" fit="scale-down">
+                					" style="width: 10rem;height:10rem;" :src="data.idCardImg== undefined?'./Storage/undefined.jpg':data.idCardImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                                 <br>
@@ -1150,7 +1260,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="体温">
-                                <span>{{data.temp}}</span>
+                                <!-- <span>{{data.temp}}</span> -->
+                                <el-input-number class="w-100" v-model="data.temp" :min="0" :precision="2" :step="0.01" :max="50"></el-input-number>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1158,8 +1269,10 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="出入标识">
-                                <span v-if="data.status == '0'">入</span>
-                                <span v-else-if="data.status == '1'">出</span>
+                                <el-select class="w-100" filterable placeholder="出入标识" v-model="data.status" clearable>
+                                    <el-option label="入" value="0"></el-option>
+                                    <el-option label="出" value="1"></el-option>
+                                </el-select>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1168,7 +1281,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="经度">
-                                <span>{{data.x}}</span>
+                                <!-- <span>{{data.x}}</span> -->
+                                <el-input-number class="w-100" v-model="data.x" :min="-180" :precision="6" :step="0.000001" :max="180"></el-input-number>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1176,7 +1290,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="纬度">
-                                <span>{{data.y}}</span>
+                                <!-- <span>{{data.y}}</span> -->
+                                <el-input-number class="w-100" v-model="data.y" :min="-180" :precision="6" :step="0.000001" :max="180"></el-input-number>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1210,7 +1325,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="设备所在地名称">
-                                <span>{{data.location}}</span>
+                                <!-- <span>{{data.location}}</span> -->
+                                <el-input class="w-100" class="w-100" v-model="data.location" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1218,7 +1334,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="警务站编号">
-                                <span>{{data.stationId}}</span>
+                                <!-- <span>{{data.stationId}}</span> -->
+                                <el-input class="w-100" v-model="data.stationId" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1226,7 +1343,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="警务站名称">
-                                <span>{{data.stationName}}</span>
+                                <!-- <span>{{data.stationName}}</span> -->
+                                <el-input class="w-100" v-model="data.stationName" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1258,9 +1376,14 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="人员类型">
-                                <span v-if="data.identity == '1'">封闭式小区</span>
+                                <!--                                <span v-if="data.identity == '1'">封闭式小区</span>
                                 <span v-if="data.identity == '2'">小区</span>
-                                <span v-if="data.identity == '3'">无人管理小区</span>
+                                <span v-if="data.identity == '3'">无人管理小区</span> -->
+                                <el-select class="w-100" filterable placeholder="人员类别" v-model="data.identity" clearable>
+                                    <el-option label="业主" value="1"></el-option>
+                                    <el-option label="租户" value="2"></el-option>
+                                    <el-option label="访客" value="3"></el-option>
+                                </el-select>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1268,7 +1391,8 @@
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="家庭住址">
-                                <span>{{data.homePlace}}</span>
+                                <!-- <span>{{data.homePlace}}</span> -->
+                                <el-input class="w-100" v-model="data.homePlace" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1277,7 +1401,7 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="联系方式">
                                 <!-- <span>{{data.contact}}</span> -->
-                                <el-input v-model="data.contact" clearable></el-input>
+                                <el-input class="w-100" v-model="data.contact" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1298,7 +1422,7 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="人证相似度">
                                 <!-- <span>{{data.compareScore}}</span> -->
-								<el-input-number class="w-100" v-model="data.compareScore" :precision="0" :step="1" :min="0" :max="100"></el-input-number>
+                                <el-input-number class="w-100" v-model="data.compareScore" :precision="0" :step="1" :min="0" :max="100"></el-input-number>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1325,7 +1449,7 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="访问事由">
                                 <!-- <span>{{data.visitReason}}</span> -->
-								<el-input v-model="data.visitReason" clearable></el-input>
+                                <el-input class="w-100" v-model="data.visitReason" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1334,7 +1458,7 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="手机 MAC 地址">
                                 <!-- <span>{{data.mac}}</span> -->
-								<el-input v-model="data.mac" clearable></el-input>
+                                <el-input class="w-100" v-model="data.mac" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1343,7 +1467,7 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="手机 IMSI 地址">
                                 <!-- <span>{{data.imsi}}</span> -->
-								<el-input v-model="data.imsi" clearable></el-input>
+                                <el-input class="w-100" v-model="data.imsi" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1352,7 +1476,7 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="手机 IMEI 地址">
                                 <!-- <span>{{data.imei}}</span> -->
-								<el-input v-model="data.imei" clearable></el-input>
+                                <el-input class="w-100" v-model="data.imei" clearable></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -1362,8 +1486,8 @@
                             <el-form label-position="left" inline class="table-expand">
                                 <el-form-item label="被访人信息 JSON">
                                     <!-- <span>{{data.visitor}}</span> -->
-									<el-input v-model="data.visitor" clearable></el-input>
                                 </el-form-item>
+                                <el-input class="w-100" v-model="data.visitor" clearable></el-input>
                             </el-form>
                         </div>
                     </el-col>
@@ -1382,6 +1506,532 @@
 				</span>
         </el-dialog>
 
+        <el-dialog title="人员信息添加" :visible.sync="personAddDialog" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
+            <el-row>
+                <el-row style="vertical-align: middle;">
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="通行时间">
+                                <!-- <span>{{data.passTime}}</span> -->
+                                <el-date-picker class="w-100" type="datetime" placeholder="选择日期时间" v-model="data.passTime" clearable>
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域">
+                                <!-- <span>{{data.area}}</span> -->
+                                <el-select v-model="data.area" remote :remote-method="(v)=>{loadArea(v)}" @change="(v)=>{loadArea(v);data.darea = '';}" filterable placeholder="请选择区域">
+                                    <div v-for="(v,k) in areaList">
+                                        <el-option v-for="(val,key) in v" :key="k" :label="val" :value="k">
+                                        </el-option>
+                                    </div>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所">
+                                <!-- <span>{{data.darea}}</span> -->
+                                <el-select v-model="data.darea" remote :remote-method="(v)=>{}" @change="(v)=>{
+									getEquipment(data.area,data.darea); 
+									equipmentList = []
+									data.equipmentId = ''
+									if(permission == 8)
+									{
+										data.dareaName = dareaList[data.area].areaName + ':' + dareaList[data.area].darea[data.darea].dareaName
+									}
+									else{
+										data.dareaName = dareaList[data.area].darea[data.darea].dareaName
+									}
+									data.placeType = v.substr(13,2)
+									
+								}" filterable placeholder="请选择场所" :disabled="data.area == null">
+                                    <div v-if="(Object.keys(areaList).length != 0 && data.area != null && data.area.length != 0)">
+                                        <el-option v-for="(v,k) in dareaList[data.area].darea" :key="k" :label="v.dareaName" :value="k" v-if="permission == '8' || v.addPersonnel == '1'">
+                                        </el-option>
+                                    </div>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所名称">
+                                <!-- <span>{{data.dareaName}}</span> -->
+                                <el-input v-model="data.dareaName" :disabled="true">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="姓名">
+                                <!-- <span>{{data.name}}</span> -->
+                                <el-input class="w-100" v-model="data.name" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="性别">
+                                <!-- <span>{{data.gender}}</span> -->
+                                <el-select class="w-100" filterable placeholder="性别" v-model="data.gender" clearable>
+                                    <el-option label="男" value="男"></el-option>
+                                    <el-option label="女" value="女"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="民族">
+                                <!-- <span>{{data.nation}}</span> -->
+                                <el-input class="w-100" v-model="data.nation" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件号码">
+                                <!-- <span>{{data.idCard}}</span> -->
+                                <el-input class="w-100" v-model="data.idCard" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件类型">
+                                <el-select class="w-100" filterable placeholder="证件类型" v-model="data.cardType" clearable>
+                                    <el-option label="居民身份证" value="1"></el-option>
+                                    <el-option label="港澳台居住证" value="2"></el-option>
+                                    <el-option label="中国护照" value="3"></el-option>
+                                    <el-option label="国外护照" value="4"></el-option>
+                                    <el-option label="永久居住证" value="5"></el-option>
+                                    <el-option label="其他" value="9"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="国家/地区代码">
+                                <!-- <span>{{data.countryOrAreaCode}}</span> -->
+                                <el-input class="w-100" v-model="data.countryOrAreaCode" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="国家/地区名称">
+                                <!-- <span>{{data.countryOrAreaName}}</span> -->
+                                <el-input class="w-100" v-model="data.countryOrAreaName" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件版本号">
+                                <!-- <span>{{data.cardVersion}}</span> -->
+                                <el-input class="w-100" v-model="data.cardVersion" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="受理机关代码">
+                                <!-- <span>{{data.currentApplyOrgCode}}</span> -->
+                                <el-input class="w-100" v-model="data.currentApplyOrgCode" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="签发次数">
+                                <!-- <span>{{data.signNum}}</span> -->
+                                <el-input-number class="w-100" v-model="data.signNum" :precision="0" :min="0" :step="1" :max="50"></el-input-number>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="签发机关">
+                                <!-- <span>{{data.authority}}</span> -->
+                                <el-input class="w-100" v-model="data.authority" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="有效期开始时间">
+                                <!-- <span>{{data.validtyStart}}</span> -->
+                                <el-date-picker v-model="data.validtyStart" type="date" placeholder="选择日期">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="有效期结束时间">
+                                <!-- <span>{{data.validtyEnd}}</span> -->
+                                <el-date-picker v-model="data.validtyEnd" type="date" placeholder="选择日期">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="出生日期">
+                                <!-- <span>{{data.birthDay}}</span> -->
+                                <el-date-picker v-model="data.birthDay" type="date" placeholder="选择日期">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="住址信息">
+                                <!-- <span>{{data.address}}</span> -->
+                                <el-input class="w-100" v-model="data.address" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="现场照片">
+                                <el-image v-if="data.personImg != ''" :preview-src-list="
+                					data.personImg != '' && data.idCardImg != ''
+                					?[data.personImg,data.idCardImg]
+                					: data.personImg != '' && data.idCardImg == '' 
+                						? [data.personImg]
+                						: [data.idCardImg]
+                					" style="width: 10rem;height:10rem;" :src="data.personImg == undefined?'./Storage/undefined.jpg':data.personImg" fit="scale-down">
+                                </el-image>
+                                <span v-else> 未录入照片 </span>
+                                <br>
+                                <el-button @click="()=>{personImgAdd()}" type="mini">上传现场照片</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <input id="personImgAdd" style="display: none;" class="btn" type="file" onchange="personnel.imgAdd(this,personnel.data,'personImg')" accept="image/png,image/gif,image/jpeg" />
+
+                    <input id="idCardImgAdd" style="display: none;" class="btn" type="file" onchange="personnel.imgAdd(this,personnel.data,'idCardImg')" accept="image/png,image/gif,image/jpeg" />
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件照片">
+                                <el-image v-if="data.idCardImg != ''" :preview-src-list="
+                					data.personImg != '' && data.idCardImg != ''
+                					?[data.personImg,data.idCardImg]
+                					: data.personImg != '' && data.idCardImg == '' 
+                						? [data.personImg]
+                						: [data.idCardImg]
+                					" style="width: 10rem;height:10rem;" :src="data.idCardImg== undefined?'./Storage/undefined.jpg':data.idCardImg" fit="scale-down">
+                                </el-image>
+                                <span v-else> 未录入照片 </span>
+                                <br>
+                                <el-button @click="()=>{idCardImgAdd()}" type="mini">上传证件照片</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="体温">
+                                <!-- <span>{{data.temp}}</span> -->
+                                <el-input-number class="w-100" v-model="data.temp" :min="0" :precision="2" :step="0.01" :max="50"></el-input-number>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="出入标识">
+                                <el-select class="w-100" filterable placeholder="出入标识" v-model="data.status" clearable>
+                                    <el-option label="入" value="0"></el-option>
+                                    <el-option label="出" value="1"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="经度">
+                                <!-- <span>{{data.x}}</span> -->
+                                <el-input-number class="w-100" v-model="data.x" :min="-180" :precision="6" :step="0.000001" :max="180"></el-input-number>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="纬度">
+                                <!-- <span>{{data.y}}</span> -->
+                                <el-input-number class="w-100" v-model="data.y" :min="-180" :precision="6" :step="0.000001" :max="180"></el-input-number>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="设备">
+                                <!-- <span>{{data.equipmentId}}</span> -->
+                                <el-select v-model="data.equipmentId" remote :remote-method="(v)=>{}" @change="(v)=>{
+									equipmentList.forEach((x)=>{
+										if(x.equipmentId == v)
+										{
+											data.equipmentName = x.equipmentName
+										}
+									})
+									data.equipmentType = data.equipmentId.substr(13,2)
+										
+								}" filterable placeholder="请选择设备">
+                                    <div v-for="(v,k) in equipmentList">
+                                        <el-option :key="k" :label="v.equipmentName" :value="v.equipmentId">
+                                        </el-option>
+                                    </div>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="设备名称">
+                                <!-- <span>{{data.equipmentName}}</span> -->
+                                <el-input v-model="data.equipmentName" :disabled="true">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="设备类型">
+                                <!-- <span v-if="data.equipmentType == '01'"> 访客机</span>
+                                <span v-if="data.equipmentType == '02'"> 门禁机</span>
+								<span v-if="data.equipmentType == '03'"> 车辆道闸></span> -->
+                                <el-select class="w-100" filterable placeholder="登记设备类型" v-model="data.equipmentType" clearable>
+                                    <el-option label="访客机" value="01"></el-option>
+                                    <el-option label="门禁机" value="02"></el-option>
+                                    <el-option label="车辆道闸" value="03"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="设备所在地名称">
+                                <!-- <span>{{data.location}}</span> -->
+                                <el-input class="w-100" class="w-100" v-model="data.location" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="警务站编号">
+                                <!-- <span>{{data.stationId}}</span> -->
+                                <el-input class="w-100" v-model="data.stationId" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="警务站名称">
+                                <!-- <span>{{data.stationName}}</span> -->
+                                <el-input class="w-100" v-model="data.stationName" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所类型">
+                                <el-select class="w-100" filterable placeholder="场所类型" v-model="data.placeType" clearable :disabled="true">
+                                    <el-option label="封闭式小区" value="01"></el-option>
+                                    <el-option label="小区" value="02"></el-option>
+                                    <el-option label="无人管理小区" value="03"></el-option>
+                                    <el-option label="旅店/宾馆/酒店" value="04"></el-option>
+                                    <el-option label="停车场" value="05"></el-option>
+                                    <el-option label="娱乐场所" value="06"></el-option>
+                                    <el-option label="政府单位" value="07"></el-option>
+                                    <el-option label="企事业单位" value="08"></el-option>
+                                    <el-option label="学校" value="09"></el-option>
+                                    <el-option label="车站/机场" value="10"></el-option>
+                                    <el-option label="宗教场所" value="11"></el-option>
+                                    <el-option label="医院" value="12"></el-option>
+                                    <el-option label="超市/商场/市场" value="13"></el-option>
+                                    <el-option label="广场/公园" value="14"></el-option>
+                                    <el-option label="体育馆" value="15"></el-option>
+                                    <el-option label="旅游景点" value="16"></el-option>
+                                    <el-option label="其他" value="99"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="人员类型">
+                                <!--                                <span v-if="data.identity == '1'">封闭式小区</span>
+                                <span v-if="data.identity == '2'">小区</span>
+                                <span v-if="data.identity == '3'">无人管理小区</span> -->
+                                <el-select class="w-100" filterable placeholder="人员类别" v-model="data.identity" clearable>
+                                    <el-option label="业主" value="1"></el-option>
+                                    <el-option label="租户" value="2"></el-option>
+                                    <el-option label="访客" value="3"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="家庭住址">
+                                <!-- <span>{{data.homePlace}}</span> -->
+                                <el-input class="w-100" v-model="data.homePlace" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="联系方式">
+                                <!-- <span>{{data.contact}}</span> -->
+                                <el-input class="w-100" v-model="data.contact" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="人证一致">
+                                <!-- <span>{{data.isConsist}}</span> -->
+                                <el-select class="w-100" filterable placeholder="人证一致" v-model="data.isConsist" clearable>
+                                    <el-option label="一致" value="1"></el-option>
+                                    <el-option label="不一致" value="0"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="人证相似度">
+                                <!-- <span>{{data.compareScore}}</span> -->
+                                <el-input-number class="w-100" v-model="data.compareScore" :precision="0" :step="1" :min="0" :max="100"></el-input-number>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="开门方式">
+                                <el-select class="w-100" filterable placeholder="开门方式" v-model="data.openMode" clearable>
+                                    <el-option label="人脸识别" value="1"></el-option>
+                                    <el-option label="门禁卡" value="2"></el-option>
+                                    <el-option label="密码开门" value="3"></el-option>
+                                    <el-option label="APP开门" value="4"></el-option>
+                                    <el-option label="人脸与身份证识别比对" value="5"></el-option>
+                                    <el-option label="手机邀请码" value="6"></el-option>
+                                    <el-option label="访客门铃" value="7"></el-option>
+                                    <el-option label="可视对讲机" value="8"></el-option>
+                                    <el-option label="其它" value="9"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="访问事由">
+                                <!-- <span>{{data.visitReason}}</span> -->
+                                <el-input class="w-100" v-model="data.visitReason" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="手机 MAC 地址">
+                                <!-- <span>{{data.mac}}</span> -->
+                                <el-input class="w-100" v-model="data.mac" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="手机 IMSI 地址">
+                                <!-- <span>{{data.imsi}}</span> -->
+                                <el-input class="w-100" v-model="data.imsi" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="手机 IMEI 地址">
+                                <!-- <span>{{data.imei}}</span> -->
+                                <el-input class="w-100" v-model="data.imei" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="24">
+                        <div>
+                            <el-form label-position="left" inline class="table-expand">
+                                <el-form-item label="被访人信息 JSON">
+                                    <!-- <span>{{data.visitor}}</span> -->
+                                </el-form-item>
+                                <el-input class="w-100" v-model="data.visitor" clearable></el-input>
+                            </el-form>
+                        </div>
+                    </el-col>
+
+
+                </el-row>
+            </el-row>
+
+            <input id="personImgUpload" style="display: none;" class="btn" type="file" onchange="personnel.imgChange(this,personnel.data,'personImg')" accept="image/png,image/gif,image/jpeg" />
+
+            <input id="idCardImgUpload" style="display: none;" class="btn" type="file" onchange="personnel.imgChange(this,personnel.data,'idCardImg')" accept="image/png,image/gif,image/jpeg" />
+
+            <span slot="footer" class="dialog-footer">
+					<el-button @click="()=>{CurrentChange();personAddDialog = false}">取 消</el-button>
+					<el-button type="primary" @click="()=>{add(data)}">确 定</el-button>
+				</span>
+        </el-dialog>
+
+
     </div>
     <script>
         var personnel = new Vue({
@@ -1393,6 +2043,7 @@
                 return {
 
                     personDialog: false,
+                    personAddDialog: false,
                     personEditDialog: false,
                     personnelNum: 0,
 
@@ -1425,6 +2076,8 @@
                     dareaList: {},
                     darea: "",
                     dareaName: '',
+                    equipmentList: [],
+
 
                     personnelData: {
                         data: [],
@@ -1434,7 +2087,7 @@
                         timeFilter: '0',
                         tempFilter: '0',
                         compareScoreFilter: '0',
-                        searchPlan: '',
+                        searchPlan: 0,
                         searchArea: '',
                         searchDarea: '',
                         filter: {
@@ -1482,6 +2135,250 @@
                 this.GetRequest()
             },
             methods: {
+                getEquipment(area, darea) {
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getEquipmentList": '',
+                        "page": "1",
+                        "num": "9999999999999",
+                        "area": area,
+                        "darea": darea,
+                    }), ).then(function(res) {
+                        if ('error' in res.data) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '没有查询 ' + personnel.dareaList[area].darea[darea].dareaName + ' 设备的权限，无法选择设备信息',
+                                type: 'error',
+                                duration: 5000
+                            });
+                        } else {
+                            personnel.equipmentList = res.data.slice(1)
+                            console.log(personnel.equipmentList)
+                        }
+                    })
+                },
+                loadArea(v) {
+                    if (personnel.permission != '8') {
+                        return personnel.areaList
+                    }
+
+                    if (v.length != 0) {
+                        personnel.areaList = {}
+
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getPlanList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "areaName": v,
+                            })
+                        }), ).then(function(res) {
+                            data = res.data.slice(1)
+                            for (t in data) {
+
+                                if (!(data[t]['area'] in personnel.areaList)) {
+                                    personnel.areaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName']
+                                    }
+                                }
+
+                                // console.log(personnel.areaList,personnel.roleList[t]['areaCode'],personnel.roleList[t]['areaName'])
+
+                                if (!(data[t]['area'] in personnel.dareaList)) {
+                                    personnel.dareaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName'],
+                                        'darea': {}
+                                    }
+                                }
+
+                                if (!(data[t]['darea'] in personnel.dareaList[data[t]['area']]['darea'])) {
+                                    personnel.dareaList[data[t]['area']]['darea'][data[t]['darea']] = {
+                                        'dareaName': data[t]['dareaName'],
+                                    }
+                                }
+                            }
+                            personnel.$set(personnel.areaList, personnel.areaList)
+                            personnel.$set(personnel.dareaList, personnel.dareaList)
+                        })
+                    }
+
+                },
+                add(data) {
+                    for (x in data) {
+
+                        if (x == 'passTime' && (data[x] == null || data[x].length == 0)) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '请填写通行时间',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'area' && (data[x] == null || data[x].length == 0)) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '请选择区域',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'darea' && (data[x] == null || data[x].length == 0)) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '请选择场所',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'name' && (data[x] == null || data[x].length == 0)) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '请填写姓名',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'idCard' && (data[x] == null || data[x].length == 0)) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '请填写证件号码',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'status' && (data[x] == null || data[x].length == 0)) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '请选择出入标识',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'equipmentId' && (data[x] == null || data[x].length == 0)) {
+                            personnel.$message({
+                                showClose: true,
+                                message: '请选择登记设备',
+                                type: 'error'
+                            });
+                            return
+                        }
+
+                        if (data[x] == null || data[x].length == 0) {
+                            data[x] = undefined
+                        }
+
+                        if (x == 'passTime' && data[x] != null) {
+                            data[x] = personnel.getTime(data[x])
+                        }
+
+                        if (
+                            (x.indexOf('birth') != -1 || x.indexOf('validty') != -1) &&
+                            data[x] != null && data[x].length != 0
+                        ) {
+                            data[x] = personnel.getTime(Date.parse(data[x])).split(' ')[0]
+                        }
+
+                        if (x.indexOf('Img') != -1 && data[x] != null && data[x].indexOf('base64') == -1) {
+                            data[x] = undefined
+                        }
+                    }
+
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "addPersonnel": '',
+                        'area': data.area,
+                        'darea': data.darea,
+                        "data": JSON.stringify(data)
+                    }), ).then(function(res) {
+                        if ('success' in res.data) {
+                            personnel.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            personnel.personEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            personnel.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        if ('info' in res.data) {
+                            personnel.$message({
+                                showClose: true,
+                                message: res.data.info,
+                                type: 'info'
+                            });
+                            personnel.personAddDialog = false;
+                        }
+
+                        personnel.CurrentChange()
+                    })
+                },
+                showAddPersonnelDialog() {
+                    personnel.data = {
+                        area: undefined,
+                        darea: undefined,
+                        dareaName: undefined,
+                        name: undefined,
+                        gender: undefined,
+                        nation: undefined,
+                        idCard: undefined,
+                        cardType: undefined,
+                        countryOrAreaCode: undefined,
+                        countryOrAreaName: undefined,
+                        cardVersion: undefined,
+                        currentApplyOrgCode: undefined,
+                        signNum: undefined,
+                        address: undefined,
+                        passTime: undefined,
+                        equipmentId: undefined,
+                        equipmentName: undefined,
+                        equipmentType: undefined,
+                        status: undefined,
+                        stationId: undefined,
+                        stationName: undefined,
+                        plateType: undefined,
+                        identity: undefined,
+                        homePlace: undefined,
+                        contact: undefined,
+                        isConsist: undefined,
+                        higherCompareScore: undefined,
+                        lowerCompareScore: undefined,
+                        openMode: undefined,
+                        visitReason: undefined,
+                        mac: undefined,
+                        imsi: undefined,
+                        imei: undefined,
+                    }
+
+                    personnel.personAddDialog = true
+                },
+                del(data) {
+                    data = data.row
+                    console.log(data)
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "delPersonnel": '',
+                        "data": JSON.stringify({
+                            "area": data.area,
+                            "darea": data.darea,
+                            "passTime": data.passTime,
+                            "name": data.name,
+                            "idCard": data.idCard,
+                        })
+                    }), ).then(function(res) {
+                        if ('success' in res.data) {
+                            personnel.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            personnel.personEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            personnel.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        personnel.CurrentChange()
+                    })
+                },
                 update(data) {
                     console.log()
                     console.log(data)
@@ -1536,6 +2433,27 @@
                         personnel.CurrentChange()
                     })
                 },
+                idCardImgAdd() {
+                    $('#idCardImgAdd').click()
+                },
+                personImgAdd() {
+                    $('#personImgAdd').click()
+                },
+                async imgAdd(img, data, x) {
+                    console.log(data)
+                        // 生成一个文件读取的对象
+                    console.log(img.files[0])
+                    reader = new FileReader();
+                    reader.onload = function(ev) {
+                            // base64码
+                            var imgFile = ev.target.result; //或e.target都是一样的
+                            // console.log(imgFile)
+                            // data[x] = imgFile
+                            personnel.$set(personnel.data, x, imgFile)
+                        }
+                        //发起异步读取文件请求，读取结果为data:url的字符串形式，
+                    await reader.readAsDataURL(img.files[0])
+                },
                 idCardImgUpload() {
                     $('#idCardImgUpload').click()
                 },
@@ -1550,7 +2468,8 @@
                             // base64码
                             var imgFile = ev.target.result; //或e.target都是一样的
                             // console.log(imgFile)
-                            data[x] = imgFile
+                            // data[x] = imgFile
+                            personnel.$set(personnel.data, x, imgFile)
                         }
                         //发起异步读取文件请求，读取结果为data:url的字符串形式，
                     await reader.readAsDataURL(img.files[0])
@@ -1559,7 +2478,7 @@
                     personnel.data = scope.row
                     personnel.personEditDialog = true
                 },
-                searhDarea(v) {
+                searchDarea(v) {
                     console.log(v)
                 },
                 select(scope) {
@@ -1581,7 +2500,8 @@
                             2) {
                             personnel.personnelData.filter[x][0] = this.getTime(personnel.personnelData.filter[x][0])
                             personnel.personnelData.filter[x][1] = this.getTime(personnel.personnelData.filter[x][1])
-                        } else if (x.indexOf('Time') != -1 && personnel.personnelData.filter[x] != null && personnel.personnelData.filter[
+                        } else if (x.indexOf('Time') != -1 && personnel.personnelData.filter[x] != null && personnel.personnelData
+                            .filter[
                                 x].length != 0) {
                             personnel.personnelData.filter[x] = this.getTime(personnel.personnelData.filter[x])
                         }
@@ -1622,9 +2542,11 @@
                         'page': personnel.personnelData.page,
                         'num': personnel.personnelData.num,
                         'area': personnel.personnelData.searchArea instanceof Array ? undefined : personnel.personnelData.searchArea,
-                        'areaList': personnel.personnelData.searchArea instanceof Array ? JSON.stringify(personnel.personnelData.searchArea) : undefined,
+                        'areaList': personnel.personnelData.searchArea instanceof Array ? JSON.stringify(personnel.personnelData
+                            .searchArea) : undefined,
                         'darea': personnel.personnelData.searchDarea instanceof Array ? undefined : personnel.personnelData.searchDarea,
-                        'dareaList': personnel.personnelData.searchDarea instanceof Array ? JSON.stringify(personnel.personnelData.searchDarea) : undefined,
+                        'dareaList': personnel.personnelData.searchDarea instanceof Array ? JSON.stringify(personnel.personnelData
+                            .searchDarea) : undefined,
                         'filter': JSON.stringify(personnel.personnelData.filter)
                     }), ).then(function(res) {
                         if ('error' in res.data) {
@@ -1722,6 +2644,10 @@
                         personnel.personnelNum = res.data[0]
                     })
                 },
+                saveDefault() {
+                    sessionStorage.setItem("area", personnel.area)
+                    sessionStorage.setItem("darea", personnel.darea)
+                },
                 loadArea(v) {
                     if (personnel.permission != '8') {
                         return personnel.areaList
@@ -1800,12 +2726,15 @@
                     window.location = target
                 },
                 getSomeTime(n) {
-                    return personnel.getTime(Date.parse(personnel.getTime(Math.ceil((new Date().getTime() / 100000) * 100000)).split(
-                            ':')[0] +
-                        ':' +
-                        (parseInt(personnel.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) - parseInt(
-                            personnel.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) % 5)) + 60 * 1000 * (5 *
-                        n))
+                    return personnel.getTime(Date.parse(personnel.getTime(Math.ceil((new Date().getTime() / 100000) * 100000))
+                            .split(
+                                ':')[0] +
+                            ':' +
+                            (parseInt(personnel.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) -
+                                parseInt(
+                                    personnel.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) % 5)) + 60 * 1000 *
+                        (5 *
+                            n))
                 },
                 getTime(unixTime) {
                     unixTime = new Date(unixTime)
@@ -1939,20 +2868,22 @@
                                     personnel.$set(personnel.areaList, personnel.areaList)
                                     personnel.$set(personnel.dareaList, personnel.dareaList)
 
+                                    // personnel.CurrentChange()
+
+
+
                                     if ('area' in personnel.Request) {
                                         if (personnel.Request.area in personnel.areaList) {
                                             personnel.area = personnel.Request.area
+                                            personnel.personnelData.searchArea = personnel.area
                                             if ('darea' in personnel.Request) {
                                                 if (personnel.Request.darea in personnel.dareaList[personnel.area].darea) {
                                                     personnel.darea = personnel.Request.darea
-
+                                                    personnel.personnelData.searchDarea = personnel.darea
+                                                    personnel.personnelData.searchPlan = personnel.darea
                                                     personnel.areaDialog = false
-
                                                     personnel.getPersonnelCount()
-                                                    personnel.loadDarea()
-
-                                                    personnel.CurrentChange()
-
+                                                        // personnel.loadDarea()
                                                 } else {
                                                     personnel.$alert('您没有管理该区域/场所的权限，或该区域/场所不存在', '错误', {
                                                         confirmButtonText: '确定',
@@ -1971,9 +2902,42 @@
                                             })
                                         }
                                     } else {
-                                        personnel.areaDialog = true
-                                    }
+                                        if (sessionStorage.getItem("area") != null) {
+                                            if (sessionStorage.getItem("area") in personnel.areaList) {
+                                                if (sessionStorage.getItem("darea") != null) {
+                                                    personnel.area = sessionStorage.getItem("area")
+                                                    personnel.personnelData.searchArea = personnel.area
+                                                    if (sessionStorage.getItem("darea") in personnel.dareaList[personnel.area].darea) {
+                                                        personnel.darea = sessionStorage.getItem("darea")
+                                                        personnel.personnelData.searchPlan = sessionStorage.getItem("darea")
+                                                        personnel.areaDialog = false
 
+                                                    } else {
+                                                        personnel.$alert('默认区域/场所 权限错误，请重新选择', '错误', {
+                                                            confirmButtonText: '确定',
+                                                            type: 'error',
+                                                            center: true,
+                                                            callback: action => {
+                                                                personnel.areaDialog = true
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                            } else {
+                                                personnel.$alert('默认区域/场所 权限错误，请重新选择', '错误', {
+                                                    confirmButtonText: '确定',
+                                                    type: 'error',
+                                                    center: true,
+                                                    callback: action => {
+                                                        personnel.areaDialog = true
+                                                    }
+                                                })
+                                            }
+                                        } else if (sessionStorage.getItem("area") == null) {
+                                            personnel.areaDialog = true
+                                        }
+                                    }
+                                    personnel.CurrentChange()
                                     console.log(personnel.dareaList)
                                 })
                             }

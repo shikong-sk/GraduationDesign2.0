@@ -159,7 +159,7 @@ session_start();
 //}
 //require_once './Class/SqlHelper.php';
 //error_reporting(E_ALL);
-//$f = new FileManager();
+$f = new FileManager();
 //$db = new SqlHelper();
 //$file_maxSize = $f->MaxFileSize;
 //$disk_maxSize = intval(disk_free_space('./')/1024) - 51200;
@@ -191,3 +191,7 @@ $v = 'result';
 $k = 'url';
 $$k = $v;
 echo $url;
+
+var_dump(dirname(__FILE__));
+
+echo $f->deleteImage('/Storage/Personnel/2020/03/21/12/12/现场/123123_现场_0FB15CFC-66D7-6FB4-22E1-1B85FB548284.png','personnel');
