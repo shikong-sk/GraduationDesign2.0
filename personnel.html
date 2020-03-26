@@ -629,17 +629,17 @@
 							</template>
                     </el-table-column>
                 </el-table>
-				
-				<el-col :span="24">
-					<el-pagination small @size-change="(v)=>{personnelData.num = v ;CurrentChange(personnelData.page) }" @current-change="(v)=>{CurrentChange(v)}" :total="personnelData.count" :current-page.sync="personnelData.page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="personnelData.num"
-					    layout="total,sizes,prev, pager, next, jumper">
-					</el-pagination>
-				</el-col>
-                
+
+                <el-col :span="24">
+                    <el-pagination small @size-change="(v)=>{personnelData.num = v ;CurrentChange(personnelData.page) }" @current-change="(v)=>{CurrentChange(v)}" :total="personnelData.count" :current-page.sync="personnelData.page" :page-sizes="[10,20,50,100,200,500,1000]"
+                        :page-size="personnelData.num" layout="total,sizes,prev, pager, next, jumper">
+                    </el-pagination>
+                </el-col>
+
         </el-row>
 
 
-        <el-dialog title="人员详细信息" :visible.sync="personDialog" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
+        <el-dialog title="人员详细信息" :visible.sync="personDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
             <el-row>
                 <el-row style="vertical-align: middle;">
                     <el-col :xs="24" :sm="12" :md="6">
@@ -1048,7 +1048,7 @@
 				</span>
         </el-dialog>
 
-        <el-dialog v-if="data" title="人员信息修改" :visible.sync="personEditDialog" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
+        <el-dialog v-if="data" title="人员信息修改" :visible.sync="personEditDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
             <el-row>
                 <el-row style="vertical-align: middle;">
 
@@ -1515,7 +1515,7 @@
 				</span>
         </el-dialog>
 
-        <el-dialog title="人员信息添加" :visible.sync="personAddDialog" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
+        <el-dialog title="人员信息添加" :visible.sync="personAddDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
             <el-row>
                 <el-row style="vertical-align: middle;">
 

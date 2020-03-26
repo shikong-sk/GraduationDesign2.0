@@ -817,6 +817,9 @@ class  ManagementClass
             if (isset($filter['id'])) {
                 $selectFilter .= "AND id = '" . $filter['id'] . "' ";
             }
+            if (isset($filter['userName'])) {
+                $selectFilter .= "AND userName LIKE '%" . $filter['userName'] . "%' ";
+            }
             if (isset($filter['name'])) {
                 $selectFilter .= "AND name LIKE '%" . $filter['name'] . "%' ";
             }
@@ -1168,6 +1171,9 @@ class  ManagementClass
             }
             if (isset($filter['higherLevel'])) {
                 $selectFilter .= "AND level > '" . $filter['higherLevel'] . "' ";
+            }
+            if (isset($filter['id'])) {
+                $selectFilter .= "AND id = '" . $filter['id'] . "' ";
             }
             if (isset($filter['level'])) {
                 $selectFilter .= "AND level = '" . $filter['level'] . "' ";
@@ -2081,6 +2087,26 @@ class  ManagementClass
         }
 
         if ($res && $this->db->database->affected_rows == 1) {
+            if(isset($data['id'])){
+                $this->addRole($data['area'],$data['darea'],
+                    [
+                        'id'=>$data['id'],
+                        'selectPersonnel'=>'1',
+                        'addPersonnel'=>'1',
+                        'updatePersonnel'=>'1',
+                        'delPersonnel'=>'1',
+                        'selectCar'=>'1',
+                        'addCar'=>'1',
+                        'updateCar'=>'1',
+                        'delCar'=>'1',
+                        'selectEquipment'=>'1',
+                        'addEquipment'=>'1',
+                        'updateEquipment'=>'1',
+                        'delEquipment'=>'1',
+                    ]
+                );
+            }
+
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
@@ -3306,13 +3332,15 @@ class  ManagementClass
 
         if (isset($data['darea'])) {
             $queryWhere .= "AND area = '{$data['area']}' AND darea = '{$data['darea']}'";
+
         } else {
             $queryWhere .= "AND area = '{$data['area']}'";
         }
 
         $query .= rtrim(rtrim($queryArg, ' '), ',') . ' ' . $queryWhere;
 
-//        die($query);
+        $oId = $this->db->database->query("SELECT id FROM $this->planTable WHERE area = '{$data['area']}' AND darea = '{$data['darea']}'")->fetch_assoc()['id'];
+
         $res = $this->db->database->query($query);
 
         $err = $this->db->database->errno;
@@ -3322,6 +3350,27 @@ class  ManagementClass
         }
 
         if ($res && $this->db->database->affected_rows > 0) {
+            if (isset($data['id']) && strlen($data['id']) != 0) {
+
+                $this->delRole(['area'=>$data['area'],'darea'=>$data['darea'],'id'=>$oId]);
+                $this->addRole($data['area'],$data['darea'],
+                    [
+                        'id'=>$data['id'],
+                        'selectPersonnel'=>'1',
+                        'addPersonnel'=>'1',
+                        'updatePersonnel'=>'1',
+                        'delPersonnel'=>'1',
+                        'selectCar'=>'1',
+                        'addCar'=>'1',
+                        'updateCar'=>'1',
+                        'delCar'=>'1',
+                        'selectEquipment'=>'1',
+                        'addEquipment'=>'1',
+                        'updateEquipment'=>'1',
+                        'delEquipment'=>'1',
+                    ]
+                );
+            }
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
             return json_encode(Array('info' => '数据未变更'), JSON_UNESCAPED_UNICODE);
@@ -4370,15 +4419,17 @@ class  ManagementClass
                     return json_encode(Array('error' => '地区与场所不符'), JSON_UNESCAPED_UNICODE);
                 }
 
-                $selectFilter .= "AND area = '" . $data['area'] . "' AND darea = '{$data['darea']}' ";
+                $selectFilter .= "AND areaCode = '" . $data['area'] . "' AND dareaCode = '{$data['darea']}' ";
                 $selectFilterArray['area'] = $data['area'];
                 $selectFilterArray['darea'] = $data['darea'];
             } else if (isset($data['area'])) {
-                $selectFilter .= "AND area = '" . $data['area'] . "' ";
+                $selectFilter .= "AND areaCode = '" . $data['area'] . "' ";
                 $selectFilterArray['area'] = $data['area'];
             }
 
-            $roleData = json_decode($this->getRoleList($selectFilterArray), true);
+//            var_dump(array_merge($selectFilterArray,['page'=>1,'num'=>1]));
+            $roleData = json_decode($this->getRoleList(array_merge($selectFilterArray,['page'=>1,'num'=>1])), true);
+//            var_dump($roleData);
 
             if ($roleData[0] == 0) {
                 return json_encode(Array('info' => '所选条件范围内无记录'), JSON_UNESCAPED_UNICODE);
@@ -4393,12 +4444,12 @@ class  ManagementClass
             $res = $this->db->database->query($query);
 
             if ($res && $this->db->database->affected_rows >= 1) {
-                $f = new FileManager();
-                foreach (array_splice($personnelData, 1) as $t) {
-                    if (isset($t['userImg']) && strlen($t['userImg']) != 0) {
-                        $f->deleteImage($t['userImg'], 'user');
-                    }
-                }
+//                $f = new FileManager();
+//                foreach (array_splice($personnelData, 1) as $t) {
+//                    if (isset($t['userImg']) && strlen($t['userImg']) != 0) {
+//                        $f->deleteImage($t['userImg'], 'user');
+//                    }
+//                }
                 return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
             } else {
                 return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);

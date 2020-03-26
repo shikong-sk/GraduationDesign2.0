@@ -68,7 +68,12 @@
 				</el-col>
 				<el-col :sm="16" :xs="24">
 					<el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
-						<el-menu-item index="1">平台概览</el-menu-item>
+					    <el-menu-item index="1" @click="linkTo('./management.html')">平台概览</el-menu-item>
+						<el-menu-item index="2" @click="linkTo('./personnel.html')">人员管理</el-menu-item>
+						<el-menu-item index="3" @click="linkTo('./car.html')">车辆管理</el-menu-item>
+						<el-menu-item index="4" @click="linkTo('./equipment.html')">设备管理</el-menu-item>
+						<el-menu-item v-if="role == '超级管理员' " index="6" @click="linkTo('./plan.html')">区域/场所管理</el-menu-item>
+						<el-menu-item v-if="role == '超级管理员' " index="7" @click="linkTo('./userManagement.html')">用户管理</el-menu-item>
 					</el-menu>
 				</el-col>
 				<el-col :md="4" :xs="24">
@@ -260,6 +265,40 @@
 					this.GetRequest()
 				},
 				methods: {
+					change(v){
+						if(v.length == 0)
+						{
+							return undefined
+						}
+						else{
+							return v
+						}
+					},
+					clear()
+					{
+						return undefined
+					},
+					changeUrl(k,v){
+						history.pushState({},'',this.changeURLArg(k,v));
+					},
+					changeURLArg(arg,arg_val){ 
+						// var url = window.location.href.replace(window.location.search,'')
+						var url = window.location.href
+					    var pattern=arg+'=([^&]*)'; 
+					    var replaceText=arg+'='+arg_val; 
+					    if(url.match(pattern)){ 
+					        var tmp='/('+ arg+'=)([^&]*)/gi'; 
+					        tmp=url.replace(eval(tmp),replaceText); 
+					        return tmp; 
+					    }else{ 
+					        if(url.match('[\?]')){ 
+					            return url+'&'+replaceText; 
+					        }else{ 
+					            return url+'?'+replaceText; 
+					        } 
+					    } 
+					    return url+'\n'+arg+'\n'+arg_val;
+					},
 					GetRequest() {
 						var url = location.search; //获取url中"?"符后的字串
 						var theRequest = new Object();

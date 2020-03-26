@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <script src="Assets/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/popper.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/axios.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/qs.min.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="Assets/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="Assets/css/swiper.min.css" />
+
+    <script src="Assets/js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/element-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="Assets/css/element-ui.css" />
+
+    <script src="Assets/js/vuex.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/tinymce/tinymce.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/jquery.base64.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <style type="text/css">
+        .text-danger {
+            color: #F56C6C !important;
+        }
+        
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+
+    <script type="text/javascript">
+        //公用函数定义
+        function sleep(fun, ms) {
+            setTimeout(fun, ms);
+        }
+
+        function loop(fun, ms) {
+            fun();
+            setInterval(fun, ms);
+        }
+
+        addEventListener(
+            "load",
+            function() {
+                setTimeout(hideURLbar, 0);
+            },
+            false
+        );
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+</head>
+
+<body class="body">
+
+    <div id="plan" v-cloak>
+        <el-row v-if="planFlag">
+            <el-col :sm="4" class="text-center">
+                <img style="max-width: 120px;max-height: 50px;text-align: center;" src="Storage/global/Logo.png" alt="logo" class="img-fluid">
+            </el-col>
+            <el-col :sm="16" :xs="24">
+                <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+                    <el-menu-item index="1" @click="linkTo('./management.html')">平台概览</el-menu-item>
+                    <el-menu-item index="2" @click="linkTo('./personnel.html')">人员管理</el-menu-item>
+                    <el-menu-item index="3" @click="linkTo('./car.html')">车辆管理</el-menu-item>
+                    <el-menu-item index="4" @click="linkTo('./equipment.html')">设备管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="5" @click="linkTo('./plan.html')">区域/场所管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="6" @click="linkTo('./userManagement.html')">用户管理</el-menu-item>
+                </el-menu>
+            </el-col>
+            <el-col :md="4" :xs="24">
+                <el-row>
+                    <el-col :span="role != '超级管理员'?12:24">
+                        <div style="padding-top: 10px; text-align: center;" class="mx-auto">
+                            <el-dropdown class="text-center">
+                                <span class="el-dropdown-link">
+										{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item><span @click="linkTo('./')">返回首页</span></el-dropdown-item>
+                                    <el-dropdown-item divided>
+                                        <div @click="(x)=>{logout()}">退出登录</div>
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-col>
+        </el-row>
+
+        <el-row>
+            <el-col class="text-center border" :xs="24" :sm="24" :md="24">
+                <h5>区域/场所管理</h5>
+            </el-col>
+
+            <div>
+                <el-row>
+                    <el-col :sm="12" :xs="12" :md="12">
+                        <el-select class="w-100" filterable placeholder="搜索方式" v-model="planData.searchPlan" @change="(v)=>{
+                                planData.filter.fuzzy = undefined
+                                planData.filter.areaName = undefined
+                                planData.filter.dareaName = undefined
+                            }">
+                            <el-option label="区域/场所模糊搜索" value="0"></el-option>
+                            <el-option label="区域名称" value="1"></el-option>
+                            <el-option label="场所名称" value="2"></el-option>
+                            <el-option label="联合搜索" value="3"></el-option>
+                        </el-select>
+                    </el-col>
+
+                    <div>
+                        <div v-if="planData.searchPlan == '0'">
+                            <el-col :sm="12" :xs="12" :md="12">
+
+                                <el-input v-model="planData.filter.fuzzy" placeholder="区域/场所名称" clearable @clear="()=>{planData.filter.fuzzy = clear()}" @change="(v)=>{planData.filter.fuzzy = change(v)}">
+                                </el-input>
+
+                            </el-col>
+                        </div>
+
+                        <div v-if="planData.searchPlan == '3'">
+                            <el-col :xs="24" :sm="6" :md="6">
+                                <el-input v-model="planData.filter.areaName" placeholder="区域名称" clearable @clear="()=>{planData.filter.areaName = clear()}" @change="(v)=>{planData.filter.areaName = change(v)}">
+                                </el-input>
+                            </el-col>
+
+                            <el-col :xs="24" :sm="6" :md="6">
+                                <el-input v-model="planData.filter.dareaName" placeholder="场所名称" clearable @clear="()=>{planData.filter.dareaName = clear()}" @change="(v)=>{planData.filter.dareaName = change(v)}">
+                                </el-input>
+                            </el-col>
+                        </div>
+                    </div>
+
+                    <el-col :sm="12" :xs="8" :md="6">
+                        <el-select class="w-100" filterable placeholder="行政区域级别" v-model="planData.filter.level" clearable @clear="planData.filter.level = undefined">
+                            <el-option label="国" value="0"></el-option>
+                            <el-option label="省" value="1"></el-option>
+                            <el-option label="市" value="2"></el-option>
+                            <el-option label="区/县" value="3"></el-option>
+                            <el-option label="街道" value="4"></el-option>
+                        </el-select>
+                    </el-col>
+
+                    <el-col :sm="12" :xs="8" :md="6">
+                        <el-select class="w-100" filterable placeholder="场所类型" v-model="planData.filter.placeType" clearable @clear="planData.filter.placeType = undefined">
+                            <el-option label="封闭式小区" value="01"></el-option>
+                            <el-option label="小区" value="02"></el-option>
+                            <el-option label="无人管理小区" value="03"></el-option>
+                            <el-option label="旅店/宾馆/酒店" value="04"></el-option>
+                            <el-option label="停车场" value="05"></el-option>
+                            <el-option label="娱乐场所" value="06"></el-option>
+                            <el-option label="政府单位" value="07"></el-option>
+                            <el-option label="企事业单位" value="08"></el-option>
+                            <el-option label="学校" value="09"></el-option>
+                            <el-option label="车站/机场" value="10"></el-option>
+                            <el-option label="宗教场所" value="11"></el-option>
+                            <el-option label="医院" value="12"></el-option>
+                            <el-option label="超市/商场/市场" value="13"></el-option>
+                            <el-option label="广场/公园" value="14"></el-option>
+                            <el-option label="体育馆" value="15"></el-option>
+                            <el-option label="旅游景点" value="16"></el-option>
+                            <el-option label="其他" value="99"></el-option>
+                        </el-select>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="6">
+                        <el-button type="danger" class="w-100" @click="()=>{showAddPlanDialog()}">添加区域/场所</el-button>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="6">
+                        <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+                    </el-col>
+
+
+
+                </el-row>
+            </div>
+
+            <el-col class="text-center border" :xs="24" :sm="24" :md="24">
+                <el-table :data="planData.data" style="width: 100%" border>
+                    <el-table-column label="行政区域代码" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.area}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="行政区域名称" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.areaName}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="场所代码" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.darea}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="场所" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.dareaName}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="场所类别" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+                                <span v-if="scope.row.placeType == '01'">封闭式小区</span>
+                                <span v-if="scope.row.placeType == '02'">小区</span>
+                                <span v-if="scope.row.placeType == '03'">无人管理小区</span>
+                                <span v-if="scope.row.placeType == '04'">旅店/宾馆/酒店</span>
+                                <span v-if="scope.row.placeType == '05'">停车场</span>
+                                <span v-if="scope.row.placeType == '06'">娱乐场所</span>
+                                <span v-if="scope.row.placeType == '07'">政府单位</span>
+                                <span v-if="scope.row.placeType == '08'">企事业单位</span>
+                                <span v-if="scope.row.placeType == '09'">学校</span>
+                                <span v-if="scope.row.placeType == '10'">机场/车站</span>
+                                <span v-if="scope.row.placeType == '11'">宗教场所</span>
+                                <span v-if="scope.row.placeType == '12'">医院</span>
+                                <span v-if="scope.row.placeType == '13'">超市/商场/市场</span>
+                                <span v-if="scope.row.placeType == '14'">广场/公园</span>
+                                <span v-if="scope.row.placeType == '15'">体育馆</span>
+                                <span v-if="scope.row.placeType == '16'">旅游景点</span>
+                                <span v-if="scope.row.placeType == '99'">其它</span>
+						</template>
+                    </el-table-column>
+                    <el-table-column label="负责人用户ID" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.id}}
+							</template>
+                    </el-table-column>
+                    <el-table-column fixed="right" label="操作" width="150">
+                        <template slot-scope="scope">
+								<div class="text-center">
+									<el-button style="padding:5px 0;margin:0 auto" @click="select(scope)" type="text" size="small">查看</el-button>
+									<el-button v-if="permission == '8' || dareaList[scope.row.area].darea[scope.row.darea].updatePlan" style="padding:5px 0;margin:0 auto"
+									 type="text" size="small" @click="edit(scope)">修改</el-button>
+									<el-button v-if="permission == '8' || dareaList[scope.row.area].darea[scope.row.darea].delPlan" style="padding:5px 0;margin:0 auto"
+									 type="text" size="small" @click="del(scope)">删除</el-button>
+								</div>
+							</template>
+                    </el-table-column>
+                </el-table>
+
+                <el-col :span="24">
+                    <el-pagination small @size-change="(v)=>{planData.num = v ;CurrentChange(planData.page) }" @current-change="(v)=>{CurrentChange(v)}" :total="planData.count" :current-page.sync="planData.page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="planData.num"
+                        layout="total,sizes,prev, pager, next, jumper">
+                    </el-pagination>
+                </el-col>
+
+        </el-row>
+
+
+        <el-dialog title="区域/场所详细信息" :visible.sync="planDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="false">
+            <el-row>
+                <el-row style="vertical-align: middle;">
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域代码">
+                                <span>{{data.area}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域名称">
+                                <span>{{data.areaName}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所代码">
+                                <span>{{data.darea}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所名称">
+                                <span>{{data.dareaName}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所类型">
+                                <span v-if="data.placeType == '01'">封闭式小区</span>
+                                <span v-if="data.placeType == '02'">小区</span>
+                                <span v-if="data.placeType == '03'">无人管理小区</span>
+                                <span v-if="data.placeType == '04'">旅店/宾馆/酒店</span>
+                                <span v-if="data.placeType == '05'">停车场</span>
+                                <span v-if="data.placeType == '06'">娱乐场所</span>
+                                <span v-if="data.placeType == '07'">政府单位</span>
+                                <span v-if="data.placeType == '08'">企事业单位</span>
+                                <span v-if="data.placeType == '09'">学校</span>
+                                <span v-if="data.placeType == '10'">机场/车站</span>
+                                <span v-if="data.placeType == '11'">宗教场所</span>
+                                <span v-if="data.placeType == '12'">医院</span>
+                                <span v-if="data.placeType == '13'">超市/商场/市场</span>
+                                <span v-if="data.placeType == '14'">广场/公园</span>
+                                <span v-if="data.placeType == '15'">体育馆</span>
+                                <span v-if="data.placeType == '16'">旅游景点</span>
+                                <span v-if="data.placeType == '99'">其它</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人用户ID">
+                                <span>{{data.id}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人用户名">
+                                <span>{{data.userName}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人姓名">
+                                <span>{{data.name}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <span>{{data.contact}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人邮箱">
+                                <span>{{data.email}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                </el-row>
+            </el-row>
+
+            <span slot="footer" class="dialog-footer">
+					<!-- <el-button @click="()=>{planDialog = false}">取 消</el-button> -->
+					<el-button type="primary" @click="()=>{planDialog = false;}">确 定</el-button>
+				</span>
+        </el-dialog>
+
+        <el-dialog v-if="data" title="区域/场所信息修改" :visible.sync="planEditDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="false">
+            <el-row>
+                <el-row style="vertical-align: middle;">
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域代码">
+                                <span>{{data.area}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域名称">
+                                <!-- <span>{{data.areaName}}</span> -->
+                                <el-input class="w-100" v-model="data.areaName" placeholder="区域名称">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所代码">
+                                <span>{{data.darea}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所名称">
+                                <!-- <span>{{data.dareaName}}</span> -->
+                                <el-input class="w-100" v-model="data.dareaName" placeholder="区域名称">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所类型">
+                                <span v-if="data.placeType == '01'">封闭式小区</span>
+                                <span v-if="data.placeType == '02'">小区</span>
+                                <span v-if="data.placeType == '03'">无人管理小区</span>
+                                <span v-if="data.placeType == '04'">旅店/宾馆/酒店</span>
+                                <span v-if="data.placeType == '05'">停车场</span>
+                                <span v-if="data.placeType == '06'">娱乐场所</span>
+                                <span v-if="data.placeType == '07'">政府单位</span>
+                                <span v-if="data.placeType == '08'">企事业单位</span>
+                                <span v-if="data.placeType == '09'">学校</span>
+                                <span v-if="data.placeType == '10'">机场/车站</span>
+                                <span v-if="data.placeType == '11'">宗教场所</span>
+                                <span v-if="data.placeType == '12'">医院</span>
+                                <span v-if="data.placeType == '13'">超市/商场/市场</span>
+                                <span v-if="data.placeType == '14'">广场/公园</span>
+                                <span v-if="data.placeType == '15'">体育馆</span>
+                                <span v-if="data.placeType == '16'">旅游景点</span>
+                                <span v-if="data.placeType == '99'">其它</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="24">
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <span>{{adminUser.contact}}</span>
+                                <!-- <el-input class="w-100" v-model="data.contact" clearable></el-input> -->
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人用户ID">
+                                <span>{{adminUser.id}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人用户名">
+                                <!-- <span>{{data.userName}}</span> -->
+                                <el-select v-model="data.userName" remote :remote-method="(v)=>{searchUser(v);adminUser = {};}" @change="(v)=>{
+                                        userList.forEach((x)=>{
+                                            if(v == x.userName)
+                                            {
+                                                data.name = x.name
+                                                adminUser = x
+                                                data.id = adminUser.id
+                                                return
+                                            }
+                                        })
+                                    }" filterable placeholder="请选择区域">
+                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人姓名">
+                                <!-- <span>{{data.name}}</span> -->
+                                <el-select v-model="data.name" remote :remote-method="(v)=>{searchUser('',v);adminUser = {};}" @change="(v)=>{
+                                        userList.forEach((x)=>{
+                                            if(v == x.name)
+                                            {
+                                                data.userName = x.userName
+                                                adminUser = x
+                                                data.id = adminUser.id
+                                                return
+                                            }
+                                        })
+                                    }" filterable placeholder="请选择区域">
+                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <span>{{adminUser.contact}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人邮箱">
+                                <span>{{adminUser.email}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                </el-row>
+            </el-row>
+
+            <span slot="footer" class="dialog-footer">
+					<el-button @click="()=>{CurrentChange();planEditDialog = false;adminUser = {};userList = [] }">取 消</el-button>
+					<el-button type="primary" @click="()=>{update(data)}">确 定</el-button>
+				</span>
+        </el-dialog>
+
+        <el-dialog title="添加区域/场所" :visible.sync="planAddDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="false">
+            <el-row>
+                <el-row style="vertical-align: middle;">
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域代码">
+                                <span>{{data.area}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域名称">
+                                <!-- <span>{{data.areaName}}</span> -->
+                                <el-input class="w-100" v-model="data.areaName" placeholder="区域名称">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所代码">
+                                <span>{{data.darea}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所名称">
+                                <!-- <span>{{data.dareaName}}</span> -->
+                                <el-input class="w-100" v-model="data.dareaName" placeholder="区域名称">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所类型">
+                                <el-select class="w-100" filterable placeholder="场所类型" v-model="data.placeType">
+                                    <el-option label="封闭式小区" value="01"></el-option>
+                                    <el-option label="小区" value="02"></el-option>
+                                    <el-option label="无人管理小区" value="03"></el-option>
+                                    <el-option label="旅店/宾馆/酒店" value="04"></el-option>
+                                    <el-option label="停车场" value="05"></el-option>
+                                    <el-option label="娱乐场所" value="06"></el-option>
+                                    <el-option label="政府单位" value="07"></el-option>
+                                    <el-option label="企事业单位" value="08"></el-option>
+                                    <el-option label="学校" value="09"></el-option>
+                                    <el-option label="车站/机场" value="10"></el-option>
+                                    <el-option label="宗教场所" value="11"></el-option>
+                                    <el-option label="医院" value="12"></el-option>
+                                    <el-option label="超市/商场/市场" value="13"></el-option>
+                                    <el-option label="广场/公园" value="14"></el-option>
+                                    <el-option label="体育馆" value="15"></el-option>
+                                    <el-option label="旅游景点" value="16"></el-option>
+                                    <el-option label="其他" value="99"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="24">
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <span>{{adminUser.contact}}</span>
+                                <!-- <el-input class="w-100" v-model="data.contact" clearable></el-input> -->
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人用户ID">
+                                <span>{{adminUser.id}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人用户名">
+                                <!-- <span>{{data.userName}}</span> -->
+                                <el-select v-model="data.userName" remote :remote-method="(v)=>{searchUser(v);adminUser = {};}" @change="(v)=>{
+                                        userList.forEach((x)=>{
+                                            if(v == x.userName)
+                                            {
+                                                data.name = x.name
+                                                adminUser = x
+                                                data.id = adminUser.id
+                                                return
+                                            }
+                                        })
+                                    }" filterable placeholder="请选择区域">
+                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人姓名">
+                                <!-- <span>{{data.name}}</span> -->
+                                <el-select v-model="data.name" remote :remote-method="(v)=>{searchUser('',v);adminUser = {};}" @change="(v)=>{
+                                        userList.forEach((x)=>{
+                                            if(v == x.name)
+                                            {
+                                                data.userName = x.userName
+                                                adminUser = x
+                                                data.id = adminUser.id
+                                                return
+                                            }
+                                        })
+                                    }" filterable placeholder="请选择区域">
+                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <span>{{adminUser.contact}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人邮箱">
+                                <span>{{adminUser.email}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                </el-row>
+            </el-row>
+
+            <span slot="footer" class="dialog-footer">
+					<el-button @click="()=>{CurrentChange();planAddDialog = false;adminUser = {};userList = [] }">取 消</el-button>
+					<el-button type="primary" @click="()=>{add(data)}">确 定</el-button>
+				</span>
+        </el-dialog>
+
+
+    </div>
+    <script>
+        var plan = new Vue({
+            el: '#plan',
+            watch: {},
+            computed: {},
+            mounted() {},
+            data() {
+                return {
+
+                    planDialog: false,
+                    planAddDialog: false,
+                    planEditDialog: false,
+                    planNum: 0,
+
+                    fileData: '',
+
+                    firstLoadDialog: true,
+                    areaDialog: false,
+
+                    planFlag: false,
+                    activeIndex: '5',
+                    userName: '',
+                    role: "",
+                    permission: "",
+
+                    Tab: "区域/场所管理",
+
+                    data: {},
+                    userInfo: "",
+
+                    dialogWidth: 0,
+
+                    roleListPage: 1,
+                    roleListNum: 1000,
+
+                    roleList: [],
+
+                    areaList: {},
+                    area: '',
+                    areaName: '',
+                    dareaList: {},
+                    darea: "",
+                    dareaName: '',
+                    userList: [],
+                    adminUser: {},
+
+
+                    planData: {
+                        data: [],
+                        count: 0,
+                        num: 10,
+                        page: 1,
+                        timeFilter: '0',
+                        tempFilter: '0',
+                        compareScoreFilter: '0',
+                        searchPlan: '0',
+                        filter: {
+                            level: undefined,
+                            areaName: undefined,
+                            dareaName: undefined,
+                            fuzzy: undefined,
+                            placeType: undefined,
+                        },
+                    },
+                }
+            },
+            created() {
+                this.setDialogWidth()
+                this.GetRequest()
+            },
+            methods: {
+                console(x) {
+                    console.log(x)
+                },
+                searchUser(userName, name) {
+                    if (name == null) {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "userName": userName,
+                            })
+                        }), ).then(function(res) {
+                            plan.userList = res.data.slice(1)
+                        })
+                    } else {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "name": name,
+                            })
+                        }), ).then(function(res) {
+                            plan.userList = res.data.slice(1)
+                        })
+                    }
+                    console.log(userName, name)
+                },
+                loadArea(v) {
+                    if (plan.permission != '8') {
+                        return plan.areaList
+                    }
+
+                    if (v.length != 0) {
+                        plan.areaList = {}
+
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getPlanList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "areaName": v,
+                            })
+                        }), ).then(function(res) {
+                            data = res.data.slice(1)
+                            for (t in data) {
+
+                                if (!(data[t]['area'] in plan.areaList)) {
+                                    plan.areaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName']
+                                    }
+                                }
+
+                                // console.log(plan.areaList,plan.roleList[t]['areaCode'],plan.roleList[t]['areaName'])
+
+                                if (!(data[t]['area'] in plan.dareaList)) {
+                                    plan.dareaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName'],
+                                        'darea': {}
+                                    }
+                                }
+
+                                if (!(data[t]['darea'] in plan.dareaList[data[t]['area']]['darea'])) {
+                                    plan.dareaList[data[t]['area']]['darea'][data[t]['darea']] = {
+                                        'dareaName': data[t]['dareaName'],
+                                    }
+                                }
+                            }
+                            plan.$set(plan.areaList, plan.areaList)
+                            plan.$set(plan.dareaList, plan.dareaList)
+                        })
+                    }
+
+                },
+                add(data) {
+                    for (x in data) {
+
+                        if (x == 'area' && (data[x] == null || data[x].length == 0)) {
+                            plan.$message({
+                                showClose: true,
+                                message: '请填写区域代码',
+                                type: 'error'
+                            });
+                            return
+                        }
+
+                        if (data[x] == null || data[x].length == 0) {
+                            data[x] = undefined
+                        }
+
+                        if (x == 'passTime' && data[x] != null) {
+                            data[x] = plan.getTime(data[x])
+                        }
+
+                        if (
+                            (x.indexOf('birth') != -1 || x.indexOf('validty') != -1) &&
+                            data[x] != null && data[x].length != 0
+                        ) {
+                            data[x] = plan.getTime(Date.parse(data[x])).split(' ')[0]
+                        }
+
+                        if (x.indexOf('Img') != -1 && data[x] != null && data[x].indexOf('base64') == -1) {
+                            data[x] = undefined
+                        }
+                    }
+
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "addPlan": '',
+                        'area': data.area,
+                        'darea': data.darea,
+                        "data": JSON.stringify(data)
+                    }), ).then(function(res) {
+                        if ('success' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            plan.planEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        if ('info' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.info,
+                                type: 'info'
+                            });
+                            plan.planAddDialog = false;
+                        }
+
+                        plan.CurrentChange()
+                    })
+                },
+                showAddPlanDialog() {
+                    plan.data = {
+                        area: undefined,
+                        darea: undefined,
+                        dareaName: undefined,
+                        name: undefined,
+                        gender: undefined,
+                        nation: undefined,
+                        idCard: undefined,
+                        cardType: undefined,
+                        countryOrAreaCode: undefined,
+                        countryOrAreaName: undefined,
+                        cardVersion: undefined,
+                        currentApplyOrgCode: undefined,
+                        signNum: undefined,
+                        address: undefined,
+                        passTime: undefined,
+                        equipmentId: undefined,
+                        equipmentName: undefined,
+                        equipmentType: undefined,
+                        status: undefined,
+                        stationId: undefined,
+                        stationName: undefined,
+                        plateType: undefined,
+                        identity: undefined,
+                        homePlace: undefined,
+                        contact: undefined,
+                        isConsist: undefined,
+                        higherCompareScore: undefined,
+                        lowerCompareScore: undefined,
+                        openMode: undefined,
+                        visitReason: undefined,
+                        mac: undefined,
+                        imsi: undefined,
+                        imei: undefined,
+                    }
+
+                    plan.planAddDialog = true
+                },
+                del(data) {
+                    data = data.row
+                    console.log(data)
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "delPlan": '',
+                        "data": JSON.stringify({
+                            "area": data.area,
+                            "darea": data.darea,
+                            "passTime": data.passTime,
+                            "name": data.name,
+                            "idCard": data.idCard,
+                        })
+                    }), ).then(function(res) {
+                        if ('success' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            plan.planEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        plan.CurrentChange()
+                    })
+                },
+                update(data) {
+                    console.log()
+                    console.log(data)
+                    for (x in data) {
+                        // console.log(x)
+                        if (data[x] == null || data[x].length == 0) {
+                            data[x] = undefined
+                        }
+
+                        if (
+                            (x.indexOf('birth') != -1 || x.indexOf('validty') != -1) &&
+                            data[x] != null && data[x].length != 0
+                        ) {
+                            data[x] = plan.getTime(Date.parse(data[x])).split(' ')[0]
+                        }
+
+                        if (x.indexOf('Img') != -1 && data[x] != null && data[x].indexOf('base64') == -1) {
+                            data[x] = undefined
+                        }
+                        // console.log(x, data[x])
+                    }
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "updatePlan": '',
+                        'area': data.area,
+                        'darea': data.darea,
+                        "data": JSON.stringify(data)
+                    }), ).then(function(res) {
+                        if ('success' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            plan.planEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        if ('info' in res.data) {
+                            plan.$message({
+                                showClose: true,
+                                message: res.data.info,
+                                type: 'info'
+                            });
+                            plan.planEditDialog = false;
+                        }
+
+                        plan.CurrentChange()
+                    })
+                },
+                edit(scope) {
+                    plan.data = scope.row
+                    if (scope.row.id != null && scope.row.id.length != 0) {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "1",
+                            "filter": JSON.stringify({
+                                'id': scope.row.id
+                            })
+                        }), ).then(function(res) {
+                            plan.$set(plan.data, 'userName', res.data[1].userName)
+                            plan.$set(plan.data, 'name', res.data[1].name)
+                            plan.$set(plan.data, 'contact', res.data[1].contact)
+                            plan.$set(plan.data, 'email', res.data[1].email)
+                            scope.row['userName'] = res.data[1].userName
+                            scope.row['name'] = res.data[1].name
+                            scope.row['contact'] = res.data[1].contact
+                            scope.row['email'] = res.data[1].email
+                            console.log(scope.row)
+                        })
+                    }
+                    plan.planEditDialog = true
+                },
+                select(scope) {
+                    plan.data = scope.row
+                    if (scope.row.id != null && scope.row.id.length != 0) {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "1",
+                            "filter": JSON.stringify({
+                                'id': scope.row.id
+                            })
+                        }), ).then(function(res) {
+                            plan.$set(plan.data, 'userName', res.data[1].userName)
+                            plan.$set(plan.data, 'name', res.data[1].name)
+                            plan.$set(plan.data, 'contact', res.data[1].contact)
+                            plan.$set(plan.data, 'email', res.data[1].email)
+                            scope.row['userName'] = res.data[1].userName
+                            scope.row['name'] = res.data[1].name
+                            scope.row['contact'] = res.data[1].contact
+                            scope.row['email'] = res.data[1].email
+                            console.log(scope.row)
+                        })
+                    }
+                    plan.planDialog = true
+                },
+                search() {
+                    plan.planData.page = 1
+                    this.CurrentChange()
+                },
+                CurrentChange(v) {
+
+                    for (x in plan.planData.filter) {
+                        if (plan.planData.filter[x] == null) {
+                            plan.planData.filter[x] = undefined
+                        }
+                        // console.log(x, plan.planData.filter[x])
+                    }
+
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getPlanList": '',
+                        'page': plan.planData.page,
+                        'num': plan.planData.num,
+                        'filter': JSON.stringify(plan.planData.filter)
+                    }), ).then(function(res) {
+                        if ('error' in res.data) {
+                            plan.$alert(res.data.error, '错误', {
+                                confirmButtonText: '确定',
+                                type: 'error',
+                                center: true,
+                                callback: action => {
+                                    // plan.linkTo('./management.html')
+                                }
+                            })
+                            return
+                        }
+                        plan.planData.count = parseInt(res.data[0])
+                        plan.planData.data = res.data.slice(1)
+                    })
+                },
+                change(v) {
+                    if (v == null) {
+                        return undefined
+                    }
+                    if (v.length == 0) {
+                        return undefined
+                    } else {
+                        return v
+                    }
+                },
+                clear() {
+                    return undefined
+                },
+                changeUrl(k, v) {
+                    history.pushState({}, '', this.changeURLArg(k, v));
+                },
+                changeURLArg(arg, arg_val) {
+                    // var url = window.location.href.replace(window.location.search,'')
+                    var url = window.location.href
+                    var pattern = arg + '=([^&]*)';
+                    var replaceText = arg + '=' + arg_val;
+                    if (url.match(pattern)) {
+                        var tmp = '/(' + arg + '=)([^&]*)/gi';
+                        tmp = url.replace(eval(tmp), replaceText);
+                        return tmp;
+                    } else {
+                        if (url.match('[\?]')) {
+                            return url + '&' + replaceText;
+                        } else {
+                            return url + '?' + replaceText;
+                        }
+                    }
+                    return url + '\n' + arg + '\n' + arg_val;
+                },
+                GetRequest() {
+                    var url = location.search; //获取url中"?"符后的字串
+                    var theRequest = new Object();
+                    if (url.indexOf("?") != -1) {
+                        var str = url.substr(1);
+                        strs = str.split("&");
+                        for (var i = 0; i < strs.length; i++) {
+                            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                        }
+                    }
+                    this.Request = theRequest
+                },
+                getPlanCount(page, num) {
+                    time = []
+                    t = plan.getTime(new Date()).replace(/-/g, ' ').replace(/:/g, ' ').split(' ')
+                    time[0] = t[0] + '-' + t[1] + '-' + t[2]
+                    t = plan.getTime(Date.parse(time[0]) + 1000 * 60 * 60 * 24).replace(/-/g, ' ').replace(/:/g, ' ').split(
+                        ' ')
+                    time[1] = t[0] + '-' + t[1] + '-' + t[2]
+
+                    if (plan.role == '超级管理员') {
+                        data = Qs.stringify({
+                            "getPlanList": '',
+                            "page": "1",
+                            "num": "0",
+                            // "filter": JSON.stringify({
+                            // 	"betweenTime": JSON.stringify(time),
+                            // })
+                        })
+                    } else {
+                        data = Qs.stringify({
+                            "getPlanList": '',
+                            "page": "1",
+                            "num": "0",
+                            'area': plan.area,
+                            'darea': plan.darea,
+                            // "filter": JSON.stringify({
+                            // 	"betweenTime": JSON.stringify(time),
+                            // })
+                        })
+                    }
+                    axios.post('./System/Core/Management.php', data).then(function(res) {
+                        // console.log(res)
+                        plan.planNum = res.data[0]
+                    })
+                },
+                saveDefault() {
+                    sessionStorage.setItem("area", plan.area)
+                    sessionStorage.setItem("darea", plan.darea)
+                },
+                loadArea(v) {
+                    if (plan.permission != '8') {
+                        return plan.areaList
+                    }
+
+                    if (v.length != 0) {
+                        plan.areaList = {}
+
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getPlanList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "areaName": v,
+                            })
+                        }), ).then(function(res) {
+                            data = res.data.slice(1)
+                            for (t in data) {
+
+                                if (!(data[t]['area'] in plan.areaList)) {
+                                    plan.areaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName']
+                                    }
+                                }
+
+                                // console.log(plan.areaList,plan.roleList[t]['areaCode'],plan.roleList[t]['areaName'])
+
+                                if (!(data[t]['area'] in plan.dareaList)) {
+                                    plan.dareaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName'],
+                                        'darea': {}
+                                    }
+                                }
+
+                                if (!(data[t]['darea'] in plan.dareaList[data[t]['area']]['darea'])) {
+                                    plan.dareaList[data[t]['area']]['darea'][data[t]['darea']] = {
+                                        'dareaName': data[t]['dareaName'],
+                                    }
+                                }
+                            }
+                            plan.$set(plan.areaList, plan.areaList)
+                            plan.$set(plan.dareaList, plan.dareaList)
+                        })
+                    }
+
+                },
+                loadDarea(v) {
+                    plan.areaName = plan.dareaList[plan.area].areaName
+                    plan.dareaName = plan.dareaList[plan.area].darea[plan.darea].dareaName
+                    plan.getPlanCount()
+                    plan.changeUrl('area', plan.area)
+                    plan.changeUrl('darea', plan.darea)
+
+                    plan.CurrentChange()
+
+                    plan.planData.searchPlan = plan.darea
+                    plan.planData.searchArea = plan.area
+                    plan.planData.searchDarea = plan.darea
+
+                    if (plan.permission != '8') {
+                        return plan.dareaList
+                    }
+
+                },
+                setDialogWidth() {
+                    // console.log(document.body.clientWidth)
+                    var val = document.body.clientWidth
+                    const def = 800 // 默认宽度
+                    if (val < def) {
+                        this.dialogWidth = '100%'
+                    } else {
+                        this.dialogWidth = def + 'px'
+                    }
+                },
+                linkTo(target) {
+                    window.location = target
+                },
+                getSomeTime(n) {
+                    return plan.getTime(Date.parse(plan.getTime(Math.ceil((new Date().getTime() / 100000) * 100000))
+                            .split(
+                                ':')[0] +
+                            ':' +
+                            (parseInt(plan.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) -
+                                parseInt(
+                                    plan.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) % 5)) + 60 * 1000 *
+                        (5 *
+                            n))
+                },
+                getTime(unixTime) {
+                    unixTime = new Date(unixTime)
+                    Y = unixTime.getFullYear()
+                    M = (unixTime.getMonth() + 1) < 10 ? '0' + (unixTime.getMonth() + 1) : (unixTime.getMonth() + 1)
+                    D = unixTime.getDate() < 10 ? '0' + unixTime.getDate() : unixTime.getDate()
+                    H = unixTime.getHours() < 10 ? '0' + unixTime.getHours() : unixTime.getHours()
+                    i = unixTime.getMinutes() < 10 ? '0' + unixTime.getMinutes() : unixTime.getMinutes()
+                    S = unixTime.getSeconds() < 10 ? '0' + unixTime.getSeconds() : unixTime.getSeconds()
+                    return Y + '-' + M + '-' + D + ' ' + H + ':' + i + ':' + S
+                },
+                handleSelect(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                logout() {
+                    axios.post('./System/Core/User.php', Qs.stringify({
+                        "logout": '',
+                    }), ).then(function(res) {
+                        for (x in res.data) {
+                            if ('success' === x) {
+                                console.log(res.data['success'])
+                                plan.$alert(res.data['success'], '操作成功', {
+                                    confirmButtonText: '确定',
+                                    type: 'success',
+                                    center: true,
+                                    callback: action => {
+                                        window.location = 'login.html'
+                                    }
+                                })
+                            }
+                        }
+                    })
+                },
+            },
+            mounted() {
+                window.onresize = () => {
+                    return (() => {
+                        this.setDialogWidth()
+                    })()
+                }
+                axios.post('./System/Core/User.php', Qs.stringify({
+                    "getUserInfo": '',
+                }), ).then(function(res) {
+                    for (x in res.data) {
+                        if ('error' === x) {
+                            plan.$alert(res.data[x], '错误', {
+                                confirmButtonText: '确定',
+                                type: 'error',
+                                center: true,
+                                callback: action => {
+                                    window.location = 'login.html'
+                                }
+                            })
+                        } else {
+                            plan.userName = res.data[x]['userName']
+                            plan.userInfo = res.data[x]
+                            plan.permission = res.data[x]['permission']
+
+                            if (plan.permission == '8') {
+                                plan.role = '超级管理员'
+                                plan.CurrentChange()
+                                plan.areaDialog = false
+                            } else if (plan.permission == '1') {
+                                plan.$alert('您没有管理区域/场所的权限', '错误', {
+                                    confirmButtonText: '确定',
+                                    type: 'error',
+                                    center: true,
+                                    callback: action => {
+                                        plan.linkTo('./management.html')
+                                    }
+                                })
+                                return
+                            } else {
+                                plan.linkTo('./')
+                            }
+
+                            plan.planFlag = true
+
+                            if (plan.permission != '8') {
+                                axios.post('./System/Core/Management.php', Qs.stringify({
+                                    "getRoleList": '',
+                                }), ).then(function(res) {
+                                    if (res.data[0] == 0) {
+                                        plan.$alert('您没有访问面板的权限，如需访问请联系超级管理员添加相应权限', '错误', {
+                                            confirmButtonText: '返回首页',
+                                            type: 'error',
+                                            center: true,
+                                            callback: action => {
+                                                plan.linkTo('./')
+                                            }
+                                        })
+                                    }
+                                    // console.log(res.data)
+                                    plan.roleList = res.data.slice(1)
+                                    for (t in plan.roleList) {
+                                        // console.log(plan.roleList[t]['areaCode'])
+
+                                        if (!(plan.roleList[t]['areaCode'] in plan.areaList)) {
+                                            plan.areaList[plan.roleList[t]['areaCode']] = {
+                                                'areaName': plan.roleList[t]['areaName']
+                                            }
+                                        }
+
+                                        console.log(plan.areaList, plan.roleList[t]['areaCode'], plan.roleList[t]['areaName'])
+
+                                        if (!(plan.roleList[t]['areaCode'] in plan.dareaList)) {
+                                            plan.dareaList[plan.roleList[t]['areaCode']] = {
+                                                'areaName': plan.roleList[t]['areaName'],
+                                                'darea': {}
+                                            }
+                                        }
+
+                                        if (!(plan.roleList[t]['dareaCode'] in plan.dareaList[plan.roleList[t]['areaCode']][
+                                                'darea'
+                                            ])) {
+                                            plan.dareaList[plan.roleList[t]['areaCode']]['darea'][plan.roleList[t]['dareaCode']] = {
+                                                'dareaName': plan.roleList[t]['dareaName'],
+
+                                                'selectCar': plan.roleList[t]['selectCar'] == 0 ? false : true,
+                                                'selectPlan': plan.roleList[t]['selectPlan'] == 0 ? false : true,
+                                                'selectEquipment': plan.roleList[t]['selectEquipment'] == 0 ? false : true,
+
+                                                'updateCar': plan.roleList[t]['updateCar'] == 0 ? false : true,
+                                                'updatePlan': plan.roleList[t]['updatePlan'] == 0 ? false : true,
+                                                'updateEquipment': plan.roleList[t]['updateEquipment'] == 0 ? false : true,
+
+                                                'delCar': plan.roleList[t]['delCar'] == 0 ? false : true,
+                                                'delPlan': plan.roleList[t]['delPlan'] == 0 ? false : true,
+                                                'delEquipment': plan.roleList[t]['delEquipment'] == 0 ? false : true,
+
+                                                'addCar': plan.roleList[t]['addCar'] == 0 ? false : true,
+                                                'addPlan': plan.roleList[t]['addPlan'] == 0 ? false : true,
+                                                'addEquipment': plan.roleList[t]['addEquipment'] == 0 ? false : true,
+                                            }
+                                        }
+
+                                    }
+
+                                    plan.$set(plan.areaList, plan.areaList)
+                                    plan.$set(plan.dareaList, plan.dareaList)
+
+                                    // plan.CurrentChange()
+
+
+
+                                    if ('area' in plan.Request) {
+                                        if (plan.Request.area in plan.areaList) {
+                                            plan.area = plan.Request.area
+                                            plan.planData.searchArea = plan.area
+                                            if ('darea' in plan.Request) {
+                                                if (plan.Request.darea in plan.dareaList[plan.area].darea) {
+                                                    plan.darea = plan.Request.darea
+                                                    plan.planData.searchDarea = plan.darea
+                                                    plan.planData.searchPlan = plan.darea
+                                                    plan.areaDialog = false
+                                                    plan.getPlanCount()
+                                                        // plan.loadDarea()
+                                                } else {
+                                                    plan.$alert('您没有管理该区域/场所的权限，或该区域/场所不存在', '错误', {
+                                                        confirmButtonText: '确定',
+                                                        type: 'error',
+                                                        center: true,
+                                                        callback: action => {}
+                                                    })
+                                                }
+                                            }
+                                        } else {
+                                            plan.$alert('您没有管理该区域/场所的权限，或该区域/场所不存在', '错误', {
+                                                confirmButtonText: '确定',
+                                                type: 'error',
+                                                center: true,
+                                                callback: action => {}
+                                            })
+                                        }
+                                    } else {
+                                        if (sessionStorage.getItem("area") != null) {
+                                            if (sessionStorage.getItem("area") in plan.areaList) {
+                                                if (sessionStorage.getItem("darea") != null) {
+                                                    plan.area = sessionStorage.getItem("area")
+                                                    plan.planData.searchArea = plan.area
+                                                    if (sessionStorage.getItem("darea") in plan.dareaList[plan.area].darea) {
+                                                        plan.darea = sessionStorage.getItem("darea")
+                                                        plan.planData.searchPlan = sessionStorage.getItem("darea")
+                                                        plan.areaDialog = false
+
+                                                    } else {
+                                                        plan.$alert('默认区域/场所 权限错误，请重新选择', '错误', {
+                                                            confirmButtonText: '确定',
+                                                            type: 'error',
+                                                            center: true,
+                                                            callback: action => {
+                                                                plan.areaDialog = true
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                            } else {
+                                                plan.$alert('默认区域/场所 权限错误，请重新选择', '错误', {
+                                                    confirmButtonText: '确定',
+                                                    type: 'error',
+                                                    center: true,
+                                                    callback: action => {
+                                                        plan.areaDialog = true
+                                                    }
+                                                })
+                                            }
+                                        } else if (sessionStorage.getItem("area") == null) {
+                                            plan.areaDialog = true
+                                        }
+                                    }
+                                    plan.CurrentChange()
+                                    console.log(plan.dareaList)
+                                })
+                            }
+
+                            // plan.getPlanCount()
+
+                        }
+                    }
+                })
+            }
+        })
+    </script>
+
+    </div>
+    <style>
+        .table-expand {
+            font-size: 0;
+        }
+        
+        .table-expand label {
+            width: 50%;
+            color: #99a9bf;
+        }
+        
+        .table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        var resetWindow = function() {
+            $('#plan').css({
+                'min-height': $(window).height() - $('#head').height() - $('#foot').height()
+            })
+
+            if ($(window).width() <= 995) {
+                plan.tabPosition = 'top'
+                $('#plan').css({
+                    'margin': '0 10px',
+                    'margin-top': '5px'
+                })
+            } else {
+                plan.tabPosition = 'left'
+                $('#plan').css({
+                    'margin': '0 5px',
+                    'margin-top': '5px'
+                })
+            }
+        }
+        $(document).ready(function() {
+            resetWindow()
+            $(window).resize(function() {
+                resetWindow()
+            })
+        })
+    </script>
+
+</html>
