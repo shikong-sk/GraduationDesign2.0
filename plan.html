@@ -488,8 +488,8 @@
                                                 return
                                             }
                                         })
-                                    }" filterable placeholder="请选择区域">
-                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
+                                    }" filterable placeholder="请选择">
+                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName + ':' + v.name" :value="v.name">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
@@ -525,10 +525,106 @@
             <el-row>
                 <el-row style="vertical-align: middle;">
 
+                    <el-col :xs="24" :sm="24" :md="24">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="添加操作">
+                                <el-select class="w-100" filterable placeholder="添加操作" v-model="data.choose" @change="(v)=>{
+                                    if(v == '1')
+                                    {
+                                        data.addDarea = '1'
+                                        data.addArea = undefined
+                                    }
+                                    else{
+                                        data.addDarea = undefined
+                                        data.addArea = '1'
+                                        data.placeType = '99'
+                                    }
+                                }">
+                                    <el-option label="添加场所" value="1"></el-option>
+                                    <el-option label="添加区域" value="0"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域级别">
+                                <el-select class="w-100" filterable placeholder="区域级别" v-model="data.level">
+                                    <el-option label="街道" value="4"></el-option>
+                                    <el-option label="区/县" value="3"></el-option>
+                                    <el-option label="市" value="2"></el-option>
+                                    <el-option label="省" value="1"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
                     <el-col :xs="24" :sm="12" :md="12">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="区域代码">
-                                <span>{{data.area}}</span>
+                                <!-- <span>{{data.area}}</span> -->
+                                <div v-if="data.level == '1'">
+                                    <el-input class="w-25" v-model="data.province" placeholder="省级区域代码" @change="(v)=>{
+                                        if(v.length == 2)
+                                        {
+                                            $set(data,'area',String(data.province) + '00' + '00' + '000')
+                                            if(data.darea != null && data.darea.length != 0)
+                                            {
+                                                $set(data,'darea',String(data.area) + String(data.master) + String(data.placeType) + String(data.B))
+                                            }
+                                        }
+                                    }" minlength="2" maxlength="2">
+                                    </el-input>
+                                    <span v-if="data.area != null">{{data.area.substr(2)}}</span>
+                                </div>
+                                <div v-else-if="data.level == '2'">
+                                    <el-input style="width: 50%;" v-model="data.city" placeholder="市级区域代码" @change="(v)=>{
+                                        if(v.length == 4)
+                                        {
+                                            $set(data,'area',String(data.city) + '00' + '000')
+                                            if(data.darea != null && data.darea.length != 0)
+                                            {
+                                                $set(data,'darea',String(data.area) + String(data.master) + String(data.placeType) + String(data.B))
+                                            }
+                                        }
+                                        
+                                    }" minlength="4" maxlength="4">
+                                    </el-input>
+                                    <span v-if="data.area != null">{{data.area.substr(4)}}</span>
+                                </div>
+                                <div v-else-if="data.level == '3'">
+                                    <el-input style="width: 75%;" v-model="data.A" placeholder="区级区域代码" @change="(v)=>{
+                                        if(v.length == 6)
+                                        {
+                                            $set(data,'area',String(data.A) + '000')
+                                            if(data.darea != null && data.darea.length != 0)
+                                            {
+                                                $set(data,'darea',String(data.area) + String(data.master) + String(data.placeType) + String(data.B))
+                                            }
+                                        }
+                                        
+                                    }" minlength="6" maxlength="6">
+                                    </el-input>
+                                    <span v-if="data.area != null">{{data.area.substr(6)}}</span>
+                                </div>
+                                <div v-else-if="data.level == '4'">
+                                    <el-input style="width: 100%;" v-model="data.street" placeholder="街道区域代码" @change="(v)=>{
+                                        if(v.length == 9)
+                                        {
+                                            $set(data,'area',String(data.street))
+                                            if(data.darea != null && data.darea.length != 0)
+                                            {
+                                                $set(data,'darea',String(data.area) + String(data.master) + String(data.placeType) + String(data.B))
+                                            }
+                                        }
+                                        
+                                    }" minlength="9" maxlength="9">
+                                    </el-input>
+                                </div>
+                                <div v-else>
+                                    <el-input :disabled="true"></el-input>
+                                </div>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -545,26 +641,8 @@
 
                     <el-col :xs="24" :sm="12" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="场所代码">
-                                <span>{{data.darea}}</span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="12">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="场所名称">
-                                <!-- <span>{{data.dareaName}}</span> -->
-                                <el-input class="w-100" v-model="data.dareaName" placeholder="区域名称">
-                                </el-input>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="场所类型">
-                                <el-select class="w-100" filterable placeholder="场所类型" v-model="data.placeType">
+                                <el-select class="w-100" filterable placeholder="场所类型" v-model="data.placeType" v-if="data.choose == '1'">
                                     <el-option label="封闭式小区" value="01"></el-option>
                                     <el-option label="小区" value="02"></el-option>
                                     <el-option label="无人管理小区" value="03"></el-option>
@@ -583,20 +661,72 @@
                                     <el-option label="旅游景点" value="16"></el-option>
                                     <el-option label="其他" value="99"></el-option>
                                 </el-select>
+                                <el-select class="w-100" filterable placeholder="场所类型" v-model="data.placeType" :disabled="true" v-else>
+                                    <el-option label="其他" value="99"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="厂商编号">
+                                <el-input class="w-100" v-model="data.master" :disabled="data.area == null || (data.placeType == null && data.choose=='1') " placeholder="厂商编号" @change="(v)=>{
+                                    if(v.length == 4)
+                                    {
+                                        if(data.choose == '1')
+                                        {
+                                            data.B = '0001'
+                                        }
+                                        else
+                                        {
+                                            data.B = '0000'
+                                        }
+                                        data.darea = String(data.area) + String(data.master) + String(data.placeType) + String(data.B)
+                                    }
+                                    
+                                }" minlength="4" maxlength="4">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="小区流水号">
+                                <el-input class="w-100" v-model="data.B" :disabled="data.area == null || data.placeType == null || data.choose == '0' " placeholder="小区流水号" @change="(v)=>{
+                                    if(v.length == 4)
+                                    {
+                                        data.darea = String(data.area) + String(data.master) + String(data.placeType) + String(data.B)
+                                    }
+                                    
+                                }" minlength="4" maxlength="4">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所代码">
+                                <span>{{data.darea}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所名称">
+                                <!-- <span>{{data.dareaName}}</span> -->
+                                <el-input v-if="data.choose == '0'" class="w-100" value="默认" placeholder="场所名称" :disabled="true">
+                                </el-input>
+                                <el-input v-else class="w-100" v-model="data.dareaName" placeholder="区域名称">
+                                </el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
 
                     <el-col :xs="24" :sm="24" :md="24">
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="12">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人联系方式">
-                                <span>{{adminUser.contact}}</span>
-                                <!-- <el-input class="w-100" v-model="data.contact" clearable></el-input> -->
-                            </el-form-item>
-                        </el-form>
                     </el-col>
 
                     <el-col :xs="24" :sm="24" :md="12">
@@ -621,7 +751,7 @@
                                                 return
                                             }
                                         })
-                                    }" filterable placeholder="请选择区域">
+                                    }" filterable placeholder="请选择">
                                     <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
                                     </el-option>
                                 </el-select>
@@ -643,8 +773,8 @@
                                                 return
                                             }
                                         })
-                                    }" filterable placeholder="请选择区域">
-                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
+                                    }" filterable placeholder="请选择">
+                                    <el-option v-for="(v,k) in userList" :key="k" :label="v.userName + ':' + v.name" :value="v.name">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
@@ -840,28 +970,13 @@
                             data[x] = undefined
                         }
 
-                        if (x == 'passTime' && data[x] != null) {
-                            data[x] = plan.getTime(data[x])
-                        }
-
-                        if (
-                            (x.indexOf('birth') != -1 || x.indexOf('validty') != -1) &&
-                            data[x] != null && data[x].length != 0
-                        ) {
-                            data[x] = plan.getTime(Date.parse(data[x])).split(' ')[0]
-                        }
-
-                        if (x.indexOf('Img') != -1 && data[x] != null && data[x].indexOf('base64') == -1) {
-                            data[x] = undefined
-                        }
                     }
 
                     axios.post('./System/Core/Management.php', Qs.stringify({
                         "addPlan": '',
-                        'area': data.area,
-                        'darea': data.darea,
                         "data": JSON.stringify(data)
                     }), ).then(function(res) {
+                        // console.log(JSON.stringify(data))
                         if ('success' in res.data) {
                             plan.$message({
                                 showClose: true,
@@ -891,39 +1006,22 @@
                 },
                 showAddPlanDialog() {
                     plan.data = {
+                        province: undefined,
+                        city: undefined,
+                        A: undefined,
+                        street: undefined,
                         area: undefined,
+                        areaName: undefined,
+                        master: undefined,
+                        placeType: undefined,
+                        B: undefined,
                         darea: undefined,
                         dareaName: undefined,
-                        name: undefined,
-                        gender: undefined,
-                        nation: undefined,
-                        idCard: undefined,
-                        cardType: undefined,
-                        countryOrAreaCode: undefined,
-                        countryOrAreaName: undefined,
-                        cardVersion: undefined,
-                        currentApplyOrgCode: undefined,
-                        signNum: undefined,
-                        address: undefined,
-                        passTime: undefined,
-                        equipmentId: undefined,
-                        equipmentName: undefined,
-                        equipmentType: undefined,
-                        status: undefined,
-                        stationId: undefined,
-                        stationName: undefined,
-                        plateType: undefined,
-                        identity: undefined,
-                        homePlace: undefined,
-                        contact: undefined,
-                        isConsist: undefined,
-                        higherCompareScore: undefined,
-                        lowerCompareScore: undefined,
-                        openMode: undefined,
-                        visitReason: undefined,
-                        mac: undefined,
-                        imsi: undefined,
-                        imei: undefined,
+                        id: undefined,
+                        level: undefined,
+                        choose: '1',
+                        addArea: undefined,
+                        addDarea: '1',
                     }
 
                     plan.planAddDialog = true
