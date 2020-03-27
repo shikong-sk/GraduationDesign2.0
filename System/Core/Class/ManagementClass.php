@@ -1075,7 +1075,7 @@ class  ManagementClass
                 $selectFilter .= "AND checkTime BETWEEN '" . $filter['betweenTime'][0] . "' AND '" . $filter['betweenTime'][1] . "' ";
             }
             if (isset($filter['equipmentId'])) {
-                $selectFilter .= "AND equipmentId = '" . $filter['equipmentId'] . "' ";
+                $selectFilter .= "AND equipmentId LIKE '%" . $filter['equipmentId'] . "%' ";
             }
             if (isset($filter['equipmentName'])) {
                 $selectFilter .= "AND equipmentName LIKE '%" . $filter['equipmentName'] . "%' ";
@@ -1083,8 +1083,8 @@ class  ManagementClass
             if (isset($filter['equipmentType'])) {
                 $selectFilter .= "AND equipmentType = '" . $filter['equipmentType'] . "' ";
             }
-            if (isset($filter['status'])) {
-                $selectFilter .= "AND equipmentStatus = '" . $filter['status'] . "' ";
+            if (isset($filter['equipmentStatus'])) {
+                $selectFilter .= "AND equipmentStatus = '" . $filter['equipmentStatus'] . "' ";
             }
         }
 
@@ -1279,6 +1279,9 @@ class  ManagementClass
             }
             if (isset($filter['area'])) {
                 $selectFilter .= "AND area = '" . $filter['area'] . "' ";
+            }
+            if (isset($filter['areaLike'])) {
+                $selectFilter .= "AND area LIKE '" . $filter['areaLike'] . "%' ";
             }
             if (isset($filter['areaName'])) {
                 $selectFilter .= "AND areaName LIKE '%" . $filter['areaName'] . "%' ";
@@ -1729,7 +1732,7 @@ class  ManagementClass
 
             if (!isset($data['equipmentId']) || strlen($data['equipmentId']) != 18) {
                 return json_encode(Array('error' => 'equipmentId 参数错误'), JSON_UNESCAPED_UNICODE);
-            } else if ($area !== substr($data['equipmentId'], 0, 9)) {
+            } else if ($area != substr($data['equipmentId'], 0, 9)) {
                 return json_encode(Array('error' => 'equipmentId 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['equipmentName'])) {
@@ -1738,7 +1741,7 @@ class  ManagementClass
             if (!isset($data['equipmentType']) || strlen($data['equipmentType']) != 2 || $data['equipmentType'] !== substr($data['equipmentId'], 13, 2)) {
                 return json_encode(Array('error' => 'equipmentType 参数错误'), JSON_UNESCAPED_UNICODE);
             }
-            if (!isset($data['status']) || strlen($data['status']) != 1) {
+            if (!isset($data['equipmentStatus']) || strlen($data['equipmentStatus']) != 1) {
                 return json_encode(Array('error' => 'status 参数错误'), JSON_UNESCAPED_UNICODE);
             }
 
@@ -1788,7 +1791,7 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该场所不存在'), JSON_UNESCAPED_UNICODE);
         }
 
-        $query = "INSERT INTO $this->equipmentTable(`equipmentId`, `equipmentName`, `equipmentType`, `area`, `areaName`, `darea`, `dareaName`, `equipmentStatus`, `checkTime`, `remark`) VALUES ('{$data['equipmentId']}', '{$data['equipmentName']}', '{$data['equipmentType']}', '{$area}', '{$areaName}', '{$darea}', '{$dareaName}', '{$data['status']}', '0000-00-00 00:00:00', '{$data['remark']}')";
+        $query = "INSERT INTO $this->equipmentTable(`equipmentId`, `equipmentName`, `equipmentType`, `area`, `areaName`, `darea`, `dareaName`, `equipmentStatus`, `checkTime`, `remark`,`address`) VALUES ('{$data['equipmentId']}', '{$data['equipmentName']}', '{$data['equipmentType']}', '{$area}', '{$areaName}', '{$darea}', '{$dareaName}', '{$data['equipmentStatus']}', '0000-00-00 00:00:00', '{$data['remark']}','{$data['address']}')";
 //        die($query);
 
         $res = $this->db->database->query($query);
@@ -2076,9 +2079,11 @@ class  ManagementClass
         }
 
 
-        $query = "INSERT INTO $this->planTable(`area`, `areaName`, `level`, `darea`, `dareaName`, `placeType`, `id`) VALUES ('{$data['area']}', '{$data['areaName']}', '{$data['level']}', '{$data['darea']}', '{$data['dareaName']}', '{$data['placeType']}', '{$data['id']}')";
+        $query = "INSERT INTO $this->planTable(`area`, `areaName`, `level`, `darea`, `dareaName`, `placeType`, `id`,`person`,`personContact`) VALUES ('{$data['area']}', '{$data['areaName']}', '{$data['level']}', '{$data['darea']}', '{$data['dareaName']}', '{$data['placeType']}', '{$data['id']}','{$data['person']}','{$data['personContact']}')";
 
         $res = $this->db->database->query($query);
+
+//        echo $query;
 
         $err = $this->db->database->errno;
 
@@ -3124,12 +3129,16 @@ class  ManagementClass
 
             if (isset($data['status']) && strlen($data['status']) != 1) {
                 return json_encode(Array('error' => 'status 参数错误'), JSON_UNESCAPED_UNICODE);
-            } else if (isset($data['status'])) {
-                $queryArg .= "`equipmentStatus` = '" . $data['status'] . "', ";
+            } else if (isset($data['equipmentStatus'])) {
+                $queryArg .= "`equipmentStatus` = '" . $data['equipmentStatus'] . "', ";
             }
 
             if (isset($data['remark']) && strlen($data['remark']) != 0) {
                 $queryArg .= "`remark` = '" . $data['remark'] . "', ";
+            }
+
+            if (isset($data['address']) && strlen($data['address']) != 0) {
+                $queryArg .= "`address` = '" . $data['address'] . "', ";
             }
 
         } else {
@@ -3326,6 +3335,15 @@ class  ManagementClass
             if (isset($data['id']) && strlen($data['id']) != 0) {
                 $queryArg .= "`id` = '{$data['id']}', ";
             }
+
+            if (isset($data['person']) && strlen($data['person']) != 0) {
+                $queryArg .= "`person` = '{$data['person']}', ";
+            }
+
+            if (isset($data['personContact']) && strlen($data['personContact']) != 0) {
+                $queryArg .= "`personContact` = '{$data['personContact']}', ";
+            }
+
         } else {
             return json_encode(Array('error' => 'data 参数错误'), JSON_UNESCAPED_UNICODE);
         }

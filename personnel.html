@@ -144,53 +144,11 @@
 
         <el-row>
             <el-col class="text-center border" :xs="24" :sm="24" :md="24">
-                <h5>管理区域详细信息</h5>
-                <!--                <el-row>
-                    <el-col :xs="12" :sm="12" :md="12">人员信息总数量</el-col>
-                    <el-col :xs="12" :sm="12" :md="12">{{personnelNum}}</el-col>
-                </el-row> -->
+                <h5>人员详细信息</h5>
             </el-col>
 
             <div>
                 <el-row>
-                    <!-- 					<el-col :span="24">
-						  <el-cascader
-							class="w-100"
-						    :options="[
-								{
-									value:1,
-									label:'广东',
-									children:[
-										{
-											value:2,
-											label:'汕头',
-											children:[
-												{
-													value:3,
-													label:'金平区',
-													children:[
-														{
-															value:4,
-															label:'大华街道',
-														},
-														{
-															value:5,
-															label:'东夏街道',
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-							]"
-						    :props="{ multiple: true }"
-							@change="(v)=>{searchDarea(v)}"
-						    collapse-tags
-							filterable
-						    clearable></el-cascader>
-					</el-col>
- -->
                     <el-col class="" :sm="24" :xs="8" :md="8">
                         <el-select class="w-100" v-model="personnelData.searchPlan" remote :remote-method="(v)=>{searchDarea(v)}" @change="(v)=>{searchDarea(v)}" filterable placeholder="请选择搜索范围">
                             <el-option label="所有可查询范围" :value="0">
@@ -225,58 +183,11 @@
                         </el-input>
                     </el-col>
 
-                    <!-- <el-col :xs="24" :sm="12" :md="6">
-                        <el-select class="w-100" filterable placeholder="性别" v-model="personnelData.filter.gender" clearable @clear="()=>{personnelData.filter.gender = clear()}">
-                            <el-option label="男" value="男"></el-option>
-                            <el-option label="女" value="女"></el-option>
-                        </el-select>
-                    </el-col> -->
-
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.idCard" placeholder="证件号码" clearable @clear="()=>{personnelData.filter.idCard = clear()}" @change="(v)=>{personnelData.filter.idCard = change(v)}">
                         </el-input>
                     </el-col>
 
-                    <!-- <el-col :xs="24" :sm="12" :md="6">
-                        <el-select class="w-100" filterable placeholder="证件类型" v-model="personnelData.filter.cardType" clearable @clear="()=>{personnelData.filter.cardType = clear()}">
-                            <el-option label="居民身份证" value="1"></el-option>
-                            <el-option label="港澳台居住证" value="2"></el-option>
-                            <el-option label="中国护照" value="3"></el-option>
-                            <el-option label="国外护照" value="4"></el-option>
-                            <el-option label="永久居住证" value="5"></el-option>
-                            <el-option label="其他" value="9"></el-option>
-                        </el-select>
-                    </el-col> -->
-
-                    <!-- <el-col :xs="24" :sm="12" :md="6">
-                        <el-input v-model="personnelData.filter.countryOrAreaCode" placeholder="国家/地区代码" clearable @clear="()=>{personnelData.filter.countryOrAreaCode = clear()}" @change="(v)=>{personnelData.filter.countryOrAreaCode = change(v)}">
-                        </el-input>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-input v-model="personnelData.filter.countryOrAreaName" placeholder="国家地区名称" clearable @clear="()=>{personnelData.filter.countryOrAreaName = clear()}" @change="(v)=>{personnelData.filter.countryOrAreaName = change(v)}">
-                        </el-input>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-input v-model="personnelData.filter.cardVersion" placeholder="证件版本号" clearable @clear="()=>{personnelData.filter.cardVersion = clear()}" @change="(v)=>{personnelData.filter.cardVersion = change(v)}">
-                        </el-input>
-                    </el-col> -->
-
-                    <!-- <el-col :xs="24" :sm="12" :md="6">
-                        <el-input v-model="personnelData.filter.currentApplyOrgCode" placeholder="受理机关代码" clearable @clear="()=>{personnelData.filter.currentApplyOrgCode = clear()}" @change="(v)=>{personnelData.filter.currentApplyOrgCode = change(v)}">
-                        </el-input>
-                    </el-col> -->
-
-                    <!-- <el-col :xs="24" :sm="8" :md="6">
-                        <el-input v-model="personnelData.filter.signNum" placeholder="签发次数" clearable @clear="()=>{personnelData.filter.signNum = clear()}" @change="(v)=>{personnelData.filter.signNum = change(v)}">
-                        </el-input>
-                    </el-col> -->
-
-                    <!-- <el-col :xs="24" :sm="16" :md="18">
-                        <el-input v-model="personnelData.filter.address" placeholder="联系地址" clearable @clear="()=>{personnelData.filter.address = clear()}" @change="(v)=>{personnelData.filter.address = change(v)}">
-                        </el-input>
-                    </el-col> -->
 
                     <el-col :xs="24" :sm="12" :md="4">
                         <el-select class="w-100" filterable placeholder="时间条件" v-model="personnelData.timeFilter" clearable @clear="()=>{
@@ -382,10 +293,10 @@
                         </el-select>
                     </el-col> -->
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.dareaName" placeholder="场所名称" clearable @clear="()=>{personnelData.filter.dareaName = clear()}" @change="(v)=>{personnelData.filter.dareaName = change(v)}">
                         </el-input>
-                    </el-col>
+                    </el-col> -->
                     <!-- 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-select class="w-100" filterable placeholder="人员类别" v-model="personnelData.filter.identity" clearable @clear="()=>{personnelData.filter.identity = clear()}">
@@ -464,14 +375,13 @@
                         </el-input>
                     </el-col> -->
 
-                    <el-col :xs="24" :sm="24" :md="24">
-                        <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="24" :md="24">
+                    <el-col :xs="24" :sm="24" :md="6">
                         <el-button type="danger" class="w-100" @click="()=>{showAddPersonnelDialog()}">添加人员信息</el-button>
                     </el-col>
 
+                    <el-col :xs="24" :sm="24" :md="6">
+                        <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+                    </el-col>
                 </el-row>
             </div>
 
@@ -642,7 +552,7 @@
         <el-dialog title="人员详细信息" :visible.sync="personDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="true">
             <el-row>
                 <el-row style="vertical-align: middle;">
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <el-col :xs="24" :sm="12" :md="8">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="通行时间">
                                 <span>{{data.passTime}}</span>
@@ -650,28 +560,8 @@
                         </el-form>
                     </el-col>
 
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="区域代码">
-                                <span>{{data.area}}</span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="场所代码">
-                                <span>{{data.darea}}</span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="场所名称">
-                                <span>{{data.dareaName}}</span>
-                            </el-form-item>
-                        </el-form>
+                    <el-col :span="24">
+                        <el-divider content-position="left">基础信息</el-divider>
                     </el-col>
 
                     <el-col :xs="24" :sm="12" :md="6">
@@ -704,6 +594,90 @@
                                 <span>{{data.idCard}}</span>
                             </el-form-item>
                         </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="区域代码">
+                                <span>{{data.area}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所代码">
+                                <span>{{data.darea}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所名称">
+                                <span>{{data.dareaName}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="6">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="场所类型">
+                                <span v-if="data.placeType == '01'">封闭式小区</span>
+                                <span v-if="data.placeType == '02'">小区</span>
+                                <span v-if="data.placeType == '03'">无人管理小区</span>
+                                <span v-if="data.placeType == '04'">旅店/宾馆/酒店</span>
+                                <span v-if="data.placeType == '05'">停车场</span>
+                                <span v-if="data.placeType == '06'">娱乐场所</span>
+                                <span v-if="data.placeType == '07'">政府单位</span>
+                                <span v-if="data.placeType == '08'">企事业单位</span>
+                                <span v-if="data.placeType == '09'">学校</span>
+                                <span v-if="data.placeType == '10'">机场/车站</span>
+                                <span v-if="data.placeType == '11'">宗教场所</span>
+                                <span v-if="data.placeType == '12'">医院</span>
+                                <span v-if="data.placeType == '13'">超市/商场/市场</span>
+                                <span v-if="data.placeType == '14'">广场/公园</span>
+                                <span v-if="data.placeType == '15'">体育馆</span>
+                                <span v-if="data.placeType == '16'">旅游景点</span>
+                                <span v-if="data.placeType == '99'">其它</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="现场照片">
+                                <el-image v-if="data.personImg != ''" :preview-src-list="
+										data.personImg != '' && data.idCardImg != ''
+										?[data.personImg,data.idCardImg]
+										: data.personImg != '' && data.idCardImg == '' 
+											? [data.personImg]
+											: [data.idCardImg]
+										" style="width: 10rem;height:10rem;" :src="data.personImg == undefined?'./Storage/undefined.jpg':data.personImg" fit="scale-down">
+                                </el-image>
+                                <span v-else> 未录入照片 </span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件照片">
+                                <el-image v-if="data.idCardImg != ''" :preview-src-list="
+										data.personImg != '' && data.idCardImg != ''
+										?[data.personImg,data.idCardImg]
+										: data.personImg != '' && data.idCardImg == '' 
+											? [data.personImg]
+											: [data.idCardImg]
+										" style="width: 10rem;height:10rem;" :src="data.idCardImg== undefined?'./Storage/undefined.jpg':data.idCardImg" fit="scale-down">
+                                </el-image>
+                                <span v-else> 未录入照片 </span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :span="24">
+                        <el-divider content-position="left">详细信息</el-divider>
                     </el-col>
 
                     <el-col :xs="24" :sm="12" :md="6">
@@ -801,38 +775,6 @@
 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="现场照片">
-                                <el-image v-if="data.personImg != ''" :preview-src-list="
-										data.personImg != '' && data.idCardImg != ''
-										?[data.personImg,data.idCardImg]
-										: data.personImg != '' && data.idCardImg == '' 
-											? [data.personImg]
-											: [data.idCardImg]
-										" style="width: 10rem;height:10rem;" :src="data.personImg == undefined?'./Storage/undefined.jpg':data.personImg" fit="scale-down">
-                                </el-image>
-                                <span v-else> 未录入照片 </span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="证件照片">
-                                <el-image v-if="data.idCardImg != ''" :preview-src-list="
-										data.personImg != '' && data.idCardImg != ''
-										?[data.personImg,data.idCardImg]
-										: data.personImg != '' && data.idCardImg == '' 
-											? [data.personImg]
-											: [data.idCardImg]
-										" style="width: 10rem;height:10rem;" :src="data.idCardImg== undefined?'./Storage/undefined.jpg':data.idCardImg" fit="scale-down">
-                                </el-image>
-                                <span v-else> 未录入照片 </span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
-
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="体温">
                                 <span>{{data.temp}}</span>
                             </el-form-item>
@@ -915,29 +857,7 @@
                         </el-form>
                     </el-col>
 
-                    <el-col :xs="24" :sm="12" :md="6">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="场所类型">
-                                <span v-if="data.placeType == '01'">封闭式小区</span>
-                                <span v-if="data.placeType == '02'">小区</span>
-                                <span v-if="data.placeType == '03'">无人管理小区</span>
-                                <span v-if="data.placeType == '04'">旅店/宾馆/酒店</span>
-                                <span v-if="data.placeType == '05'">停车场</span>
-                                <span v-if="data.placeType == '06'">娱乐场所</span>
-                                <span v-if="data.placeType == '07'">政府单位</span>
-                                <span v-if="data.placeType == '08'">企事业单位</span>
-                                <span v-if="data.placeType == '09'">学校</span>
-                                <span v-if="data.placeType == '10'">机场/车站</span>
-                                <span v-if="data.placeType == '11'">宗教场所</span>
-                                <span v-if="data.placeType == '12'">医院</span>
-                                <span v-if="data.placeType == '13'">超市/商场/市场</span>
-                                <span v-if="data.placeType == '14'">广场/公园</span>
-                                <span v-if="data.placeType == '15'">体育馆</span>
-                                <span v-if="data.placeType == '16'">旅游景点</span>
-                                <span v-if="data.placeType == '99'">其它</span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
+
 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-form label-position="left" inline class="table-expand">

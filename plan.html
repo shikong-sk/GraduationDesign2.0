@@ -244,7 +244,7 @@
                                 <span v-if="scope.row.placeType == '99'">其它</span>
 						</template>
                     </el-table-column>
-                    <el-table-column label="负责人用户ID" :show-overflow-tooltip="true">
+                    <el-table-column label="管理员用户ID" :show-overflow-tooltip="true">
                         <template slot-scope="scope">
 								{{scope.row.id}}
 							</template>
@@ -333,7 +333,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人用户ID">
+                            <el-form-item label="管理员用户ID">
                                 <span>{{data.id}}</span>
                             </el-form-item>
                         </el-form>
@@ -341,7 +341,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人用户名">
+                            <el-form-item label="管理员用户名">
                                 <span>{{data.userName}}</span>
                             </el-form-item>
                         </el-form>
@@ -349,7 +349,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人姓名">
+                            <el-form-item label="管理员姓名">
                                 <span>{{data.name}}</span>
                             </el-form-item>
                         </el-form>
@@ -357,7 +357,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人联系方式">
+                            <el-form-item label="管理员联系方式">
                                 <span>{{data.contact}}</span>
                             </el-form-item>
                         </el-form>
@@ -365,8 +365,24 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人邮箱">
+                            <el-form-item label="管理员邮箱">
                                 <span>{{data.email}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人姓名">
+                                <span>{{data.person}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <span>{{data.personContact}}</span>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -449,7 +465,7 @@
 
                     <el-col :xs="24" :sm="12" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人联系方式">
+                            <el-form-item label="管理员联系方式">
                                 <span>{{adminUser.contact}}</span>
                                 <!-- <el-input class="w-100" v-model="data.contact" clearable></el-input> -->
                             </el-form-item>
@@ -458,7 +474,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人用户ID">
+                            <el-form-item label="管理员用户ID">
                                 <span>{{adminUser.id}}</span>
                             </el-form-item>
                         </el-form>
@@ -466,7 +482,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人用户名">
+                            <el-form-item label="管理员用户名">
                                 <!-- <span>{{data.userName}}</span> -->
                                 <el-select v-model="data.userName" remote :remote-method="(v)=>{searchUser(v);adminUser = {};}" @change="(v)=>{
                                         userList.forEach((x)=>{
@@ -488,7 +504,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人姓名">
+                            <el-form-item label="管理员姓名">
                                 <!-- <span>{{data.name}}</span> -->
                                 <el-select v-model="data.name" remote :remote-method="(v)=>{searchUser('',v);adminUser = {};}" @change="(v)=>{
                                         userList.forEach((x)=>{
@@ -510,7 +526,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人联系方式">
+                            <el-form-item label="管理员联系方式">
                                 <span>{{adminUser.contact}}</span>
                             </el-form-item>
                         </el-form>
@@ -518,12 +534,29 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人邮箱">
+                            <el-form-item label="管理员邮箱">
                                 <span>{{adminUser.email}}</span>
                             </el-form-item>
                         </el-form>
                     </el-col>
 
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人姓名">
+                                <!-- <span>{{data.person}}</span> -->
+                                <el-input class="w-100" v-model="data.person"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <!-- <span>{{data.personContact}}</span> -->
+                                <el-input class="w-100" v-model="data.personContact"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
                 </el-row>
             </el-row>
 
@@ -547,6 +580,7 @@
                                         data.addArea = undefined
                                     }
                                     else{
+                                        data.area = '000000000'
                                         data.addDarea = undefined
                                         data.addArea = '1'
                                         data.placeType = '99'
@@ -559,10 +593,10 @@
                         </el-form>
                     </el-col>
 
-                    <el-col :xs="24" :sm="12" :md="12">
+                    <el-col :xs="24" :sm="12" :md="12" v-show="data.choose != '1'">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="区域级别">
-                                <el-select class="w-100" filterable placeholder="区域级别" v-model="data.level">
+                                <el-select class="w-100" filterable placeholder="区域级别" v-model="data.level" :disabled="data.choose == '1'">
                                     <el-option label="街道" value="4"></el-option>
                                     <el-option label="区/县" value="3"></el-option>
                                     <el-option label="市" value="2"></el-option>
@@ -574,7 +608,7 @@
 
                     <el-col :xs="24" :sm="12" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="区域代码">
+                            <el-form-item label="区域代码" v-if="data.choose == '0'">
                                 <!-- <span>{{data.area}}</span> -->
                                 <div v-if="data.level == '1'">
                                     <el-input class="w-25" v-model="data.province" placeholder="省级区域代码" @change="(v)=>{
@@ -638,14 +672,25 @@
                                     <el-input :disabled="true"></el-input>
                                 </div>
                             </el-form-item>
+
+                            <el-form-item label="区域" v-else>
+                                <el-cascader @change="(v)=>{
+                                        data.area = v[ v.length - 1]
+                                        if(data.B != null && data.B.length != 0)
+                                        {
+                                            $set(data,'darea',String(data.area) + String(data.master) + String(data.placeType) + String(data.B))
+                                        }
+                                    }" :options="areaOptions" :props="areaProps">
+                                </el-cascader>
+                            </el-form-item>
                         </el-form>
                     </el-col>
 
-                    <el-col :xs="24" :sm="12" :md="12">
+                    <el-col :xs="24" :sm="12" :md="12" v-show="data.choose != '1'">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="区域名称">
                                 <!-- <span>{{data.areaName}}</span> -->
-                                <el-input class="w-100" v-model="data.areaName" placeholder="区域名称">
+                                <el-input class="w-100" v-model="data.areaName" placeholder="区域名称" :disabled="data.choose == '1'">
                                 </el-input>
                             </el-form-item>
                         </el-form>
@@ -732,7 +777,7 @@
                                 <!-- <span>{{data.dareaName}}</span> -->
                                 <el-input v-if="data.choose == '0'" class="w-100" value="默认" placeholder="场所名称" :disabled="true">
                                 </el-input>
-                                <el-input v-else class="w-100" v-model="data.dareaName" placeholder="区域名称">
+                                <el-input v-else class="w-100" v-model="data.dareaName" placeholder="场所名称">
                                 </el-input>
                             </el-form-item>
                         </el-form>
@@ -743,7 +788,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人用户ID">
+                            <el-form-item label="管理员用户ID">
                                 <span>{{adminUser.id}}</span>
                             </el-form-item>
                         </el-form>
@@ -751,7 +796,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人用户名">
+                            <el-form-item label="管理员用户名">
                                 <!-- <span>{{data.userName}}</span> -->
                                 <el-select v-model="data.userName" remote :remote-method="(v)=>{searchUser(v);adminUser = {};}" @change="(v)=>{
                                         userList.forEach((x)=>{
@@ -773,7 +818,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人姓名">
+                            <el-form-item label="管理员姓名">
                                 <!-- <span>{{data.name}}</span> -->
                                 <el-select v-model="data.name" remote :remote-method="(v)=>{searchUser('',v);adminUser = {};}" @change="(v)=>{
                                         userList.forEach((x)=>{
@@ -795,7 +840,7 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人联系方式">
+                            <el-form-item label="管理员联系方式">
                                 <span>{{adminUser.contact}}</span>
                             </el-form-item>
                         </el-form>
@@ -803,8 +848,26 @@
 
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人邮箱">
+                            <el-form-item label="管理员邮箱">
                                 <span>{{adminUser.email}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人姓名">
+                                <!-- <span>{{data.person}}</span> -->
+                                <el-input class="w-100" v-model="data.person"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <!-- <span>{{data.personContact}}</span> -->
+                                <el-input class="w-100" v-model="data.personContact"></el-input>
                             </el-form-item>
                         </el-form>
                     </el-col>
@@ -821,6 +884,7 @@
 
     </div>
     <script>
+        let id = 0;
         var plan = new Vue({
             el: '#plan',
             watch: {},
@@ -828,6 +892,86 @@
             mounted() {},
             data() {
                 return {
+
+                    // areaOptions: [{
+                    //     area: '',
+                    //     areaName: "国内",
+                    //     children: [{
+                    //         area: '市编码',
+                    //         areaName: "市名",
+                    //         children: [{
+                    //             area: '区编码',
+                    //             areaName: "区名",
+                    //         }],
+                    //     }],
+                    // }],
+                    areaOptions: [],
+
+                    areaProps: {
+                        lazy: true,
+                        value: 'area',
+                        label: 'areaName',
+                        children: "children",
+                        checkStrictly: true,
+                        lazyLoad(node, resolve) {
+                            const {
+                                level
+                            } = node;
+
+                            // if (level < 3) {
+                            //     substrNum = (level + 1) * 2
+                            // }
+
+                            // console.log(node);
+                            // return
+
+                            axios.post('./System/Core/Management.php', Qs.stringify({
+                                'getAreaList': '',
+                                'page': '1',
+                                'num': '9999999999999',
+                                'filter': JSON.stringify({
+                                    'level': level,
+                                    'areaLike': level == 0 ? '' : node.value.substr(0, (level - 1) * 2)
+                                })
+                            }), ).then(function(res) {
+                                if (res.data[0] != 0) {
+                                    // console.log(res.data.slice(1))
+                                }
+                                data = res.data.slice(1)
+                                var nodes = [];
+
+                                // var nodes = Array.from({
+                                //     length: level + 1
+                                // }).map(item => ({
+                                //     area: ++id,
+                                //     areaName: `选项${id}`,
+                                //     leaf: level >= 4
+                                // }));
+                                data.forEach((x) => {
+                                    nodes.push({
+                                        area: x.area,
+                                        areaName: x.areaName,
+                                        leaf: level >= 4
+                                    })
+                                })
+
+                                // console.log(level, node, nodes, resolve, res.data)
+                                resolve(nodes);
+                            })
+
+                            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+
+                        }
+                        // lazyLoad(node, resolve) {
+                        //     // const {
+                        //     //     level
+                        //     // } = node;
+
+                        //     // plan.console(node, resolve)
+                        //     // plan.areaLevelLoad(node.level)
+                        //     resolve(resolve)
+                        // }
+                    },
 
                     planDialog: false,
                     planAddDialog: false,
@@ -1048,6 +1192,8 @@
                         choose: '1',
                         addArea: undefined,
                         addDarea: '1',
+                        person: undefined,
+                        personContact: undefined,
                     }
 
                     plan.planAddDialog = true
