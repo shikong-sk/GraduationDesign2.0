@@ -176,8 +176,19 @@
                         </el-select>
                     </el-col>
 
+
                     <el-col :xs="24" :sm="24" :md="6">
-                        <el-button type="danger" class="w-100" @click="()=>{showAddPlanDialog()}">添加区域/场所</el-button>
+                        <el-row>
+                            <el-col :xs="12" :sm="12" :md="12">
+                                <el-button type="primary" plain class="w-100" @click="()=>{showAddPlanDialog()}">添加区域/场所</el-button>
+                            </el-col>
+
+                            <el-col :xs="12" :sm="12" :md="12">
+                                <el-button type="danger" class="w-100" @click="()=>{batchDel()}">批量删除</el-button>
+                            </el-col>
+
+                        </el-row>
+
                     </el-col>
 
                     <el-col :xs="24" :sm="24" :md="6">
@@ -190,8 +201,9 @@
             </div>
 
             <el-col class="text-center border" :xs="24" :sm="24" :md="24">
-                <el-table :data="planData.data" style="width: 100%" border>
-                    <el-table-column label="行政区域代码" :show-overflow-tooltip="true">
+                <el-table ref="planTable" :data="planData.data" style="width: 100%" border>
+                    <el-table-column type="selection" width="35" class="text-center"></el-table-column>
+                    <el-table-column label="行政区域代码" :show-overflow-tooltip="true" width="110">
                         <template slot-scope="scope">
 								{{scope.row.area}}
 							</template>
@@ -201,7 +213,7 @@
 								{{scope.row.areaName}}
 							</template>
                     </el-table-column>
-                    <el-table-column label="场所代码" :show-overflow-tooltip="true">
+                    <el-table-column label="场所代码" :show-overflow-tooltip="true" width="180">
                         <template slot-scope="scope">
 								{{scope.row.darea}}
 							</template>
@@ -211,7 +223,7 @@
 								{{scope.row.dareaName}}
 							</template>
                     </el-table-column>
-                    <el-table-column label="场所类别" :show-overflow-tooltip="true">
+                    <el-table-column label="场所类别" :show-overflow-tooltip="true" width="150">
                         <template slot-scope="scope">
                                 <span v-if="scope.row.placeType == '01'">封闭式小区</span>
                                 <span v-if="scope.row.placeType == '02'">小区</span>
@@ -879,6 +891,20 @@
                 this.GetRequest()
             },
             methods: {
+                batchDel() {
+                    if (plan.$refs.planTable.selection.length != 0) {
+                        plan.$refs.planTable.selection.forEach((x) => {
+                            // console.log(x)
+                            this.del(x)
+                        })
+                    } else {
+                        plan.$message({
+                            showClose: true,
+                            message: '请先选择要删除的项目',
+                            type: 'info'
+                        });
+                    }
+                },
                 console(x) {
                     console.log(x)
                 },
@@ -1027,8 +1053,9 @@
                     plan.planAddDialog = true
                 },
                 del(data) {
-                    data = data.row
-                    console.log(data)
+                    if ('row' in data) {
+                        data = data.row
+                    }
                     axios.post('./System/Core/Management.php', Qs.stringify({
                         "delPlan": '',
                         "data": JSON.stringify({
