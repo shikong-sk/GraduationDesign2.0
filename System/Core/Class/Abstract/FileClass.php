@@ -144,8 +144,16 @@ abstract class FileClass
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $imgData, $result)) {
             $type = $result[2];
 
-            $file_name = $fileName.'_'.trim(guid(), '{}').".$type";
+            $file_name = $fileName . '_' . trim(guid(), '{}') . ".$type";
 
+            $img = str_replace($result[1], '', $imgData);
+
+        }
+        else{
+            $type = '.png';
+            $file_name = $fileName . '_' . trim(guid(), '{}') . ".$type";
+            $img = $imgData;
+        }
 
             if($source == 'personnel')
             {
@@ -187,7 +195,7 @@ abstract class FileClass
 
             $new_file = $dir.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i."/".$file_name;
 
-            $img = str_replace($result[1], '', $imgData);
+
             $imgLen = strlen($img);
             $imgSize = $imgLen - ($imgLen / 8) * 2;
 
@@ -201,7 +209,7 @@ abstract class FileClass
                 return json_encode(Array(0=>$file_path.'/'.$Y.'/'.$m.'/'.$d.'/'.$H.'/'.$i.'/'.$file_name,'success' => '文件上传成功'), JSON_UNESCAPED_UNICODE);
             }
 
-        }
+
 
     }
 

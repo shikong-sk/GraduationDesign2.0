@@ -96,6 +96,15 @@ class  ManagementClass
                 $data = json_decode($data, true);
             }
 
+            if(isset($data['filter']))
+            {
+                $filter = $data['filter'];
+                if (!is_array($filter)) {
+                    $filter = json_decode($filter, true);
+                }
+            }
+
+
             if (isset($data['area']) && strlen($data['area']) != 9) {
                 return json_encode(Array('error' => '行政区域代码错误'), JSON_UNESCAPED_UNICODE);
             }
@@ -108,6 +117,13 @@ class  ManagementClass
 
             if (isset($data['id']) && strlen($data['id']) != 36) {
                 return json_encode(Array('error' => 'id 参数错误'), JSON_UNESCAPED_UNICODE);
+            }
+
+            if (isset($filter['id']) && strlen($filter['id']) != 36) {
+                return json_encode(Array('error' => 'id 参数错误'), JSON_UNESCAPED_UNICODE);
+            }
+            else if(isset($filter['id'])){
+                $data['id'] = $filter['id'];
             }
 
             if (!isset($data['page'])) {

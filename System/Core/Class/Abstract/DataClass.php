@@ -16,6 +16,7 @@ class DataClass{
     var $area;
     var $darea;
     var $equipmentId;
+    var $equipmentName;
     var $equipmentTable;
     var $personnelTable;
     var $carTable;
@@ -25,7 +26,7 @@ class DataClass{
     var $disk_maxSize;
     var $max_record;
 
-    public function __construct($equipmentId,$equipmentName,$area,$darea)
+    public function __construct($equipmentId,$equipmentName='',$area,$darea)
     {
         session_start();
         $this->db = new SqlHelper();
@@ -34,9 +35,14 @@ class DataClass{
         $this->carTable = $this->db->db_table_prefix . "_" . SqlHelper::Car;
         $this->planTable = $this->db->db_table_prefix . "_" . SqlHelper::Plan;
 
-        $query = "SELECT equipmentId FROM $this->equipmentTable WHERE `equipmentId` = '$equipmentId' AND `equipmentName` = '$equipmentName' AND `area` = '$area' AND `darea` = '$darea'";
+        $query = "SELECT equipmentId,equipmentName FROM $this->equipmentTable WHERE `equipmentId` = '$equipmentId' AND `area` = '$area' AND `darea` = '$darea'";
 
-        $res = $this->db->database->query($query)->fetch_assoc()['equipmentId'];
+        $res = $this->db->database->query($query)->fetch_assoc();
+
+        $this->equipmentName = $res['equipmentName'];
+
+        $res = $res['equipmentId'];
+
         if(!$res){
             die(json_encode(Array('error' => '设备认证失败'), JSON_UNESCAPED_UNICODE));
         }
@@ -74,6 +80,10 @@ class DataClass{
         $location="",$status,$dareaName,$darea,$dareaType,$identity,$homedarea="",$contact="",$isConsist="",$compareScore="",
         $openMode="",$visitReason="",$mac="",$imsi="",$imei="",$visitor=""
     ){
+
+        if(isset($this->equipmentName) && $this->equipmentName != ''){
+            $equipmentName = $this->equipmentName;
+        }
 
         if (strlen($area) != 9) {
             return json_encode(Array('error' => '行政区域代码错误'), JSON_UNESCAPED_UNICODE);
@@ -198,6 +208,10 @@ class DataClass{
         $passTime,$plateNum,$plateColor,$vehicleType,$area,$x,$y,$equipmentId,$equipmentName,$equipmentType,$stationId="",$stationName="",
         $location="",$vehicleColor,$status,$dareaName,$darea,$placeType,$carType,$visitReason="",$visitor="",$driverData="",$passengerData="",$vehicleImg="",$plateImg=""
     ){
+
+        if(isset($this->equipmentName) && $this->equipmentName != ''){
+            $equipmentName = $this->equipmentName;
+        }
 
         if (strlen($area) != 9) {
             return json_encode(Array('error' => '行政区域代码错误'), JSON_UNESCAPED_UNICODE);
