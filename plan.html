@@ -331,6 +331,30 @@
                         </el-form>
                     </el-col>
 
+                    <el-col :span="24">
+                        <el-divider content-position="left">场所负责人</el-divider>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人姓名">
+                                <span>{{data.person}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="负责人联系方式">
+                                <span>{{data.personContact}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :span="24">
+                        <el-divider content-position="left">场所所属管理员</el-divider>
+                    </el-col>
+
                     <el-col :xs="24" :sm="24" :md="12">
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="管理员用户ID">
@@ -371,21 +395,7 @@
                         </el-form>
                     </el-col>
 
-                    <el-col :xs="24" :sm="24" :md="12">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人姓名">
-                                <span>{{data.person}}</span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
 
-                    <el-col :xs="24" :sm="24" :md="12">
-                        <el-form label-position="left" inline class="table-expand">
-                            <el-form-item label="负责人联系方式">
-                                <span>{{data.personContact}}</span>
-                            </el-form-item>
-                        </el-form>
-                    </el-col>
 
                 </el-row>
             </el-row>

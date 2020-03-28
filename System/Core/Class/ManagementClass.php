@@ -1849,19 +1849,19 @@ class  ManagementClass
             }
 
             if (!isset($data['userName'])) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'userName 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['password'])) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'password 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['permission']) || strlen($data['permission']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'permission 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['idCard'])) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'idCard 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['cardType']) || strlen($data['cardType']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'cardType 参数错误'), JSON_UNESCAPED_UNICODE);
             }
         }
 
@@ -1887,12 +1887,18 @@ class  ManagementClass
         $err = $this->db->database->errno;
 
         if ($err == 1062) {
+            if (isset($data['userImg']) && strlen($data['userImg']) != 0) {
+                $f->deleteImage($data['userImg'], 'user');
+            }
             return json_encode(Array('error' => '该数据已存在'), JSON_UNESCAPED_UNICODE);
         }
 
         if ($res && $this->db->database->affected_rows == 1) {
             return json_encode(Array('success' => '操作成功'), JSON_UNESCAPED_UNICODE);
         } else {
+            if (isset($data['userImg']) && strlen($data['userImg']) != 0) {
+                $f->deleteImage($data['userImg'], 'user');
+            }
             return json_encode(Array('error' => '操作失败，请检查参数是否正确'), JSON_UNESCAPED_UNICODE);
         }
 
@@ -4555,7 +4561,9 @@ class  ManagementClass
 
         if ($res && $this->db->database->affected_rows >= 1) {
             $f = new FileManager();
-            foreach (array_splice($personnelData, 1) as $t) {
+
+            foreach (array_splice($userData, 1) as $t) {
+
                 if (isset($t['userImg']) && strlen($t['userImg']) != 0) {
                     $f->deleteImage($t['userImg'], 'user');
                 }

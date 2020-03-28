@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <script src="Assets/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/popper.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/axios.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Assets/js/qs.min.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="Assets/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="Assets/css/swiper.min.css" />
+
+    <script src="Assets/js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/element-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="Assets/css/element-ui.css" />
+
+    <script src="Assets/js/vuex.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/tinymce/tinymce.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/jquery.base64.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="Assets/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <style type="text/css">
+        .text-danger {
+            color: #F56C6C !important;
+        }
+        
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+
+    <script type="text/javascript">
+        //公用函数定义
+        function sleep(fun, ms) {
+            setTimeout(fun, ms);
+        }
+
+        function loop(fun, ms) {
+            fun();
+            setInterval(fun, ms);
+        }
+
+        addEventListener(
+            "load",
+            function() {
+                setTimeout(hideURLbar, 0);
+            },
+            false
+        );
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+</head>
+
+<body class="body">
+
+    <div id="user" v-cloak>
+        <el-row v-if="userFlag">
+            <el-col :sm="4" class="text-center">
+                <img style="max-width: 120px;max-height: 50px;text-align: center;" src="Storage/global/Logo.png" alt="logo" class="img-fluid">
+            </el-col>
+            <el-col :sm="16" :xs="24">
+                <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+                    <el-menu-item index="1" @click="linkTo('./management.html')">平台概览</el-menu-item>
+                    <el-menu-item index="2" @click="linkTo('./personnel.html')">人员管理</el-menu-item>
+                    <el-menu-item index="3" @click="linkTo('./car.html')">车辆管理</el-menu-item>
+                    <el-menu-item index="4" @click="linkTo('./equipment.html')">设备管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="5" @click="linkTo('./plan.html')">区域/场所管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="6" @click="linkTo('./userManagement.html')">用户管理</el-menu-item>
+                </el-menu>
+            </el-col>
+            <el-col :md="4" :xs="24">
+                <el-row>
+                    <el-col :span="role != '超级管理员'?12:24">
+                        <div style="padding-top: 10px; text-align: center;" class="mx-auto">
+                            <el-dropdown class="text-center">
+                                <span class="el-dropdown-link">
+										{{role}}<br><span style="display: inline-block; width: 100%;">{{userName}}</span><i class="el-icon-arrow-down el-icon--right"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item><span @click="linkTo('./')">返回首页</span></el-dropdown-item>
+                                    <el-dropdown-item divided>
+                                        <div @click="(x)=>{logout()}">退出登录</div>
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-col>
+        </el-row>
+
+        <el-row>
+            <el-col class="text-center border" :xs="24" :sm="24" :md="24">
+                <h5>用户管理</h5>
+            </el-col>
+
+            <div>
+                <el-row>
+
+
+                    <el-col :xs="12" :sm="12" :md="4">
+                        <el-input v-model="userData.filter.userName" placeholder="用户名" clearable @clear="()=>{userData.filter.userName = clear()}" @change="(v)=>{userData.filter.userName = change(v)}">
+                        </el-input>
+                    </el-col>
+
+
+                    <el-col :xs="12" :sm="12" :md="4">
+                        <el-input v-model="userData.filter.name" placeholder="姓名" clearable @clear="()=>{userData.filter.name = clear()}" @change="(v)=>{userData.filter.name = change(v)}">
+                        </el-input>
+                    </el-col>
+
+                    <el-col :xs="12" :sm="12" :md="4">
+                        <el-input v-model="userData.filter.contact" placeholder="联系方式" clearable @clear="()=>{userData.filter.contact = clear()}" @change="(v)=>{userData.filter.contact = change(v)}">
+                        </el-input>
+                    </el-col>
+
+                    <el-col :xs="12" :sm="12" :md="4">
+                        <el-select class="w-100" filterable placeholder="用户组" v-model="userData.filter.permission" clearable @clear="userData.filter.permission = undefined">
+                            <el-option label="普通用户" value="0"></el-option>
+                            <el-option label="管理员" value="1"></el-option>
+                            <el-option label="超级管理员" value="8"></el-option>
+                        </el-select>
+                    </el-col>
+
+                    <el-col :xs="12" :sm="12" :md="4">
+                        <el-button type="primary" plain class="w-100" @click="()=>{showAddUserDialog()}">添加用户</el-button>
+                    </el-col>
+
+
+                    <el-col :xs="12" :sm="12" :md="4">
+                        <el-button type="primary" class="w-100" @click="()=>{search(Tab)}">搜索</el-button>
+                    </el-col>
+
+
+
+                </el-row>
+            </div>
+
+            <el-col class="text-center border" :xs="24" :sm="24" :md="24">
+                <el-table ref="userTable" :data="userData.data" style="width: 100%" border>
+                    <!-- <el-table-column type="selection" width="35" class="text-center"></el-table-column> -->
+                    <el-table-column label="用户ID" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.id}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="用户名" :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+								{{scope.row.userName}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="姓名" :show-overflow-tooltip="true" width="180">
+                        <template slot-scope="scope">
+								{{scope.row.name}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="性别" :show-overflow-tooltip="true" width="80">
+                        <template slot-scope="scope">
+								{{scope.row.gender}}
+							</template>
+                    </el-table-column>
+                    <el-table-column label="用户组" :show-overflow-tooltip="true" width="150">
+                        <template slot-scope="scope">
+                                <span v-if="scope.row.permission == '0'">普通用户</span>
+                                <span v-if="scope.row.permission == '1'">管理员</span>
+                                <span v-if="scope.row.permission == '8'">超级管理员</span>
+						</template>
+                    </el-table-column>
+                    <el-table-column label="用户照片" width="100">
+                        <template slot-scope="scope">
+							<div class="mx-auto text-center">
+								<el-image v-if="scope.row.userImg != ''" :preview-src-list="
+									[scope.row.userImg]
+								"
+								 style="width: 100%;height:50px" :src="scope.row.userImg" fit="scale-down">
+								</el-image>
+								<span v-else> 未录入照片 </span>
+							</div>
+						</template>
+                    </el-table-column>
+                    <el-table-column fixed="right" label="操作" width="150">
+                        <template slot-scope="scope">
+								<div class="text-center">
+									<el-button style="padding:5px 0;margin:0 auto" @click="select(scope)" type="text" size="small">查看</el-button>
+									<el-button v-if="permission == '8'" style="padding:5px 0;margin:0 auto"
+									 type="text" size="small" @click="edit(scope)">修改</el-button>
+									<el-button v-if="permission == '8'" style="padding:5px 0;margin:0 auto"
+									 type="text" size="small" @click="del(scope)">删除</el-button>
+								</div>
+							</template>
+                    </el-table-column>
+                </el-table>
+
+                <el-col :span="24">
+                    <el-pagination small @size-change="(v)=>{userData.num = v ;CurrentChange(userData.page) }" @current-change="(v)=>{CurrentChange(v)}" :total="userData.count" :current-page.sync="userData.page" :page-sizes="[10,20,50,100,200,500,1000]" :page-size="userData.num"
+                        layout="total,sizes,prev, pager, next, jumper">
+                    </el-pagination>
+                </el-col>
+
+        </el-row>
+
+
+        <el-dialog title="用户详细信息" :visible.sync="userDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="false">
+            <el-row>
+                <el-row style="vertical-align: middle;">
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户ID">
+                                <span>{{data.id}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户名">
+                                <span>{{data.userName}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户组">
+                                <span v-if="data.permission == '0'">普通用户</span>
+                                <span v-if="data.permission == '1'">管理员</span>
+                                <span v-if="data.permission == '8'">超级管理员</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :span="24">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户照片">
+                                <el-image v-if="data.userImg != ''" :preview-src-list="
+								[data.userImg]
+							" style="width: 100%;height:50px" :src="data.userImg" fit="scale-down">
+                                </el-image>
+                                <span v-else> 未录入照片 </span>
+
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="管理员联系方式">
+                                <span>{{data.contact}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="管理员邮箱">
+                                <span>{{data.email}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件号码">
+                                <span>{{data.idCard}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件类型">
+                                <span v-if="data.cardType == '1'">居民身份证</span>
+                                <span v-if="data.cardType == '2'">港澳台居住证</span>
+                                <span v-if="data.cardType == '3'">中国护照</span>
+                                <span v-if="data.cardType == '4'">国外护照</span>
+                                <span v-if="data.cardType == '5'">永久居住证</span>
+                                <span v-if="data.cardType == '9'">其他</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                </el-row>
+            </el-row>
+
+            <span slot="footer" class="dialog-footer">
+					<!-- <el-button @click="()=>{userDialog = false}">取 消</el-button> -->
+					<el-button type="primary" @click="()=>{userDialog = false;}">确 定</el-button>
+				</span>
+        </el-dialog>
+
+        <el-dialog v-if="data" title="用户信息修改" :visible.sync="userEditDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="false">
+            <el-row>
+                <el-row style="vertical-align: middle;">
+
+                    <el-col :xs="24" :sm="24" :md="24">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户ID">
+                                <span>{{data.id}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户名">
+                                <span>{{data.userName}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="密码">
+                                <el-input class="w-100" v-model="data.password" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户组">
+                                <el-select class="w-100" filterable placeholder="用户组" v-model="data.permission" clearable>
+                                    <el-option label="普通用户" value="0"></el-option>
+                                    <el-option label="管理员" value="1"></el-option>
+                                    <el-option label="超级管理员" value="8"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="姓名">
+                                <!-- <span>{{data.areaName}}</span> -->
+                                <el-input class="w-100" v-model="data.name" placeholder="姓名">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="性别">
+                                <el-select class="w-100" filterable placeholder="性别" v-model="data.gender" clearable>
+                                    <el-option label="男" value="男"></el-option>
+                                    <el-option label="女" value="女"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <input id="userImgUpload" style="display: none;" class="btn" type="file" onchange="user.imgChange(this,user.data,'userImg')" accept="image/png,image/gif,image/jpeg" />
+
+
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="联系方式">
+                                <!-- <span>{{data.contact}}</span> -->
+                                <el-input class="w-100" v-model="data.contact" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="邮箱">
+                                <!-- <span>{{data.email}}</span> -->
+                                <el-input class="w-100" v-model="data.email" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户照片">
+                                <el-image v-if="data.userImg != ''" :preview-src-list="
+                						[data.userImg]
+                					" style="width: 100%;height:50px" :src="data.userImg == undefined?'./Storage/undefined.jpg':data.userImg" fit="scale-down">
+                                </el-image>
+                                <span v-else> 未录入照片 </span>
+                                <br>
+                                <el-button @click="()=>{userImgUpload()}" type="mini">上传用户照片</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件号码">
+                                <!-- <span>{{data.idCard}}</span> -->
+                                <el-input class="w-100" v-model="data.idCard" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件类型">
+                                <el-select class="w-100" filterable placeholder="证件类型" v-model="data.cardType" clearable>
+                                    <el-option label="居民身份证" value="1"></el-option>
+                                    <el-option label="港澳台居住证" value="2"></el-option>
+                                    <el-option label="中国护照" value="3"></el-option>
+                                    <el-option label="国外护照" value="4"></el-option>
+                                    <el-option label="永久居住证" value="5"></el-option>
+                                    <el-option label="其他" value="9"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+            </el-row>
+
+            <span slot="footer" class="dialog-footer">
+					<el-button @click="()=>{CurrentChange();userEditDialog = false;adminUser = {};userList = [] }">取 消</el-button>
+					<el-button type="primary" @click="()=>{update(data)}">确 定</el-button>
+				</span>
+        </el-dialog>
+
+        <el-dialog title="添加用户" :visible.sync="userAddDialog" :show-close="true" :close-on-press-escape="false" :close-on-click-modal="false" :fullscreen="false">
+            <el-row>
+                <el-row style="vertical-align: middle;">
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户名">
+                                <!-- <span>{{data.userName}}</span> -->
+                                <el-input class="w-100" v-model="data.userName" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="密码">
+                                <el-input class="w-100" v-model="data.password" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户组">
+                                <el-select class="w-100" filterable placeholder="用户组" v-model="data.permission" clearable>
+                                    <el-option label="普通用户" value="0"></el-option>
+                                    <el-option label="管理员" value="1"></el-option>
+                                    <el-option label="超级管理员" value="8"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="姓名">
+                                <!-- <span>{{data.areaName}}</span> -->
+                                <el-input class="w-100" v-model="data.name" placeholder="姓名">
+                                </el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="性别">
+                                <el-select class="w-100" filterable placeholder="性别" v-model="data.gender" clearable>
+                                    <el-option label="男" value="男"></el-option>
+                                    <el-option label="女" value="女"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <input id="userImgUpload" style="display: none;" class="btn" type="file" onchange="user.imgChange(this,user.data,'userImg')" accept="image/png,image/gif,image/jpeg" />
+
+
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="联系方式">
+                                <!-- <span>{{data.contact}}</span> -->
+                                <el-input class="w-100" v-model="data.contact" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="邮箱">
+                                <!-- <span>{{data.email}}</span> -->
+                                <el-input class="w-100" v-model="data.email" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="用户照片">
+                                <el-image v-if="data.userImg != ''" :preview-src-list="
+                						[data.userImg]
+                					" style="width: 100%;height:50px" :src="data.userImg == undefined?'./Storage/undefined.jpg':data.userImg" fit="scale-down">
+                                </el-image>
+                                <span v-else> 未录入照片 </span>
+                                <br>
+                                <el-button @click="()=>{userImgUpload()}" type="mini">上传用户照片</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="24" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件号码">
+                                <!-- <span>{{data.idCard}}</span> -->
+                                <el-input class="w-100" v-model="data.idCard" clearable></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+
+                    <el-col :xs="24" :sm="12" :md="12">
+                        <el-form label-position="left" inline class="table-expand">
+                            <el-form-item label="证件类型">
+                                <el-select class="w-100" filterable placeholder="证件类型" v-model="data.cardType" clearable>
+                                    <el-option label="居民身份证" value="1"></el-option>
+                                    <el-option label="港澳台居住证" value="2"></el-option>
+                                    <el-option label="中国护照" value="3"></el-option>
+                                    <el-option label="国外护照" value="4"></el-option>
+                                    <el-option label="永久居住证" value="5"></el-option>
+                                    <el-option label="其他" value="9"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+            </el-row>
+
+            <span slot="footer" class="dialog-footer">
+					<el-button @click="()=>{CurrentChange();userAddDialog = false;adminUser = {};userList = [] }">取 消</el-button>
+					<el-button type="primary" @click="()=>{add(data)}">确 定</el-button>
+				</span>
+        </el-dialog>
+
+
+    </div>
+    <script>
+        let id = 0;
+        var user = new Vue({
+            el: '#user',
+            watch: {},
+            computed: {},
+            mounted() {},
+            data() {
+                return {
+
+                    // areaOptions: [{
+                    //     area: '',
+                    //     areaName: "国内",
+                    //     children: [{
+                    //         area: '市编码',
+                    //         areaName: "市名",
+                    //         children: [{
+                    //             area: '区编码',
+                    //             areaName: "区名",
+                    //         }],
+                    //     }],
+                    // }],
+                    areaOptions: [],
+
+                    areaProps: {
+                        lazy: true,
+                        value: 'area',
+                        label: 'areaName',
+                        children: "children",
+                        checkStrictly: true,
+                        lazyLoad(node, resolve) {
+                            const {
+                                level
+                            } = node;
+
+                            // if (level < 3) {
+                            //     substrNum = (level + 1) * 2
+                            // }
+
+                            // console.log(node);
+                            // return
+
+                            axios.post('./System/Core/Management.php', Qs.stringify({
+                                'getAreaList': '',
+                                'page': '1',
+                                'num': '9999999999999',
+                                'filter': JSON.stringify({
+                                    'level': level,
+                                    'areaLike': level == 0 ? '' : node.value.substr(0, (level - 1) * 2)
+                                })
+                            }), ).then(function(res) {
+                                if (res.data[0] != 0) {
+                                    // console.log(res.data.slice(1))
+                                }
+                                data = res.data.slice(1)
+                                var nodes = [];
+
+                                // var nodes = Array.from({
+                                //     length: level + 1
+                                // }).map(item => ({
+                                //     area: ++id,
+                                //     areaName: `选项${id}`,
+                                //     leaf: level >= 4
+                                // }));
+                                data.forEach((x) => {
+                                    nodes.push({
+                                        area: x.area,
+                                        areaName: x.areaName,
+                                        leaf: level >= 4
+                                    })
+                                })
+
+                                // console.log(level, node, nodes, resolve, res.data)
+                                resolve(nodes);
+                            })
+
+                            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+
+                        }
+                        // lazyLoad(node, resolve) {
+                        //     // const {
+                        //     //     level
+                        //     // } = node;
+
+                        //     // user.console(node, resolve)
+                        //     // user.areaLevelLoad(node.level)
+                        //     resolve(resolve)
+                        // }
+                    },
+
+                    userDialog: false,
+                    userAddDialog: false,
+                    userEditDialog: false,
+                    userNum: 0,
+
+                    fileData: '',
+
+                    firstLoadDialog: true,
+                    areaDialog: false,
+
+                    userFlag: false,
+                    activeIndex: '6',
+                    userName: '',
+                    role: "",
+                    permission: "",
+
+                    Tab: "用户管理",
+
+                    data: {},
+                    userInfo: "",
+
+                    dialogWidth: 0,
+
+                    roleListPage: 1,
+                    roleListNum: 1000,
+
+                    roleList: [],
+
+                    areaList: {},
+                    area: '',
+                    areaName: '',
+                    dareaList: {},
+                    darea: "",
+                    dareaName: '',
+                    userList: [],
+                    adminUser: {},
+
+
+                    userData: {
+                        data: [],
+                        count: 0,
+                        num: 10,
+                        page: 1,
+                        timeFilter: '0',
+                        tempFilter: '0',
+                        compareScoreFilter: '0',
+                        searchUser: '0',
+                        filter: {
+                            level: undefined,
+                            areaName: undefined,
+                            dareaName: undefined,
+                            fuzzy: undefined,
+                            permission: undefined,
+                        },
+                    },
+                }
+            },
+            created() {
+                this.setDialogWidth()
+                this.GetRequest()
+            },
+            methods: {
+                userImgUpload() {
+                    $('#userImgUpload').click()
+                },
+                async imgChange(img, data, x) {
+                    // 生成一个文件读取的对象
+                    console.log(img.files[0])
+                    reader = new FileReader();
+                    reader.onload = function(ev) {
+                            // base64码
+                            var imgFile = ev.target.result; //或e.target都是一样的
+                            // console.log(imgFile)
+                            // data[x] = imgFile
+                            user.$set(user.data, x, imgFile)
+                        }
+                        //发起异步读取文件请求，读取结果为data:url的字符串形式，
+                    await reader.readAsDataURL(img.files[0])
+                },
+                batchDel() {
+                    if (user.$refs.userTable.selection.length != 0) {
+                        user.$refs.userTable.selection.forEach((x) => {
+                            // console.log(x)
+                            this.del(x)
+                        })
+                    } else {
+                        user.$message({
+                            showClose: true,
+                            message: '请先选择要删除的项目',
+                            type: 'info'
+                        });
+                    }
+                },
+                console(x) {
+                    console.log(x)
+                },
+                searchUser(userName, name) {
+                    if (name == null) {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "userName": userName,
+                            })
+                        }), ).then(function(res) {
+                            user.userList = res.data.slice(1)
+                        })
+                    } else {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "name": name,
+                            })
+                        }), ).then(function(res) {
+                            user.userList = res.data.slice(1)
+                        })
+                    }
+                    console.log(userName, name)
+                },
+                loadArea(v) {
+                    if (user.permission != '8') {
+                        return user.areaList
+                    }
+
+                    if (v.length != 0) {
+                        user.areaList = {}
+
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "areaName": v,
+                            })
+                        }), ).then(function(res) {
+                            data = res.data.slice(1)
+                            for (t in data) {
+
+                                if (!(data[t]['area'] in user.areaList)) {
+                                    user.areaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName']
+                                    }
+                                }
+
+                                // console.log(user.areaList,user.roleList[t]['areaCode'],user.roleList[t]['areaName'])
+
+                                if (!(data[t]['area'] in user.dareaList)) {
+                                    user.dareaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName'],
+                                        'darea': {}
+                                    }
+                                }
+
+                                if (!(data[t]['darea'] in user.dareaList[data[t]['area']]['darea'])) {
+                                    user.dareaList[data[t]['area']]['darea'][data[t]['darea']] = {
+                                        'dareaName': data[t]['dareaName'],
+                                    }
+                                }
+                            }
+                            user.$set(user.areaList, user.areaList)
+                            user.$set(user.dareaList, user.dareaList)
+                        })
+                    }
+
+                },
+                add(data) {
+                    for (x in data) {
+
+                        if (x == 'idCard' && (data[x] == null || data[x].length == 0)) {
+                            user.$message({
+                                showClose: true,
+                                message: '请填写证件号码',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'cardType' && (data[x] == null || data[x].length == 0)) {
+                            user.$message({
+                                showClose: true,
+                                message: '请填写选择证件类型',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'password' && (data[x] == null || data[x].length == 0)) {
+                            user.$message({
+                                showClose: true,
+                                message: '请输入密码',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'permission' && (data[x] == null || data[x].length == 0)) {
+                            user.$message({
+                                showClose: true,
+                                message: '请选择用户组',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'name' && (data[x] == null || data[x].length == 0)) {
+                            user.$message({
+                                showClose: true,
+                                message: '请输入姓名',
+                                type: 'error'
+                            });
+                            return
+                        } else if (x == 'userName' && (data[x] == null || data[x].length == 0)) {
+                            user.$message({
+                                showClose: true,
+                                message: '请输入用户名',
+                                type: 'error'
+                            });
+                            return
+                        }
+
+                        if (data[x] == null || data[x].length == 0) {
+                            data[x] = undefined
+                        }
+
+                    }
+
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "addUser": '',
+                        "data": JSON.stringify(data)
+                    }), ).then(function(res) {
+                        // console.log(JSON.stringify(data))
+                        if ('success' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            user.userEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        if ('info' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.info,
+                                type: 'info'
+                            });
+                            user.userAddDialog = false;
+                        }
+
+                        user.CurrentChange()
+                    })
+                },
+                showAddUserDialog() {
+                    user.data = {
+                        password: undefined,
+                        userName: undefined,
+                        name: undefined,
+                        gender: undefined,
+                        idCard: undefined,
+                        cardType: undefined,
+                        userImg: undefined,
+                        contact: undefined,
+                        email: undefined,
+                    }
+
+                    user.userAddDialog = true
+                },
+                del(data) {
+                    if ('row' in data) {
+                        data = data.row
+                    }
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "delUser": '',
+                        "data": JSON.stringify({
+                            "area": data.area,
+                            "darea": data.darea,
+                            "passTime": data.passTime,
+                            "name": data.name,
+                            "idCard": data.idCard,
+                        })
+                    }), ).then(function(res) {
+                        if ('success' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            user.userEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        user.CurrentChange()
+                    })
+                },
+                update(data) {
+                    // console.log()
+                    // console.log(data)
+                    for (x in data) {
+                        // console.log(x)
+                        if (data[x] == null || data[x].length == 0) {
+                            data[x] = undefined
+                        }
+
+                        if (
+                            (x.indexOf('birth') != -1 || x.indexOf('validty') != -1) &&
+                            data[x] != null && data[x].length != 0
+                        ) {
+                            data[x] = user.getTime(Date.parse(data[x])).split(' ')[0]
+                        }
+
+                        if (x.indexOf('Img') != -1 && data[x] != null && data[x].indexOf('base64') == -1) {
+                            data[x] = undefined
+                        }
+                        // console.log(x, data[x])
+                    }
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "updateUser": '',
+                        'area': data.area,
+                        'darea': data.darea,
+                        "data": JSON.stringify(data)
+                    }), ).then(function(res) {
+                        if ('success' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.success,
+                                type: 'success'
+                            });
+                            user.userEditDialog = false;
+                        }
+                        if ('error' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.error,
+                                type: 'error'
+                            });
+                        }
+                        if ('info' in res.data) {
+                            user.$message({
+                                showClose: true,
+                                message: res.data.info,
+                                type: 'info'
+                            });
+                            user.userEditDialog = false;
+                        }
+
+                        user.CurrentChange()
+                    })
+                },
+                edit(scope) {
+                    user.data = scope.row
+                    if (scope.row.id != null && scope.row.id.length != 0) {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "1",
+                            "filter": JSON.stringify({
+                                'id': scope.row.id
+                            })
+                        }), ).then(function(res) {
+                            user.$set(user.data, 'userName', res.data[1].userName)
+                            user.$set(user.data, 'name', res.data[1].name)
+                            user.$set(user.data, 'contact', res.data[1].contact)
+                            user.$set(user.data, 'email', res.data[1].email)
+                            scope.row['userName'] = res.data[1].userName
+                            scope.row['name'] = res.data[1].name
+                            scope.row['contact'] = res.data[1].contact
+                            scope.row['email'] = res.data[1].email
+                            console.log(scope.row)
+                        })
+                    }
+                    user.userEditDialog = true
+                },
+                select(scope) {
+                    user.data = scope.row
+                    if (scope.row.id != null && scope.row.id.length != 0) {
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "1",
+                            "filter": JSON.stringify({
+                                'id': scope.row.id
+                            })
+                        }), ).then(function(res) {
+                            user.$set(user.data, 'userName', res.data[1].userName)
+                            user.$set(user.data, 'name', res.data[1].name)
+                            user.$set(user.data, 'contact', res.data[1].contact)
+                            user.$set(user.data, 'email', res.data[1].email)
+                            scope.row['userName'] = res.data[1].userName
+                            scope.row['name'] = res.data[1].name
+                            scope.row['contact'] = res.data[1].contact
+                            scope.row['email'] = res.data[1].email
+                                // console.log(scope.row)
+                        })
+                    }
+                    user.userDialog = true
+                },
+                search() {
+                    user.userData.page = 1
+                    this.CurrentChange()
+                },
+                CurrentChange(v) {
+
+                    for (x in user.userData.filter) {
+                        if (user.userData.filter[x] == null) {
+                            user.userData.filter[x] = undefined
+                        }
+                        // console.log(x, user.userData.filter[x])
+                    }
+
+                    axios.post('./System/Core/Management.php', Qs.stringify({
+                        "getUserList": '',
+                        'page': user.userData.page,
+                        'num': user.userData.num,
+                        'filter': JSON.stringify(user.userData.filter)
+                    }), ).then(function(res) {
+                        if ('error' in res.data) {
+                            user.$alert(res.data.error, '错误', {
+                                confirmButtonText: '确定',
+                                type: 'error',
+                                center: true,
+                                callback: action => {
+                                    // user.linkTo('./management.html')
+                                }
+                            })
+                            return
+                        }
+                        user.userData.count = parseInt(res.data[0])
+                        user.userData.data = res.data.slice(1)
+                    })
+                },
+                change(v) {
+                    if (v == null) {
+                        return undefined
+                    }
+                    if (v.length == 0) {
+                        return undefined
+                    } else {
+                        return v
+                    }
+                },
+                clear() {
+                    return undefined
+                },
+                changeUrl(k, v) {
+                    history.pushState({}, '', this.changeURLArg(k, v));
+                },
+                changeURLArg(arg, arg_val) {
+                    // var url = window.location.href.replace(window.location.search,'')
+                    var url = window.location.href
+                    var pattern = arg + '=([^&]*)';
+                    var replaceText = arg + '=' + arg_val;
+                    if (url.match(pattern)) {
+                        var tmp = '/(' + arg + '=)([^&]*)/gi';
+                        tmp = url.replace(eval(tmp), replaceText);
+                        return tmp;
+                    } else {
+                        if (url.match('[\?]')) {
+                            return url + '&' + replaceText;
+                        } else {
+                            return url + '?' + replaceText;
+                        }
+                    }
+                    return url + '\n' + arg + '\n' + arg_val;
+                },
+                GetRequest() {
+                    var url = location.search; //获取url中"?"符后的字串
+                    var theRequest = new Object();
+                    if (url.indexOf("?") != -1) {
+                        var str = url.substr(1);
+                        strs = str.split("&");
+                        for (var i = 0; i < strs.length; i++) {
+                            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                        }
+                    }
+                    this.Request = theRequest
+                },
+                getUserCount(page, num) {
+                    time = []
+                    t = user.getTime(new Date()).replace(/-/g, ' ').replace(/:/g, ' ').split(' ')
+                    time[0] = t[0] + '-' + t[1] + '-' + t[2]
+                    t = user.getTime(Date.parse(time[0]) + 1000 * 60 * 60 * 24).replace(/-/g, ' ').replace(/:/g, ' ').split(
+                        ' ')
+                    time[1] = t[0] + '-' + t[1] + '-' + t[2]
+
+                    if (user.role == '超级管理员') {
+                        data = Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "0",
+                            // "filter": JSON.stringify({
+                            // 	"betweenTime": JSON.stringify(time),
+                            // })
+                        })
+                    } else {
+                        data = Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "0",
+                            'area': user.area,
+                            'darea': user.darea,
+                            // "filter": JSON.stringify({
+                            // 	"betweenTime": JSON.stringify(time),
+                            // })
+                        })
+                    }
+                    axios.post('./System/Core/Management.php', data).then(function(res) {
+                        // console.log(res)
+                        user.userNum = res.data[0]
+                    })
+                },
+                saveDefault() {
+                    sessionStorage.setItem("area", user.area)
+                    sessionStorage.setItem("darea", user.darea)
+                },
+                loadArea(v) {
+                    if (user.permission != '8') {
+                        return user.areaList
+                    }
+
+                    if (v.length != 0) {
+                        user.areaList = {}
+
+                        axios.post('./System/Core/Management.php', Qs.stringify({
+                            "getUserList": '',
+                            "page": "1",
+                            "num": "9999999999999",
+                            "filter": JSON.stringify({
+                                "areaName": v,
+                            })
+                        }), ).then(function(res) {
+                            data = res.data.slice(1)
+                            for (t in data) {
+
+                                if (!(data[t]['area'] in user.areaList)) {
+                                    user.areaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName']
+                                    }
+                                }
+
+                                // console.log(user.areaList,user.roleList[t]['areaCode'],user.roleList[t]['areaName'])
+
+                                if (!(data[t]['area'] in user.dareaList)) {
+                                    user.dareaList[data[t]['area']] = {
+                                        'areaName': data[t]['areaName'],
+                                        'darea': {}
+                                    }
+                                }
+
+                                if (!(data[t]['darea'] in user.dareaList[data[t]['area']]['darea'])) {
+                                    user.dareaList[data[t]['area']]['darea'][data[t]['darea']] = {
+                                        'dareaName': data[t]['dareaName'],
+                                    }
+                                }
+                            }
+                            user.$set(user.areaList, user.areaList)
+                            user.$set(user.dareaList, user.dareaList)
+                        })
+                    }
+
+                },
+                loadDarea(v) {
+                    user.areaName = user.dareaList[user.area].areaName
+                    user.dareaName = user.dareaList[user.area].darea[user.darea].dareaName
+                    user.getUserCount()
+                    user.changeUrl('area', user.area)
+                    user.changeUrl('darea', user.darea)
+
+                    user.CurrentChange()
+
+                    user.userData.searchUser = user.darea
+                    user.userData.searchArea = user.area
+                    user.userData.searchDarea = user.darea
+
+                    if (user.permission != '8') {
+                        return user.dareaList
+                    }
+
+                },
+                setDialogWidth() {
+                    // console.log(document.body.clientWidth)
+                    var val = document.body.clientWidth
+                    const def = 800 // 默认宽度
+                    if (val < def) {
+                        this.dialogWidth = '100%'
+                    } else {
+                        this.dialogWidth = def + 'px'
+                    }
+                },
+                linkTo(target) {
+                    window.location = target
+                },
+                getSomeTime(n) {
+                    return user.getTime(Date.parse(user.getTime(Math.ceil((new Date().getTime() / 100000) * 100000))
+                            .split(
+                                ':')[0] +
+                            ':' +
+                            (parseInt(user.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) -
+                                parseInt(
+                                    user.getTime(Math.ceil(new Date().getTime() / 100000) * 100000).split(':')[1]) % 5)) + 60 * 1000 *
+                        (5 *
+                            n))
+                },
+                getTime(unixTime) {
+                    unixTime = new Date(unixTime)
+                    Y = unixTime.getFullYear()
+                    M = (unixTime.getMonth() + 1) < 10 ? '0' + (unixTime.getMonth() + 1) : (unixTime.getMonth() + 1)
+                    D = unixTime.getDate() < 10 ? '0' + unixTime.getDate() : unixTime.getDate()
+                    H = unixTime.getHours() < 10 ? '0' + unixTime.getHours() : unixTime.getHours()
+                    i = unixTime.getMinutes() < 10 ? '0' + unixTime.getMinutes() : unixTime.getMinutes()
+                    S = unixTime.getSeconds() < 10 ? '0' + unixTime.getSeconds() : unixTime.getSeconds()
+                    return Y + '-' + M + '-' + D + ' ' + H + ':' + i + ':' + S
+                },
+                handleSelect(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                logout() {
+                    axios.post('./System/Core/User.php', Qs.stringify({
+                        "logout": '',
+                    }), ).then(function(res) {
+                        for (x in res.data) {
+                            if ('success' === x) {
+                                console.log(res.data['success'])
+                                user.$alert(res.data['success'], '操作成功', {
+                                    confirmButtonText: '确定',
+                                    type: 'success',
+                                    center: true,
+                                    callback: action => {
+                                        window.location = 'login.html'
+                                    }
+                                })
+                            }
+                        }
+                    })
+                },
+            },
+            mounted() {
+                window.onresize = () => {
+                    return (() => {
+                        this.setDialogWidth()
+                    })()
+                }
+                axios.post('./System/Core/User.php', Qs.stringify({
+                    "getUserInfo": '',
+                }), ).then(function(res) {
+                    for (x in res.data) {
+                        if ('error' === x) {
+                            user.$alert(res.data[x], '错误', {
+                                confirmButtonText: '确定',
+                                type: 'error',
+                                center: true,
+                                callback: action => {
+                                    window.location = 'login.html'
+                                }
+                            })
+                        } else {
+                            user.userName = res.data[x]['userName']
+                            user.userInfo = res.data[x]
+                            user.permission = res.data[x]['permission']
+
+                            if (user.permission == '8') {
+                                user.role = '超级管理员'
+                                user.CurrentChange()
+                                user.areaDialog = false
+                            } else if (user.permission == '1') {
+                                user.$alert('您没有管理区域/场所的权限', '错误', {
+                                    confirmButtonText: '确定',
+                                    type: 'error',
+                                    center: true,
+                                    callback: action => {
+                                        user.linkTo('./management.html')
+                                    }
+                                })
+                                return
+                            } else {
+                                user.linkTo('./')
+                            }
+
+                            user.userFlag = true
+
+                            if (user.permission != '8') {
+                                axios.post('./System/Core/Management.php', Qs.stringify({
+                                    "getRoleList": '',
+                                }), ).then(function(res) {
+                                    if (res.data[0] == 0) {
+                                        user.$alert('您没有访问面板的权限，如需访问请联系超级管理员添加相应权限', '错误', {
+                                            confirmButtonText: '返回首页',
+                                            type: 'error',
+                                            center: true,
+                                            callback: action => {
+                                                user.linkTo('./')
+                                            }
+                                        })
+                                    }
+                                    // console.log(res.data)
+                                    user.roleList = res.data.slice(1)
+                                    for (t in user.roleList) {
+                                        // console.log(user.roleList[t]['areaCode'])
+
+                                        if (!(user.roleList[t]['areaCode'] in user.areaList)) {
+                                            user.areaList[user.roleList[t]['areaCode']] = {
+                                                'areaName': user.roleList[t]['areaName']
+                                            }
+                                        }
+
+                                        console.log(user.areaList, user.roleList[t]['areaCode'], user.roleList[t]['areaName'])
+
+                                        if (!(user.roleList[t]['areaCode'] in user.dareaList)) {
+                                            user.dareaList[user.roleList[t]['areaCode']] = {
+                                                'areaName': user.roleList[t]['areaName'],
+                                                'darea': {}
+                                            }
+                                        }
+
+                                        if (!(user.roleList[t]['dareaCode'] in user.dareaList[user.roleList[t]['areaCode']][
+                                                'darea'
+                                            ])) {
+                                            user.dareaList[user.roleList[t]['areaCode']]['darea'][user.roleList[t]['dareaCode']] = {
+                                                'dareaName': user.roleList[t]['dareaName'],
+
+                                                'selectCar': user.roleList[t]['selectCar'] == 0 ? false : true,
+                                                'selectUser': user.roleList[t]['selectUser'] == 0 ? false : true,
+                                                'selectEquipment': user.roleList[t]['selectEquipment'] == 0 ? false : true,
+
+                                                'updateCar': user.roleList[t]['updateCar'] == 0 ? false : true,
+                                                'updateUser': user.roleList[t]['updateUser'] == 0 ? false : true,
+                                                'updateEquipment': user.roleList[t]['updateEquipment'] == 0 ? false : true,
+
+                                                'delCar': user.roleList[t]['delCar'] == 0 ? false : true,
+                                                'delUser': user.roleList[t]['delUser'] == 0 ? false : true,
+                                                'delEquipment': user.roleList[t]['delEquipment'] == 0 ? false : true,
+
+                                                'addCar': user.roleList[t]['addCar'] == 0 ? false : true,
+                                                'addUser': user.roleList[t]['addUser'] == 0 ? false : true,
+                                                'addEquipment': user.roleList[t]['addEquipment'] == 0 ? false : true,
+                                            }
+                                        }
+
+                                    }
+
+                                    user.$set(user.areaList, user.areaList)
+                                    user.$set(user.dareaList, user.dareaList)
+
+                                    // user.CurrentChange()
+
+
+
+                                    if ('area' in user.Request) {
+                                        if (user.Request.area in user.areaList) {
+                                            user.area = user.Request.area
+                                            user.userData.searchArea = user.area
+                                            if ('darea' in user.Request) {
+                                                if (user.Request.darea in user.dareaList[user.area].darea) {
+                                                    user.darea = user.Request.darea
+                                                    user.userData.searchDarea = user.darea
+                                                    user.userData.searchUser = user.darea
+                                                    user.areaDialog = false
+                                                    user.getUserCount()
+                                                        // user.loadDarea()
+                                                } else {
+                                                    user.$alert('您没有管理该区域/场所的权限，或该区域/场所不存在', '错误', {
+                                                        confirmButtonText: '确定',
+                                                        type: 'error',
+                                                        center: true,
+                                                        callback: action => {}
+                                                    })
+                                                }
+                                            }
+                                        } else {
+                                            user.$alert('您没有管理该区域/场所的权限，或该区域/场所不存在', '错误', {
+                                                confirmButtonText: '确定',
+                                                type: 'error',
+                                                center: true,
+                                                callback: action => {}
+                                            })
+                                        }
+                                    } else {
+                                        if (sessionStorage.getItem("area") != null) {
+                                            if (sessionStorage.getItem("area") in user.areaList) {
+                                                if (sessionStorage.getItem("darea") != null) {
+                                                    user.area = sessionStorage.getItem("area")
+                                                    user.userData.searchArea = user.area
+                                                    if (sessionStorage.getItem("darea") in user.dareaList[user.area].darea) {
+                                                        user.darea = sessionStorage.getItem("darea")
+                                                        user.userData.searchUser = sessionStorage.getItem("darea")
+                                                        user.areaDialog = false
+
+                                                    } else {
+                                                        user.$alert('默认区域/场所 权限错误，请重新选择', '错误', {
+                                                            confirmButtonText: '确定',
+                                                            type: 'error',
+                                                            center: true,
+                                                            callback: action => {
+                                                                user.areaDialog = true
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                            } else {
+                                                user.$alert('默认区域/场所 权限错误，请重新选择', '错误', {
+                                                    confirmButtonText: '确定',
+                                                    type: 'error',
+                                                    center: true,
+                                                    callback: action => {
+                                                        user.areaDialog = true
+                                                    }
+                                                })
+                                            }
+                                        } else if (sessionStorage.getItem("area") == null) {
+                                            user.areaDialog = true
+                                        }
+                                    }
+                                    user.CurrentChange()
+                                    console.log(user.dareaList)
+                                })
+                            }
+
+                            // user.getUserCount()
+
+                        }
+                    }
+                })
+            }
+        })
+    </script>
+
+    </div>
+    <style>
+        .table-expand {
+            font-size: 0;
+        }
+        
+        .table-expand label {
+            width: 50%;
+            color: #99a9bf;
+        }
+        
+        .table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        var resetWindow = function() {
+            $('#user').css({
+                'min-height': $(window).height() - $('#head').height() - $('#foot').height()
+            })
+
+            if ($(window).width() <= 995) {
+                user.tabPosition = 'top'
+                $('#user').css({
+                    'margin': '0 10px',
+                    'margin-top': '5px'
+                })
+            } else {
+                user.tabPosition = 'left'
+                $('#user').css({
+                    'margin': '0 5px',
+                    'margin-top': '5px'
+                })
+            }
+        }
+        $(document).ready(function() {
+            resetWindow()
+            $(window).resize(function() {
+                resetWindow()
+            })
+        })
+    </script>
+
+</html>
