@@ -78,6 +78,7 @@
                     <el-menu-item index="4" @click="linkTo('./equipment.html')">设备管理</el-menu-item>
                     <el-menu-item v-if="role == '超级管理员' " index="6" @click="linkTo('./plan.html')">区域/场所管理</el-menu-item>
                     <el-menu-item v-if="role == '超级管理员' " index="7" @click="linkTo('./userManagement.html')">用户管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="8" @click="linkTo('./role.html')">权限管理</el-menu-item>
                 </el-menu>
             </el-col>
             <el-col :md="4" :xs="24">

@@ -76,8 +76,9 @@
                     <el-menu-item index="2" @click="linkTo('./personnel.html')">人员管理</el-menu-item>
                     <el-menu-item index="3" @click="linkTo('./car.html')">车辆管理</el-menu-item>
                     <el-menu-item index="4" @click="linkTo('./equipment.html')">设备管理</el-menu-item>
-                    <el-menu-item v-if="role == '超级管理员' " index="5" @click="linkTo('./plan.html')">区域/场所管理</el-menu-item>
-                    <el-menu-item v-if="role == '超级管理员' " index="6" @click="linkTo('./userManagement.html')">用户管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="6" @click="linkTo('./plan.html')">区域/场所管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="7" @click="linkTo('./userManagement.html')">用户管理</el-menu-item>
+                    <el-menu-item v-if="role == '超级管理员' " index="8" @click="linkTo('./role.html')">权限管理</el-menu-item>
                 </el-menu>
             </el-col>
             <el-col :md="4" :xs="24">
@@ -504,7 +505,7 @@
                                                 return
                                             }
                                         })
-                                    }" filterable placeholder="请选择区域">
+                                    }" filterable placeholder="请选择">
                                     <el-option v-for="(v,k) in userList" :key="k" :label="v.userName" :value="v.userName">
                                     </el-option>
                                 </el-select>
@@ -994,7 +995,7 @@
                     areaDialog: false,
 
                     planFlag: false,
-                    activeIndex: '5',
+                    activeIndex: '6',
                     userName: '',
                     role: "",
                     permission: "",
