@@ -191,7 +191,7 @@
 						    clearable></el-cascader>
 					</el-col>
  -->
-                    <el-col class="" :sm="24" :xs="8" :md="8">
+                    <el-col class="" :sm="24" :xs="24" :md="6">
                         <el-select class="w-100" v-model="personnelData.searchPlan" remote :remote-method="(v)=>{searchDarea(v)}" @change="(v)=>{searchDarea(v)}" filterable placeholder="请选择搜索范围">
                             <el-option label="所有可查询范围" :value="0">
                             </el-option>
@@ -201,7 +201,7 @@
                             </div>
                         </el-select>
                     </el-col>
-                    <el-col :sm="12" :xs="8" :md="8">
+                    <el-col :sm="12" :xs="24" :md="6">
                         <el-select class="w-100" v-model="area" remote :remote-method="(v)=>{loadArea(v)}" @change="(v)=>{loadArea(v);darea = '';}" filterable placeholder="请选择区域">
                             <div v-for="(v,k) in areaList">
                                 <el-option v-for="(val,key) in v" :key="k" :label="val" :value="k">
@@ -209,13 +209,18 @@
                             </div>
                         </el-select>
                     </el-col>
-                    <el-col :sm="12" :xs="8" :md="8">
+                    <el-col :sm="12" :xs="24" :md="6">
                         <el-select class="w-100" v-model="darea" remote :remote-method="(v)=>{loadDarea(v)}" @change="(v)=>{loadDarea(v)}" filterable placeholder="请选择场所" :disabled="area.length == 0">
                             <div v-if="(Object.keys(areaList).length != 0 && area.length != 0)">
                                 <el-option v-for="(v,k) in dareaList[area].darea" :key="k" :label="v.dareaName" :value="k" v-if="v.selectPersonnel == '1' || permission == '8' ">
                                 </el-option>
                             </div>
                             </el-selectclass="w-100">
+                    </el-col>
+
+                    <el-col :sm="24" :xs="24" :md="6">
+                        <el-input v-model="personnelData.filter.dareaName" placeholder="场所名称" clearable @clear="()=>{personnelData.filter.dareaName = clear()}" @change="(v)=>{personnelData.filter.dareaName = change(v)}">
+                        </el-input>
                     </el-col>
 
 
@@ -383,10 +388,10 @@
                         </el-select>
                     </el-col> -->
 
-                    <el-col :xs="24" :sm="12" :md="6">
+                    <!-- <el-col :xs="24" :sm="12" :md="6">
                         <el-input v-model="personnelData.filter.dareaName" placeholder="场所名称" clearable @clear="()=>{personnelData.filter.dareaName = clear()}" @change="(v)=>{personnelData.filter.dareaName = change(v)}">
                         </el-input>
-                    </el-col>
+                    </el-col> -->
                     <!-- 
                     <el-col :xs="24" :sm="12" :md="6">
                         <el-select class="w-100" filterable placeholder="车辆类别" v-model="personnelData.filter.identity" clearable @clear="()=>{personnelData.filter.identity = clear()}">

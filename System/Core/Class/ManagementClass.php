@@ -469,6 +469,9 @@ class  ManagementClass
             if (isset($filter['idCardImg'])) {
                 $selectFilter .= "AND idCardImg = '" . $filter['idCardImg'] . "' ";
             }
+            if (isset($filter['dareaName'])) {
+                $selectFilter .= "AND dareaName LIKE '%" . $filter['dareaName'] . "%' ";
+            }
         }
 
         $query = "SELECT * FROM $this->personnelTable WHERE 1=1 " . $selectPlan . $selectFilter;
@@ -788,6 +791,9 @@ class  ManagementClass
             }
             if (isset($filter['vehicleImg'])) {
                 $selectFilter .= "AND vehicleImg = '" . $filter['vehicleImg'] . "' ";
+            }
+            if (isset($filter['dareaName'])) {
+                $selectFilter .= "AND dareaName LIKE '%" . $filter['dareaName'] . "%' ";
             }
         }
 
