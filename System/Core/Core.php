@@ -109,13 +109,32 @@ if(count($_POST) == 0){
 $blacklist = Array("order by",'or','and','rpad','concat',' ','union','%a0',',','if','xor','join','rand','floor','outfile','mid','#','\|\|','--+','0[xX][0-9a-fA-F]+');
 foreach ($_POST as $key => $value)
 {
-    foreach ($blacklist as $blackItem){
-        if (preg_match('/\b' . $blackItem . '\b/im', $value)) {
-            if($key = 'time' && $blackItem = ' ')
-            {
-                continue;
+    if(is_array($value) || is_array(json_decode($value,true))){
+        if(is_array(json_decode($value,true)))
+        {
+           $value =  json_decode($value,true);
+        }
+        foreach ($value as $k => $v){
+            foreach ($blacklist as $blackItem){
+                if (boolval(preg_match('/\b' . $blackItem . '\b/im', $v))) {
+                    if((strstr($k,'time') || strstr($k,'Time')) || strstr($k,'Img') || strstr($k,'img'))
+                    {
+                        continue;
+                    }
+                    die(json_encode(Array('error'=>'非法参数'.$v)));
+                }
             }
-            die('非法参数'.$value);
+        }
+    }
+    else{
+        foreach ($blacklist as $blackItem){
+            if (boolval(preg_match('/\b' . $blackItem . '\b/im', $value))) {
+                if(($key == 'time' || strstr($key,'Time')) || strstr($key,'Img'))
+                {
+                    continue;
+                }
+                die(json_encode(Array('error'=>'非法参数'.$value)));
+            }
         }
     }
 }

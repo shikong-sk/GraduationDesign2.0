@@ -104,7 +104,6 @@ class  ManagementClass
                 }
             }
 
-
             if (isset($data['area']) && strlen($data['area']) != 9) {
                 return json_encode(Array('error' => '行政区域代码错误'), JSON_UNESCAPED_UNICODE);
             }
@@ -2350,7 +2349,7 @@ class  ManagementClass
             return json_encode(Array('error' => 'data 参数错误'), JSON_UNESCAPED_UNICODE);
         }
 
-        if (json_decode($this->getRoleList(['area' => $data['area'], 'darea' => $data['darea'], 'id' => $data['id']]), true)[0] == 0) {
+        if (json_decode($this->getRoleList(['area' => $data['area'], 'darea' => $data['darea'], 'id' => $data['id'],'page'=>'1','num'=>'9999999999999']), true)[0] == 0) {
             return json_encode(Array('error' => '该用户无此地区/场所权限，请先添加后再进行此操作'), JSON_UNESCAPED_UNICODE);
         }
 
