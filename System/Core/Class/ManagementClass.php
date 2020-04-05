@@ -1956,40 +1956,40 @@ class  ManagementClass
                 return json_encode(Array('error' => 'id 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['addPersonnel']) || strlen($data['addPersonnel']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'addPersonnel 参数错误'), JSON_UNESCAPED_UNICODE);
             }
-            if (!isset($data['delPersonnel']) || strlen($data['selectPersonnel']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            if (!isset($data['delPersonnel']) || strlen($data['delPersonnel']) != 1) {
+                return json_encode(Array('error' => 'delPersonnel 参数错误'), JSON_UNESCAPED_UNICODE);
             }
-            if (!isset($data['updatePersonnel']) || strlen($data['selectPersonnel']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            if (!isset($data['updatePersonnel']) || strlen($data['updatePersonnel']) != 1) {
+                return json_encode(Array('error' => 'updatePersonnel 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['selectPersonnel']) || strlen($data['selectPersonnel']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'selectPersonnel 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['addCar']) || strlen($data['addCar']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'addCar 参数错误'), JSON_UNESCAPED_UNICODE);
             }
-            if (!isset($data['delCar']) || strlen($data['selectCar']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            if (!isset($data['delCar']) || strlen($data['delCar']) != 1) {
+                return json_encode(Array('error' => 'delCar 参数错误'), JSON_UNESCAPED_UNICODE);
             }
-            if (!isset($data['updateCar']) || strlen($data['selectCar']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            if (!isset($data['updateCar']) || strlen($data['updateCar']) != 1) {
+                return json_encode(Array('error' => 'updateCar 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['selectCar']) || strlen($data['selectCar']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'selectCar 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['addEquipment']) || strlen($data['addEquipment']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'addEquipment 参数错误'), JSON_UNESCAPED_UNICODE);
             }
-            if (!isset($data['delEquipment']) || strlen($data['selectEquipment']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            if (!isset($data['delEquipment']) || strlen($data['delEquipment']) != 1) {
+                return json_encode(Array('error' => 'delEquipment 参数错误'), JSON_UNESCAPED_UNICODE);
             }
-            if (!isset($data['updateEquipment']) || strlen($data['selectEquipment']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+            if (!isset($data['updateEquipment']) || strlen($data['updateEquipment']) != 1) {
+                return json_encode(Array('error' => 'updateEquipment 参数错误'), JSON_UNESCAPED_UNICODE);
             }
             if (!isset($data['selectEquipment']) || strlen($data['selectEquipment']) != 1) {
-                return json_encode(Array('error' => '参数错误'), JSON_UNESCAPED_UNICODE);
+                return json_encode(Array('error' => 'selectEquipment 参数错误'), JSON_UNESCAPED_UNICODE);
             }
         }
 
@@ -2000,7 +2000,7 @@ class  ManagementClass
             return json_encode(Array('error' => '操作失败，该场所不存在'), JSON_UNESCAPED_UNICODE);
         }
 
-        $query = "INSERT INTO $this->roleTable(`id`, `areaCode`, `areaName`, `dareaCode`, `dareaName`, `addPersonnel`, `delPersonnel`, `updatePersonnel`, `selectPersonnel`, `addCar`, `delCar`, `updateCar`, `selectCar`, `addEquipment`, `updateEquipment`, `delEquipment`, `selectEquipment`) VALUES ('{$data['id']}', '{$area}', '{$areaName}', '{$darea}', '{$dareaName}', '{$data['addPersonnel']}', '{$data['delPersonnel']}', '{$data['updatePersonnel']}', '{$data['selectPersonnel']}', '{$data['addCar']}', '{$data['delCar']}', '{$data['updateCar']}', '{$data['selectCar']}', '{$data['addEquipment']}', '{$data['delEquipment']}', '{$data['updateEquipment']}', '{$data['selectEquipment']}');";
+        $query = "INSERT INTO $this->roleTable(`id`, `areaCode`, `areaName`, `dareaCode`, `dareaName`, `addPersonnel`, `delPersonnel`, `updatePersonnel`, `selectPersonnel`, `addCar`, `delCar`, `updateCar`, `selectCar`, `addEquipment`, `updateEquipment`, `delEquipment`, `selectEquipment`) VALUES ('{$data['id']}', '{$area}', '{$areaName}', '{$darea}', '{$dareaName}', '{$data['addPersonnel']}', '{$data['delPersonnel']}', '{$data['updatePersonnel']}', '{$data['selectPersonnel']}', '{$data['addCar']}', '{$data['delCar']}', '{$data['updateCar']}', '{$data['selectCar']}', '{$data['addEquipment']}', '{$data['updateEquipment']}', '{$data['delEquipment']}', '{$data['selectEquipment']}');";
 //        if (!$this->rolePermission->checkEditRole()) {
 //            return json_encode(Array('error' => '操作失败，该用户组无此权限'), JSON_UNESCAPED_UNICODE);
 //        }
@@ -2716,6 +2716,7 @@ class  ManagementClass
             return json_encode(Array('error' => '该数据已存在'), JSON_UNESCAPED_UNICODE);
         }
 
+//        var_dump($query);
         if ($res && $this->db->database->affected_rows == 1) {
             if (isset($data['vehicleImg']) && strlen($data['vehicleImg']) != 0) {
                 if ($data['vehicleImg'] != $carData[1]['vehicleImg']) {
