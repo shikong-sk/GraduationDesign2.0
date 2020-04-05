@@ -106,7 +106,7 @@ if(count($_POST) == 0){
 /*
  * 过滤非法参数（$_POST 通用）
  */
-$blacklist = Array("order by",'or','and','rpad','concat',' ','union','%a0',',','if','xor','join','rand','floor','outfile','mid','#','\|\|','--+','0[xX][0-9a-fA-F]+');
+$blacklist = Array("order by",'or','and','rpad','concat',' ','union','%a0',',','if','xor','join','rand','floor','outfile','mid','#','&&','\|\|','--+','0[xX][0-9a-fA-F]+');
 foreach ($_POST as $key => $value)
 {
     if(is_array($value) || is_array(json_decode($value,true))){

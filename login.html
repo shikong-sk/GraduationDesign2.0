@@ -112,18 +112,22 @@
                                 'password': login.form.password,
                             }), ).then(function(res) {
                                 if ('error' in res.data) {
-									if(res.data['error'].indexOf('错误') == -1)
-									{
-										window.location = 'index.html'
-									}
-									else{
-										login.$alert(res.data.error, '错误', {
-										    confirmButtonText: '确定',
-										    type: 'error',
-										    center: true,
-										    callback: action => {}
-										})
-									}
+                                    if (res.data['error'].indexOf('错误') == -1) {
+                                        login.$alert(res.data.error, '错误', {
+                                                confirmButtonText: '确定',
+                                                type: 'error',
+                                                center: true,
+                                                callback: action => {}
+                                            })
+                                            // window.location = 'index.html'
+                                    } else {
+                                        login.$alert(res.data.error, '错误', {
+                                            confirmButtonText: '确定',
+                                            type: 'error',
+                                            center: true,
+                                            callback: action => {}
+                                        })
+                                    }
                                 } else {
                                     login.$alert(res.data.success, '登录成功', {
                                         confirmButtonText: '确定',
