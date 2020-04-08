@@ -54,11 +54,12 @@ class  ManagementClass
         $f = new FileManager();
         $this->file_maxSize = $f->MaxFileSize;
         $this->disk_maxSize = intval(disk_free_space('./')/1024) - 1048576;
-        $this->max_record = $this->file_maxSize / $this->max_record / 2 / 2;
+        $this->max_record = intval($this->disk_maxSize / $this->file_maxSize / 2 / 2);
         if($this->max_record > 50000)
         {
             $this->max_record = 50000;
         }
+        // var_dump($this->file_maxSize,$this->disk_maxSize,$this->max_record);
     }
 
     /*
@@ -1678,6 +1679,8 @@ class  ManagementClass
 
             if($personnelRecord > $this->max_record)
             {
+
+
                 $maxNum = intval(($personnelRecord - $this->max_record));
 
                 $maxPage = ceil(($maxNum)/5000);
