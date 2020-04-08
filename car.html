@@ -524,12 +524,12 @@
 									<el-form-item label="现场照片">
 										<el-image v-if="props.row.vehicleImg != ''" :preview-src-list="
 										props.row.vehicleImg != '' && props.row.plateImg != ''
-										?[props.row.vehicleImg,props.row.plateImg]
+										?['./'+props.row.vehicleImg,'./'+props.row.plateImg]
 										: props.row.vehicleImg != '' && props.row.plateImg == '' 
-											? [props.row.vehicleImg]
-											: [props.row.plateImg]
+											? ['./'+props.row.vehicleImg]
+											: ['./'+props.row.plateImg]
 										"
-										 style="width: 10rem;height:10rem;" :src="props.row.vehicleImg" fit="scale-down">
+										 style="width: 10rem;height:10rem;" :src="'./'+props.row.vehicleImg" fit="scale-down">
 										</el-image>
 										<span v-else> 未录入照片 </span>
 									</el-form-item>
@@ -538,12 +538,12 @@
 									<el-form-item label="证件照片">
 										<el-image v-if="props.row.plateImg != ''" :preview-src-list="
 										props.row.vehicleImg != '' && props.row.plateImg != ''
-										?[props.row.vehicleImg,props.row.plateImg]
+										?['./'+props.row.vehicleImg,'./'+props.row.plateImg]
 										: props.row.vehicleImg != '' && props.row.plateImg == '' 
-											? [props.row.vehicleImg]
-											: [props.row.plateImg]
+											? ['./'+props.row.vehicleImg]
+											: ['./'+props.row.plateImg]
 										"
-										 style="width: 10rem;height:10rem;" :src="props.row.plateImg" fit="scale-down">
+										 style="width: 10rem;height:10rem;" :src="'./'+props.row.plateImg" fit="scale-down">
 										</el-image>
 										<span v-else> 未录入照片 </span>
 									</el-form-item>
@@ -581,12 +581,12 @@
 							<div class="mx-auto text-center">
 								<el-image v-if="scope.row.vehicleImg != ''" :preview-src-list="
 								scope.row.vehicleImg != '' && scope.row.plateImg != ''
-								?[scope.row.vehicleImg,scope.row.plateImg]
+								?['./'+scope.row.vehicleImg,'./'+scope.row.plateImg]
 								: scope.row.vehicleImg != '' && scope.row.plateImg == '' 
-									? [scope.row.vehicleImg]
-									: [scope.row.plateImg]
+									? ['./'+scope.row.vehicleImg]
+									: ['./'+scope.row.plateImg]
 								"
-								 style="width: 100%;height:50px" :src="scope.row.vehicleImg" fit="scale-down">
+								 style="width: 100%;height:50px" :src="'./'+scope.row.vehicleImg" fit="scale-down">
 								</el-image>
 								<span v-else> 未录入照片 </span>
 							</div>
@@ -597,12 +597,12 @@
 							<div class="mx-auto text-center">
 								<el-image v-if="scope.row.plateImg != ''" :preview-src-list="
 								scope.row.vehicleImg != '' && scope.row.plateImg != ''
-								?[scope.row.vehicleImg,scope.row.plateImg]
+								?['./' + scope.row.vehicleImg,'./' + scope.row.plateImg]
 								: scope.row.vehicleImg != '' && scope.row.plateImg == '' 
-									? [scope.row.vehicleImg]
-									: [scope.row.plateImg]
+									? ['./' + scope.row.vehicleImg]
+									: ['./' + scope.row.plateImg]
 								"
-								style="width: 100%;height:50px;" :src="scope.row.plateImg" fit="scale-down">
+								style="width: 100%;height:50px;" :src="'./' + scope.row.plateImg" fit="scale-down">
 								</el-image>
 								<span v-else> 未录入照片 </span>
 							</div>
@@ -741,11 +741,11 @@
                                     <el-form-item label="车辆照片">
                                         <el-image v-if="data.vehicleImg != ''" :preview-src-list="
                                                 data.vehicleImg != '' && data.plateImg != ''
-                                                ?[data.vehicleImg,data.plateImg]
+                                                ?['./' + data.vehicleImg,'./' + data.plateImg]
                                                 : data.vehicleImg != '' && data.plateImg == '' 
-                                                    ? [data.vehicleImg]
-                                                    : [data.plateImg]
-                                                " style="width: 10rem;height:10rem;" :src="data.vehicleImg == undefined?'./Storage/undefined.jpg':data.vehicleImg" fit="scale-down">
+                                                    ? [ './' + data.vehicleImg]
+                                                    : [ './' + data.plateImg]
+                                                " style="width: 10rem;height:10rem;" :src="data.vehicleImg == undefined?'./Storage/undefined.jpg':'./' + data.vehicleImg" fit="scale-down">
                                         </el-image>
                                         <span v-else> 未录入照片 </span>
                                     </el-form-item>
@@ -757,11 +757,11 @@
                                     <el-form-item label="车牌照片">
                                         <el-image v-if="data.plateImg != ''" :preview-src-list="
                                                 data.vehicleImg != '' && data.plateImg != ''
-                                                ?[data.vehicleImg,data.plateImg]
+                                                ?['./' + data.vehicleImg,'./' + data.plateImg]
                                                 : data.vehicleImg != '' && data.plateImg == '' 
-                                                    ? [data.vehicleImg]
-                                                    : [data.plateImg]
-                                                " style="width: 10rem;height:10rem;" :src="data.plateImg== undefined?'./Storage/undefined.jpg':data.plateImg" fit="scale-down">
+                                                    ? ['./' + data.vehicleImg]
+                                                    : ['./' + data.plateImg]
+                                                " style="width: 10rem;height:10rem;" :src="data.plateImg== undefined?'./Storage/undefined.jpg':'./' + data.plateImg" fit="scale-down">
                                         </el-image>
                                         <span v-else> 未录入照片 </span>
                                     </el-form-item>
@@ -1002,11 +1002,11 @@
                             <el-form-item label="车辆照片">
                                 <el-image v-if="data.vehicleImg != ''" :preview-src-list="
                 					data.vehicleImg != '' && data.plateImg != ''
-                					?[data.vehicleImg,data.plateImg]
+                					?['./'+data.vehicleImg,'./'+data.plateImg]
                 					: data.vehicleImg != '' && data.plateImg == '' 
-                						? [data.vehicleImg]
-                						: [data.plateImg]
-                					" style="width: 10rem;height:10rem;" :src="data.vehicleImg == undefined?'./Storage/undefined.jpg':data.vehicleImg" fit="scale-down">
+                						? ['./'+data.vehicleImg]
+                						: ['./'+data.plateImg]
+                					" style="width: 10rem;height:10rem;" :src="data.vehicleImg == undefined?'./Storage/undefined.jpg':'./'+data.vehicleImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                                 <br>
@@ -1020,11 +1020,11 @@
                             <el-form-item label="车牌照片">
                                 <el-image v-if="data.plateImg != ''" :preview-src-list="
                 					data.vehicleImg != '' && data.plateImg != ''
-                					?[data.vehicleImg,data.plateImg]
+                					?['./'+data.vehicleImg,'./'+data.plateImg]
                 					: data.vehicleImg != '' && data.plateImg == '' 
-                						? [data.vehicleImg]
-                						: [data.plateImg]
-                					" style="width: 10rem;height:10rem;" :src="data.plateImg== undefined?'./Storage/undefined.jpg':data.plateImg" fit="scale-down">
+                						? ['./'+data.vehicleImg]
+                						: ['./'+data.plateImg]
+                					" style="width: 10rem;height:10rem;" :src="data.plateImg== undefined?'./Storage/undefined.jpg':'./'+data.plateImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                                 <br>

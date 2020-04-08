@@ -252,12 +252,12 @@
 										<el-form-item label="现场照片">
 											<el-image v-if="props.row.personImg != ''" :preview-src-list="
 											props.row.personImg != '' && props.row.idCardImg != ''
-											?[props.row.personImg,props.row.idCardImg]
+											?['./'+props.row.personImg,'./'+props.row.idCardImg]
 											: props.row.personImg != '' && props.row.idCardImg == '' 
-												? [props.row.personImg]
-												: [props.row.idCardImg]
+												? ['./'+props.row.personImg]
+												: ['./'+props.row.idCardImg]
 											"
-											 style="width: 10rem;height:10rem;" :src="props.row.personImg" fit="scale-down">
+											 style="width: 10rem;height:10rem;" :src="'./'+props.row.personImg" fit="scale-down">
 											</el-image>
 											<span v-else> 未录入照片 </span>
 										</el-form-item>
@@ -266,12 +266,12 @@
 										<el-form-item label="证件照片">
 											<el-image v-if="props.row.idCardImg != ''" :preview-src-list="
 											props.row.personImg != '' && props.row.idCardImg != ''
-											?[props.row.personImg,props.row.idCardImg]
+											?['./'+props.row.personImg,'./'+props.row.idCardImg]
 											: props.row.personImg != '' && props.row.idCardImg == '' 
-												? [props.row.personImg]
-												: [props.row.idCardImg]
+												? ['./'+props.row.personImg]
+												: ['./'+props.row.idCardImg]
 											"
-											 style="width: 10rem;height:10rem;" :src="props.row.idCardImg" fit="scale-down">
+											 style="width: 10rem;height:10rem;" :src="'./'+props.row.idCardImg" fit="scale-down">
 											</el-image>
 											<span v-else> 未录入照片 </span>
 										</el-form-item>
@@ -377,12 +377,12 @@
 										<el-form-item label="车辆照片">
 											<el-image v-if="props.row.vehicleImg != ''" :preview-src-list="
 											props.row.vehicleImg != '' && props.row.plateImg != ''
-											?[props.row.vehicleImg,props.row.plateImg]
+											?['./'+props.row.vehicleImg,'./'+props.row.plateImg]
 											: props.row.vehicleImg != '' && props.row.plateImg == '' 
-												? [props.row.vehicleImg]
-												: [props.row.plateImg]
+												? ['./'+props.row.vehicleImg]
+												: ['./'+props.row.plateImg]
 											"
-											 style="width: 10rem;height:10rem;" :src="props.row.vehicleImg" fit="scale-down">
+											 style="width: 10rem;height:10rem;" :src="'./'+props.row.vehicleImg" fit="scale-down">
 											</el-image>
 											<span v-else> 未录入照片 </span>
 										</el-form-item>
@@ -391,12 +391,12 @@
 										<el-form-item label="车牌照片">
 											<el-image v-if="props.row.plateImg != ''" :preview-src-list="
 											props.row.vehicleImg != '' && props.row.plateImg != ''
-											?[props.row.vehicleImg,props.row.plateImg]
+											?['./'+props.row.vehicleImg,'./'+props.row.plateImg]
 											: props.row.vehicleImg != '' && props.row.plateImg == '' 
-												? [props.row.vehicleImg]
-												: [props.row.plateImg]
+												? ['./'+props.row.vehicleImg]
+												: ['./'+props.row.plateImg]
 											"
-											 style="width: 10rem;height:10rem;" :src="props.row.plateImg" fit="scale-down">
+											 style="width: 10rem;height:10rem;" :src="'./'+props.row.plateImg" fit="scale-down">
 											</el-image>
 											<span v-else> 未录入照片 </span>
 										</el-form-item>

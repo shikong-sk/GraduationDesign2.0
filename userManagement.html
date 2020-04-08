@@ -183,9 +183,9 @@
                         <template slot-scope="scope">
 							<div class="mx-auto text-center">
 								<el-image v-if="scope.row.userImg != ''" :preview-src-list="
-									[scope.row.userImg]
+									['./'+scope.row.userImg]
 								"
-								 style="width: 100%;height:50px" :src="scope.row.userImg" fit="scale-down">
+								 style="width: 100%;height:50px" :src="'./'+scope.row.userImg" fit="scale-down">
 								</el-image>
 								<span v-else> 未录入照片 </span>
 							</div>
@@ -247,8 +247,8 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="用户照片">
                                 <el-image v-if="data.userImg != ''" :preview-src-list="
-								[data.userImg]
-							" style="width: 100%;height:50px" :src="data.userImg" fit="scale-down">
+								['./'+data.userImg]
+							" style="width: 100%;height:50px" :src="'./'+data.userImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
 
@@ -390,8 +390,8 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="用户照片">
                                 <el-image v-if="data.userImg != ''" :preview-src-list="
-                						[data.userImg]
-                					" style="width: 100%;height:50px" :src="data.userImg == undefined?'./Storage/undefined.jpg':data.userImg" fit="scale-down">
+                						['./'+data.userImg]
+                					" style="width: 100%;height:50px" :src="data.userImg == undefined?'./Storage/undefined.jpg':'./'+data.userImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                                 <br>
@@ -513,8 +513,8 @@
                         <el-form label-position="left" inline class="table-expand">
                             <el-form-item label="用户照片">
                                 <el-image v-if="data.userImg != ''" :preview-src-list="
-                						[data.userImg]
-                					" style="width: 100%;height:50px" :src="data.userImg == undefined?'./Storage/undefined.jpg':data.userImg" fit="scale-down">
+                						['./'+data.userImg]
+                					" style="width: 100%;height:50px" :src="data.userImg == undefined?'./Storage/undefined.jpg':'./'+data.userImg" fit="scale-down">
                                 </el-image>
                                 <span v-else> 未录入照片 </span>
                                 <br>
